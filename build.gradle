@@ -1,0 +1,39 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+description 'Plugin with all features for development and usage of yamoney librares.'
+group 'ru.yandex.money.plugins'
+
+repositories {
+    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+    maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+    maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
+}
+
+buildscript {
+    repositories {
+        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+        maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
+
+        dependencies {
+            classpath 'org.ajoberstar:gradle-git:1.5.0'
+            classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
+        }
+    }
+}
+
+dependencies {
+    compile localGroovy(),
+            'org.ajoberstar:gradle-git:1.5.0',
+            'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

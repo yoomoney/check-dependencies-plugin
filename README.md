@@ -13,7 +13,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'ru.yandex.money.plugins:yamoney-library-plugin:0.1.0'
+        classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:0.1.0'
     }
 }
 ```
@@ -21,7 +21,7 @@ buildscript {
 
 После добавления зависимостей, нужно применить сам плагин, добавив строчку в `build.gradle` после обновлённого `buildscript`: 
 ```groovy
-apply plugin: 'yamoney-library-plugin'
+apply plugin: 'yamoney-library-project-plugin'
 ```
 
 ## Конфигурация

@@ -1,4 +1,4 @@
-package ru.yandex.money.plugins.library.readme;
+package ru.yandex.money.gradle.plugins.library.readme;
 
 import net.slkdev.swagger.confluence.constants.PaginationMode;
 import org.gradle.api.DefaultTask;
@@ -21,8 +21,7 @@ public class PublishReadmeTask extends DefaultTask {
 
     @TaskAction
     void publishReadme() throws IOException {
-        ReadmePluginExtension configuration = (ReadmePluginExtension) getProject().getExtensions()
-                .getByName(ReadmePluginExtension.EXTENSION_NAME);
+        ReadmePluginExtension configuration = getProject().getExtensions().getByType(ReadmePluginExtension.class);
 
         DocPublisher docPublisher = new DocPublisher();
         DocPublisherConfig config = new DocPublisherConfig.Builder()
@@ -33,7 +32,7 @@ public class PublishReadmeTask extends DefaultTask {
                 .withAncestorId(configuration.confluenceAncestorPageId)
                 .withDocType(DocType.MARKDOWN)
                 .withPrefix(configuration.prefix)
-                .withTitle(configuration.artifactId)
+                .withTitle(configuration.pageTitle)
                 .withPathToDocument(configuration.pathToDocument)
                 .build();
         docPublisher.publish(config);

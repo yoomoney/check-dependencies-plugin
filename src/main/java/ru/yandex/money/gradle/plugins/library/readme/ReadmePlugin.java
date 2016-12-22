@@ -1,8 +1,8 @@
-package ru.yandex.money.plugins.library.readme;
+package ru.yandex.money.gradle.plugins.library.readme;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import ru.yandex.money.plugins.library.GitUtils;
+import ru.yandex.money.gradle.plugins.library.GitRepositoryProperties;
 
 /**
  * Плагин для работы с readme файлами.
@@ -16,7 +16,7 @@ public class ReadmePlugin implements Plugin<Project> {
         project.getExtensions().create(ReadmePluginExtension.EXTENSION_NAME, ReadmePluginExtension.class, project);
 
         PublishReadmeTask task = project.getTasks().create(PublishReadmeTask.TASK_NAME, PublishReadmeTask.class);
-        task.onlyIf(element -> GitUtils.isMasterBranch());
+        task.onlyIf(element -> GitRepositoryProperties.isMasterBranch());
         task.setGroup("publishing");
         task.setDescription("Publishes README.md to confluence");
     }

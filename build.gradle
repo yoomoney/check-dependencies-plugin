@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
 description 'Plugin with all features for development and usage of yamoney librares.'
-group 'ru.yandex.money.plugins'
+group 'ru.yandex.money.gradle.plugins'
 
 repositories {
     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }

@@ -1,9 +1,9 @@
-package ru.yandex.money.plugins.library;
+package ru.yandex.money.gradle.plugins.library;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import ru.yandex.money.plugins.library.readme.ReadmePlugin;
+import ru.yandex.money.gradle.plugins.library.readme.ReadmePlugin;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Collection;
  * @author Kirill Bulatov (mail4score@gmail.com)
  * @since 22.12.2016
  */
-public class LibraryPlugin implements Plugin<Project> {
+public class LibraryProjectPlugin implements Plugin<Project> {
 
     /**
      * Для подключения новой функциональности, достаточно добавить плагин в этот список.
@@ -30,6 +30,7 @@ public class LibraryPlugin implements Plugin<Project> {
         configureRepositories(project);
     }
 
+    /** Добавляем в проект все репозитории, нужные для получения зависимостей. */
     private void configureRepositories(Project project) {
         RepositoryHandler repositories = project.getRepositories();
         repositories.add(repositories.maven(mavenArtifactRepository ->

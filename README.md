@@ -38,7 +38,7 @@ readme {
     confluenceAncestorPageId = 128657081 //https://wiki.yamoney.ru/display/WebPortal/Libraries
     prefix = "lib."
     pathToDocument = project.getProjectDir().getPath() + "/README.md"
-    artifactId = project.getName()
+    pageTitle = project.getName()
 }
 ```
 
@@ -51,11 +51,11 @@ readme {
 и возможность конфигурировать модуль из `build.gradle`
 
 Для того, чтобы понять, как пишутся плагины, можно посмотреть [официальную документацию](https://docs.gradle.org/current/userguide/custom_plugins.html)
-или книгу Gradle Beyond The Basics
+или книгу Gradle Beyond The Basics.
 
 Несколько правил и рекомензаций для написания плагинов:
 1. Для удобства чтения и поддержки, все плагины пишутся на Java.
 1. Плагины конфигурируются с помощью `*Extension` классов - все поля этих классов должны быть `public` и не `final`.
 Это позволяет переопределять эти поля в `build.gradle` так, как показано в секции выше.
-1. Все классы, которые должны использоваться в gradle (`*Task`, `*Extension`, `Plugin`) должны быть `public`, иначе возникнут ошибки на этапе выполнения задач в проекте.
+1. Все классы, которые должны использоваться в gradle (`*Task`, `*Extension`, `*Plugin`) должны быть `public`, иначе возникнут ошибки на этапе выполнения задач в проекте.
 1. Как можно большее число настроек должно быть со значениями по умолчанию, чтобы не заставлять пользователей плагинов указывать эти настройки вручную.

@@ -3,13 +3,15 @@ package ru.yandex.money.plugins.library.readme;
 import org.gradle.api.Project;
 
 /**
- * Класс, позволяющий настраивать
+ * Класс, позволяющий настраивать ReadmePlugin.
  *
  * @author Kirill Bulatov (mail4score@gmail.com)
  * @since 20.12.2016
  */
 @SuppressWarnings("WeakerAccess")
-public class ReadmePluginConfiguration {
+public class ReadmePluginExtension {
+    static final String EXTENSION_NAME = "readme";
+
     public String authentication;
     public String confluenceRestApiUrl;
     public String confluenceSpace;
@@ -18,7 +20,7 @@ public class ReadmePluginConfiguration {
     public String pathToDocument;
     public String artifactId;
 
-    public ReadmePluginConfiguration(Project project) {
+    public ReadmePluginExtension(Project project) {
         authentication = System.getenv("CONFLUENCE_AUTH");
         confluenceRestApiUrl = "https://wiki.yamoney.ru:443/rest/api/";
         confluenceSpace = "WebPortal";

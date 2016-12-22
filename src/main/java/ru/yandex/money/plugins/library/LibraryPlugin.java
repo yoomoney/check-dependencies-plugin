@@ -3,7 +3,7 @@ package ru.yandex.money.plugins.library;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import ru.yandex.money.plugins.library.readme.PublishReadmePlugin;
+import ru.yandex.money.plugins.library.readme.ReadmePlugin;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class LibraryPlugin implements Plugin<Project> {
      * Все остальные настройки должны делаться в самом добавляемом плагине.
      */
     private static final Collection<Plugin<Project>> PLUGINS_TO_APPLY = Arrays.asList(
-            new PublishReadmePlugin()
+            new ReadmePlugin()
     );
 
     @Override

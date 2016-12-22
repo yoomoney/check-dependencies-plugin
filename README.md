@@ -59,3 +59,9 @@ readme {
 Это позволяет переопределять эти поля в `build.gradle` так, как показано в секции выше.
 1. Все классы, которые должны использоваться в gradle (`*Task`, `*Extension`, `*Plugin`) должны быть `public`, иначе возникнут ошибки на этапе выполнения задач в проекте.
 1. Как можно большее число настроек должно быть со значениями по умолчанию, чтобы не заставлять пользователей плагинов указывать эти настройки вручную.
+
+## Известные проблемы
+На данный момент, для плагинов используется версия gradle 2.10, из-за чего тесты могут не проходить, если они запущены из Идеи.
+Подробности:
+* [https://discuss.gradle.org/t/nosuchmethoderror-in-testkit-after-2-9-2-10-transition/13505](https://discuss.gradle.org/t/nosuchmethoderror-in-testkit-after-2-9-2-10-transition/13505)
+* [https://github.com/palantir/gradle-idea-test-fix](https://github.com/palantir/gradle-idea-test-fix)

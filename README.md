@@ -26,21 +26,10 @@ apply plugin: 'yamoney-library-project-plugin'
 
 ## Конфигурация
 Задачи плагина можно настраивать.
-Для этого, в `build.gradle` нужно указать имя задачи и параметры, которые вы хотите поменять.
+Для этого, в `build.gradle` нужно указать имя задачи и параметры, которые вы хотите поменять. Для каждого плагина нужно указывать свою,
+отдельную конфигурацию в build.gradle
 
-Возможные конфигурации со значениями по умолчанию:
-
-```groovy
-readme {
-    authentication = System.getenv("CONFLUENCE_AUTH")
-    confluenceRestApiUrl = "https://wiki.yamoney.ru:443/rest/api/"
-    confluenceSpace = "WebPortal"
-    confluenceAncestorPageId = 128657081 //https://wiki.yamoney.ru/display/WebPortal/Libraries
-    prefix = "lib."
-    pathToDocument = project.getProjectDir().getPath() + "/README.md"
-    pageTitle = project.getName()
-}
-```
+Возможные конфигурации со значениями по умолчанию приведены в секции описания плагинов.
 
 ## Устройство library-plugin
 В качестве агрегатора функционала выступает LibraryPlugin - в нём делаются все настройки, необходимые для нормальной работы проекта
@@ -65,3 +54,26 @@ readme {
 Подробности:
 * [https://discuss.gradle.org/t/nosuchmethoderror-in-testkit-after-2-9-2-10-transition/13505](https://discuss.gradle.org/t/nosuchmethoderror-in-testkit-after-2-9-2-10-transition/13505)
 * [https://github.com/palantir/gradle-idea-test-fix](https://github.com/palantir/gradle-idea-test-fix)
+
+# Описание плагинов
+
+## LibraryPlugin
+Плагин для объединения всех остальных плагинов, не нуждается в конфигурировании.
+Единственный плагин из всех в этом проекте, который виден внешним компонентам, используется для подключения всех остальных плагинов.
+
+## ReadmePlugin
+Плагин для работы с readme файлами библиотек. На данный момент плагин отвечает за публикацию readme файла на confluence.
+
+Конфигурация и значения по умолчанию: 
+```groovy
+readme {
+    authentication = System.getenv("CONFLUENCE_AUTH")
+    confluenceRestApiUrl = "https://wiki.yamoney.ru:443/rest/api/"
+    confluenceSpace = "WebPortal"
+    confluenceAncestorPageId = 128657081 //https://wiki.yamoney.ru/display/WebPortal/Libraries
+    prefix = "lib."
+    pathToDocument = project.getProjectDir().getPath() + "/README.md"
+    pageTitle = project.getName()
+}
+```
+Описание параметров конфигурации можно найти в javadoc'ах класса ReadmePluginExtension.

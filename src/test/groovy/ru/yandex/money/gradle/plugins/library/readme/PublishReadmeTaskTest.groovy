@@ -5,7 +5,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.joda.time.DateTime
 import org.testng.annotations.Test
 import ru.yandex.money.gradle.plugins.library.AbstractGradleTest
-import ru.yandex.money.gradle.plugins.library.GitRepositoryProperties
+import ru.yandex.money.gradle.plugins.library.helpers.GitRepositoryProperties
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SKIPPED

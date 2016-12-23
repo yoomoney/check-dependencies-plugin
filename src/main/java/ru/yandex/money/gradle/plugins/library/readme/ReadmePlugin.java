@@ -2,7 +2,7 @@ package ru.yandex.money.gradle.plugins.library.readme;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import ru.yandex.money.gradle.plugins.library.GitRepositoryProperties;
+import ru.yandex.money.gradle.plugins.library.helpers.GitRepositoryProperties;
 
 /**
  * Плагин для работы с readme файлами.

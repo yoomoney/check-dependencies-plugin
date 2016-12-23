@@ -1,4 +1,4 @@
-package ru.yandex.money.gradle.plugins.library;
+package ru.yandex.money.gradle.plugins.library.helpers;
 
 import org.ajoberstar.grgit.Grgit;
 
@@ -8,8 +8,11 @@ import org.ajoberstar.grgit.Grgit;
  * @author Kirill Bulatov (mail4score@gmail.com)
  * @since 22.12.2016
  */
-public class GitRepositoryProperties {
+public final class GitRepositoryProperties {
     private static final String MASTER_BRANCH_NAME = "master";
+
+    @SuppressWarnings("unused")
+    private GitRepositoryProperties() {}
 
     /**
      * Показывает, является ли текущая ветка master веткой или нет.

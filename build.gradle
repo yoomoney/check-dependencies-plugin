@@ -33,9 +33,6 @@ dependencies {
             "ru.yandex.money.common:yamoney-test-utils:5.0.4"
 }
 
-// Для того, чтобы протестировать плагин, нужно его опубликовать.
-test.dependsOn(publishToMavenLocal)
-
 tasks.withType(Test) {
     useTestNG()
 }

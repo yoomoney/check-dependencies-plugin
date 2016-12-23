@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library
 
 import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeMethod
+import ru.yandex.money.gradle.plugins.library.helpers.VersionProperties
 
 /**
  *
@@ -15,12 +16,15 @@ abstract class AbstractGradleTest {
     protected static final String COMMON_BUILD_FILE_CONTENTS = """
     buildscript {
                 repositories {
+                    flatDir { dirs '${new File("./build/libs").absolutePath.replace("\\", "\\\\")}' }
                     maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
                     maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
-                    mavenLocal()
                 }
                 dependencies {
-                    classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:+'
+                    classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:${
+                        VersionProperties.loadPluginVersion(new File("./gradle.properties"))}'
+                    classpath 'org.ajoberstar:gradle-git:1.5.0'
+                    classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
                 }
             }
             apply plugin: 'yamoney-library-project-plugin'

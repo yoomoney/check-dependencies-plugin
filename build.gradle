@@ -37,10 +37,15 @@ tasks.withType(Test) {
     useTestNG()
 }
 
+jar{
+    baseName "yamoney-library-project-plugin"
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifactId jar.getBaseName()
         }
     }
 }

@@ -16,7 +16,7 @@ public class ReadmePlugin implements Plugin<Project> {
         project.getExtensions().create(ReadmePluginExtension.EXTENSION_NAME, ReadmePluginExtension.class, project);
 
         PublishReadmeTask task = project.getTasks().create(PublishReadmeTask.TASK_NAME, PublishReadmeTask.class);
-        task.onlyIf(element -> GitRepositoryProperties.isMasterBranch());
+        task.onlyIf(element -> GitRepositoryProperties.getInstance().isMasterBranch());
         task.setGroup("publishing");
         task.setDescription("Publishes README.md to confluence");
     }

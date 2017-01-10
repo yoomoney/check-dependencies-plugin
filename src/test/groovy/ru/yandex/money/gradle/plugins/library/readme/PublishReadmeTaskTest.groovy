@@ -23,7 +23,8 @@ class PublishReadmeTaskTest extends AbstractGradleTest {
     private static final String NON_EXISTENT_FILE_PATH = "non_existent_path_${DateTime.now().getMillis()}"
 
     private static String forceTaskExecutionIfNeeded(boolean shouldExecute, String taskName) {
-        if ((shouldExecute && GitRepositoryProperties.masterBranch) || (!shouldExecute && !GitRepositoryProperties.masterBranch)) {
+        if ((shouldExecute && GitRepositoryProperties.instance.masterBranch) ||
+                (!shouldExecute && !GitRepositoryProperties.instance.masterBranch)) {
             return ""
         }
         return "${taskName}.setOnlyIf({ $shouldExecute })"

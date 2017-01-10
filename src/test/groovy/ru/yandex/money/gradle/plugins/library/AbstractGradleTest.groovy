@@ -27,6 +27,7 @@ abstract class AbstractGradleTest {
                     classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
                 }
             }
+            apply plugin: 'java'
             apply plugin: 'yamoney-library-project-plugin'
             \n
     """.stripIndent()

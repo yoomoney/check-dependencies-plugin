@@ -21,10 +21,11 @@ import static org.testng.Assert.assertTrue
  */
 class PublishReadmeTaskTest extends AbstractGradleTest {
     private static final String NON_EXISTENT_FILE_PATH = "non_existent_path_${DateTime.now().getMillis()}"
+    private static final GitRepositoryProperties gitRepositoryProperties = new GitRepositoryProperties()
 
     private static String forceTaskExecutionIfNeeded(boolean shouldExecute, String taskName) {
-        if ((shouldExecute && GitRepositoryProperties.instance.masterBranch) ||
-                (!shouldExecute && !GitRepositoryProperties.instance.masterBranch)) {
+        if ((shouldExecute && gitRepositoryProperties.masterBranch) ||
+                (!shouldExecute && !gitRepositoryProperties.masterBranch)) {
             return ""
         }
         return "${taskName}.setOnlyIf({ $shouldExecute })"
@@ -47,7 +48,7 @@ class PublishReadmeTaskTest extends AbstractGradleTest {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(temporaryFolder)
                 .withArguments(PublishReadmeTask.TASK_NAME)
-                .forwardOutput()
+                .forwardOutput().withDebug(true)
                 .buildAndFail()
 
         assertThat(result.tasks, hasSize(1))

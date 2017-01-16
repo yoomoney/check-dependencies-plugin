@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.changelog;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -15,8 +16,11 @@ import ru.yandex.money.gradle.plugins.library.helpers.GitRepositoryProperties;
  */
 public class CheckChangelogPlugin implements Plugin<Project> {
 
-    private static final String CHECK_CHANGELOG_TASK_NAME = "checkChangelog";
+    public static final String CHECK_CHANGELOG_TASK_NAME = "checkChangelog";
+    private static final String CHECK_CHANGELOG_TASK_GROUP = "verification";
     private static final String JAVA_PLUGIN_ID = "java";
+
+    private GitRepositoryProperties gitRepositoryProperties = new GitRepositoryProperties();
 
     @Override
     public void apply(Project project) {
@@ -28,15 +32,19 @@ public class CheckChangelogPlugin implements Plugin<Project> {
         project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(checkChangelogTask);
     }
 
-    private static Task addCheckChangelogTask(Project project) {
+    @VisibleForTesting
+    CheckChangelogPlugin setGitRepositoryProperties(GitRepositoryProperties gitRepositoryProperties) {
+        this.gitRepositoryProperties = gitRepositoryProperties;
+        return this;
+    }
+
+    private Task addCheckChangelogTask(Project project) {
         CheckChangelogTask task = project.getTasks().create(CHECK_CHANGELOG_TASK_NAME, CheckChangelogTask.class);
-        task.onlyIf(element -> {
-            GitRepositoryProperties gitRepositoryProperties = GitRepositoryProperties.getInstance();
-            return !gitRepositoryProperties.isMasterBranch() &&
-                    !gitRepositoryProperties.isReleaseBranch() &&
-                    !gitRepositoryProperties.isDevBranch();
-        });
-        task.setGroup("verification");
+        task.onlyIf(element ->
+                !gitRepositoryProperties.isMasterBranch() &&
+                !gitRepositoryProperties.isReleaseBranch() &&
+                !gitRepositoryProperties.isDevBranch());
+        task.setGroup(CHECK_CHANGELOG_TASK_GROUP);
         task.setDescription("Check description for current release version in file " + CheckChangelogTask.CHANGELOG_FILE_NAME);
         return task;
     }

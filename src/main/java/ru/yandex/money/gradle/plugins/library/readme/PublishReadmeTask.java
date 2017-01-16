@@ -17,7 +17,7 @@ import java.io.IOException;
  * @since 20.12.2016
  */
 public class PublishReadmeTask extends DefaultTask {
-    static final String TASK_NAME = "publishReadme";
+    public static final String TASK_NAME = "publishReadme";
 
     @TaskAction
     void publishReadme() throws IOException {

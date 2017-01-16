@@ -10,23 +10,14 @@ import java.util.regex.Pattern;
  * @author Kirill Bulatov (mail4score@gmail.com)
  * @since 22.12.2016
  */
-public final class GitRepositoryProperties {
 
-    private static final class GitRepositoryPropertiesHolder {
-        static final GitRepositoryProperties INSTANCE = new GitRepositoryProperties();
-    }
+public class GitRepositoryProperties {
 
     private static final String MASTER_BRANCH_NAME = "master";
     private static final String DEV_BRUNCH_NAME = "dev";
     private static final Pattern RELEASE_BRANCH_PATTERN = Pattern.compile("release/.*");
 
     private final Grgit grgit = Grgit.open();
-
-    private GitRepositoryProperties() {}
-
-    public static GitRepositoryProperties getInstance() {
-        return GitRepositoryPropertiesHolder.INSTANCE;
-    }
 
     /**
      * Показывает, является ли текущая ветка master веткой или нет.

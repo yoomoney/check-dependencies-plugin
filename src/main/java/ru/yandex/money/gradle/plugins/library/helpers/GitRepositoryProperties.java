@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class GitRepositoryProperties {
 
     private static final String MASTER_BRANCH_NAME = "master";
-    private static final String DEV_BRUNCH_NAME = "dev";
+    private static final String DEV_BRANCH_NAME = "dev";
     private static final Pattern RELEASE_BRANCH_PATTERN = Pattern.compile("release/.*");
 
     private final Grgit grgit = Grgit.open();
@@ -34,7 +34,7 @@ public class GitRepositoryProperties {
      * @return true, если является, false - если нет.
      */
     public boolean isDevBranch() {
-        return getCurrentBranchName().equalsIgnoreCase(DEV_BRUNCH_NAME);
+        return getCurrentBranchName().equalsIgnoreCase(DEV_BRANCH_NAME);
     }
 
     /**

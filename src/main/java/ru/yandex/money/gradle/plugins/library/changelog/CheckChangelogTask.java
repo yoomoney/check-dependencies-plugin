@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public class CheckChangelogTask extends DefaultTask {
 
     static final String CHANGELOG_FILE_NAME = "CHANGELOG.md";
-    private static final String VERSION_PROP_NAME = "version";
     private static final String SNAPSHOT_VERSION_POSTFIX = "-SNAPSHOT";
 
     @TaskAction
@@ -46,14 +45,6 @@ public class CheckChangelogTask extends DefaultTask {
 
 
     private String getReleaseVersion() {
-        Properties gradleProperties = new Properties();
-        try {
-            gradleProperties.load(new FileInputStream(getProject().file(Project.GRADLE_PROPERTIES)));
-        } catch (FileNotFoundException ex) {
-            throw new GradleException("Unable to find project file " + Project.GRADLE_PROPERTIES, ex);
-        } catch (IOException ex) {
-            throw new GradleException("An IO error occurred during reading file " + Project.GRADLE_PROPERTIES, ex);
-        }
-        return gradleProperties.getProperty(VERSION_PROP_NAME).replace(SNAPSHOT_VERSION_POSTFIX, "");
+        return getProject().getVersion().toString().replace(SNAPSHOT_VERSION_POSTFIX, "");
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.changelog;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -20,7 +19,7 @@ public class CheckChangelogPlugin implements Plugin<Project> {
     private static final String CHECK_CHANGELOG_TASK_GROUP = "verification";
     private static final String JAVA_PLUGIN_ID = "java";
 
-    private GitRepositoryProperties gitRepositoryProperties = new GitRepositoryProperties();
+    private GitRepositoryProperties gitRepositoryProperties;
 
     @Override
     public void apply(Project project) {
@@ -28,14 +27,10 @@ public class CheckChangelogPlugin implements Plugin<Project> {
             throw new GradleException("Java plugin must be applied before CheckChangelogPlugin");
         }
 
+        gitRepositoryProperties = new GitRepositoryProperties(project.getProjectDir().getAbsolutePath());
+
         Task checkChangelogTask = addCheckChangelogTask(project);
         project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(checkChangelogTask);
-    }
-
-    @VisibleForTesting
-    CheckChangelogPlugin setGitRepositoryProperties(GitRepositoryProperties gitRepositoryProperties) {
-        this.gitRepositoryProperties = gitRepositoryProperties;
-        return this;
     }
 
     private Task addCheckChangelogTask(Project project) {

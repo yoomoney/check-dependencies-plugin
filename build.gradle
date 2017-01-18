@@ -30,15 +30,24 @@ dependencies {
             'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
 
     testCompile gradleTestKit(),
-            "ru.yandex.money.common:yamoney-test-utils:5.0.4"
+            "ru.yandex.money.common:yamoney-test-utils:5.0.4",
+            'com.netflix.nebula:nebula-test:4.0.0'
+
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
 
-tasks.withType(Test) {
+task testNg(type: Test){
     useTestNG()
 }
+
+task testJUnit(type: Test){
+    useJUnit()
+}
+
+test.dependsOn project.tasks.testJUnit
+test.dependsOn project.tasks.testNg
 
 jar{
     baseName "yamoney-library-project-plugin"

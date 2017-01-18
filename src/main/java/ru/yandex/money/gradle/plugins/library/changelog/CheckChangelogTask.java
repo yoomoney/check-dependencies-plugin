@@ -3,6 +3,7 @@ package ru.yandex.money.gradle.plugins.library.changelog;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -23,10 +24,12 @@ public class CheckChangelogTask extends DefaultTask {
 
     static final String CHANGELOG_FILE_NAME = "CHANGELOG.md";
     private static final String SNAPSHOT_VERSION_POSTFIX = "-SNAPSHOT";
+    @InputFile
+    private final File changelogFile = getProject().file(CHANGELOG_FILE_NAME);
 
     @TaskAction
     public void check() throws IOException {
-        File changelogFile = getProject().file(CHANGELOG_FILE_NAME);
+
         if (!changelogFile.exists()) {
             getLogger().info("Changelog file doesn't exist");
             return;

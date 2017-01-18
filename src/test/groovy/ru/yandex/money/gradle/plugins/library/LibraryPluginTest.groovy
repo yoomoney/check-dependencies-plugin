@@ -28,7 +28,7 @@ class LibraryPluginTest extends AbstractGradleTest {
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(temporaryFolder)
-                .withArguments("tasks").withDebug(true)
+                .withArguments("tasks")
                 .build()
 
         //checking, that "tasks" task was the only launched task and that it run successfully

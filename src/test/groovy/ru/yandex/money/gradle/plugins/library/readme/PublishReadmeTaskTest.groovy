@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue
  */
 class PublishReadmeTaskTest extends AbstractGradleTest {
     private static final String NON_EXISTENT_FILE_PATH = "non_existent_path_${DateTime.now().getMillis()}"
-    private static final GitRepositoryProperties gitRepositoryProperties = new GitRepositoryProperties()
+    private static final GitRepositoryProperties gitRepositoryProperties = new GitRepositoryProperties(null)
 
     private static String forceTaskExecutionIfNeeded(boolean shouldExecute, String taskName) {
         if ((shouldExecute && gitRepositoryProperties.masterBranch) ||
@@ -44,6 +44,7 @@ class PublishReadmeTaskTest extends AbstractGradleTest {
     @Test
     void testUploadReadmeTask_onMasterBranch_withIncorrectFilePath() {
         buildFile << generateBuildFileContents(true)
+
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(temporaryFolder)

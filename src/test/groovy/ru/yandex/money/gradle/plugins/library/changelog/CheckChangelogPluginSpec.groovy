@@ -1,7 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.changelog
 
-import nebula.test.IntegrationSpec
-import org.ajoberstar.grgit.Grgit
+import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
 
 /**
  * Функциональные тесты для CheckChangelogPlugin, проверяющего корректность changelog файла
@@ -10,37 +9,10 @@ import org.ajoberstar.grgit.Grgit
  * @author Konstantin Rashev (rashev@yamoney.ru)
  * @since 17.01.2017
  */
-class CheckChangelogPluginTest extends IntegrationSpec {
-
-    private Grgit grgit;
+class CheckChangelogPluginSpec extends AbstractPluginSpec {
 
     def setup() {
-        grgit = Grgit.init(dir: projectDir.absolutePath)
-
-        buildFile << '''
-            buildscript {
-                repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
-                }
-                dependencies {
-                    classpath 'org.ajoberstar:gradle-git:1.5.0'
-                    classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
-                }
-            }
-            apply plugin: 'java'
-            apply plugin: 'yamoney-library-project-plugin'
-        '''.stripIndent()
-
-        grgit.add(patterns: ['build.gradle'])
-        grgit.commit(message: 'build.gradle commit', all: true)
-
         file("gradle.properties") << "version=1.0.1-SNAPSHOT"
-
-    }
-
-    def cleanup() {
-        grgit.close()
     }
 
     def 'skip checkChangelog task on master branch'() {

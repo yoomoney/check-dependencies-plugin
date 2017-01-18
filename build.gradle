@@ -38,17 +38,6 @@ dependencies {
     }
 }
 
-task testNg(type: Test){
-    useTestNG()
-}
-
-task testJUnit(type: Test){
-    useJUnit()
-}
-
-test.dependsOn project.tasks.testJUnit
-test.dependsOn project.tasks.testNg
-
 jar{
     baseName "yamoney-library-project-plugin"
 }

@@ -15,13 +15,16 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
         repositories {
             maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
             maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
+            maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
         }
         dependencies {
             classpath 'org.ajoberstar:gradle-git:1.5.0'
             classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
+            classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
         }
     }
     apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'yamoney-library-project-plugin'
     """.stripIndent()
 

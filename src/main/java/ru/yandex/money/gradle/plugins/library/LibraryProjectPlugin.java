@@ -4,6 +4,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import ru.yandex.money.gradle.plugins.library.changelog.CheckChangelogPlugin;
+import ru.yandex.money.gradle.plugins.library.dependencies.CheckDependenciesPlugin;
 import ru.yandex.money.gradle.plugins.library.readme.ReadmePlugin;
 
 import java.util.Arrays;
@@ -24,7 +25,8 @@ public class LibraryProjectPlugin implements Plugin<Project> {
      */
     private static final Collection<Class<?>> PLUGINS_TO_APPLY = Arrays.asList(
             ReadmePlugin.class,
-            CheckChangelogPlugin.class
+            CheckChangelogPlugin.class,
+            CheckDependenciesPlugin.class
     );
 
     @Override

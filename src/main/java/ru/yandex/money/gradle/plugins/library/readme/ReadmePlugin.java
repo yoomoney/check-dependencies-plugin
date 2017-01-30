@@ -16,7 +16,7 @@ public class ReadmePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-         gitRepositoryProperties = new GitRepositoryProperties(project.getProjectDir().getAbsolutePath());
+        gitRepositoryProperties = new GitRepositoryProperties(project.getProjectDir().getAbsolutePath());
 
         project.getExtensions().create(ReadmePluginExtension.EXTENSION_NAME, ReadmePluginExtension.class, project);
 

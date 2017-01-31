@@ -55,7 +55,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     }
 
     /**
-     * Создае задачу проверки версий библиотек
+     * Создает задачу проверки версий библиотек
      *
      * @param project проект
      * @return задача проверки зависимостей

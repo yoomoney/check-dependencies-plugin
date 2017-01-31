@@ -10,7 +10,6 @@ import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,79 +118,5 @@ public class CheckDependenciesTask extends DefaultTask {
             }
         });
         return conflictedLibraries;
-    }
-
-    /**
-     * Информация о конфликте: название библиотеки (Группа + имя артефакта), первоначальная запрашиваемая версия и конечная версии
-     * после разрешения конфликта
-     */
-    private static class ConflictedLibraryInfo {
-
-        private final String library;
-        private final String version;
-        private final String fixedVersion;
-
-        ConflictedLibraryInfo(String library, String version, String fixedVersion) {
-            this.library = library;
-            this.version = version;
-            this.fixedVersion = fixedVersion;
-        }
-
-        String getLibrary() {
-            return library;
-        }
-
-        String getVersion() {
-            return version;
-        }
-
-        String getFixedVersion() {
-            return fixedVersion;
-        }
-    }
-
-    /**
-     * Формирует отчет о библиотеках с конфликтами версий по каждой конфигурации
-     */
-    private static class CheckDependenciesReporter {
-
-        private static final String MESSAGES_INDENT = "    ";
-        private static final String FORMAT_CONFLICTED_LIBRARY_OUTPUT = "   --- %-40s: %s -> %s";
-        private static final int BASE_REPORTER_CAPACITY = 1000;
-        private final Collection<String> messages = new ArrayList<>();
-
-        /**
-         * Фиксация в отчете списка проблемных библиотек с конфликтными версиями
-         * @param configuration конфигурация
-         * @param conflictedLibraries список конфликтных библиотек
-         */
-        void logConflictedLibrary(Configuration configuration, Iterable<ConflictedLibraryInfo> conflictedLibraries) {
-            logConfiguration(String.format("%s - %s", configuration.getName(), configuration.getDescription()));
-
-            conflictedLibraries.forEach(library -> {
-                String message = String.format(FORMAT_CONFLICTED_LIBRARY_OUTPUT, library.getLibrary(), library.getVersion(),
-                        library.getFixedVersion());
-                logLibrary(message);
-            });
-        }
-
-        private void logLibrary(String message) {
-            messages.add(message);
-        }
-
-        private void logConfiguration(String catalog) {
-            if (!messages.isEmpty()) {
-                messages.add("");
-            }
-            messages.add(catalog);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder(BASE_REPORTER_CAPACITY);
-            messages.forEach(message -> sb.append(MESSAGES_INDENT).append(message).append('\n'));
-
-            return sb.toString();
-        }
     }
 }

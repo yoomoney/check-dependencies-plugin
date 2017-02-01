@@ -13,39 +13,39 @@ import java.util.Collection;
  */
 class CheckDependenciesReporter {
 
-    private static final String MESSAGES_INDENT = "    ";
-    private static final String FORMAT_CONFLICTED_LIBRARY_OUTPUT = "   --- %-50s: %s -> %s";
+    private static final String MESSAGES_INDENT = "\t";
     private static final int BASE_REPORTER_CAPACITY = 1000;
     private final Collection<String> messages = new ArrayList<>();
 
     /**
      * Фиксация в отчете списка проблемных библиотек с конфликтными версиями
-     * @param configuration конфигурация
+     *
+     * @param configuration       конфигурация
      * @param conflictedLibraries список конфликтных библиотек
      */
-    void logConflictedLibrary(Configuration configuration, Iterable<ConflictedLibraryInfo> conflictedLibraries) {
-        logConfiguration(String.format("%s - %s", configuration.getName(), configuration.getDescription()));
+    void reportConflictedLibrariesForConfiguration(Configuration configuration, Iterable<ConflictedLibraryInfo> conflictedLibraries) {
+        addConfigurationSection(String.format("%s - %s", configuration.getName(), configuration.getDescription()));
 
         conflictedLibraries.forEach(library -> {
-            String message = String.format(FORMAT_CONFLICTED_LIBRARY_OUTPUT, library.getLibrary(), library.getVersion(),
+            String message = String.format("   --- %-50s: %s -> %s", library.getLibrary(), library.getVersion(),
                     library.getFixedVersion());
-            logLibrary(message);
+            messages.add(message);
         });
     }
 
-    private void logLibrary(String message) {
-        messages.add(message);
-    }
-
-    private void logConfiguration(String catalog) {
+    private void addConfigurationSection(String configuration) {
         if (!messages.isEmpty()) {
             messages.add("");
         }
-        messages.add(catalog);
+        messages.add(configuration);
     }
 
-    @Override
-    public String toString() {
+    /**
+     * Возвращает строковое представление отчета
+     *
+     * @return отчет
+     */
+    String getFormattedReport() {
         StringBuilder sb = new StringBuilder(BASE_REPORTER_CAPACITY);
         messages.forEach(message -> sb.append(MESSAGES_INDENT).append(message).append('\n'));
 

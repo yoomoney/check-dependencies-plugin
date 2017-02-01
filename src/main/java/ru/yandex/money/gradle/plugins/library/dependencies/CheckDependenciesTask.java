@@ -33,46 +33,45 @@ public class CheckDependenciesTask extends DefaultTask {
     @TaskAction
     public void check() {
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
-        boolean totalResult = true;
+        boolean hasVersionsConflict = false;
 
         for (Configuration configuration : getProject().getConfigurations()) {
-            totalResult = checkLibraryVersionFor(configuration) && totalResult;
+            List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
+            if (!conflictedLibraries.isEmpty()) {
+                reporter.reportConflictedLibrariesForConfiguration(configuration, conflictedLibraries);
+            }
+            if (!hasVersionsConflict) {
+                hasVersionsConflict = !conflictedLibraries.isEmpty();
+            }
         }
 
-        if (!totalResult) {
-            throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.toString()));
+        if (hasVersionsConflict) {
+            throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
         }
     }
 
     /**
-     * Проверяет корректность изменения версий используемых библиотек. Если изменения версии не легитимные,
-     * то возвращает false
+     * Анализирует версии проектных библиотек и сравнивает их с со списком фиксированных версий библиотек для конфигурации.
      *
      * @param configuration конфигурация сборки
      * @return Правомерны изменения версий библиотек или нет
-     */
-    private boolean checkLibraryVersionFor(@Nonnull Configuration configuration) {
+     **/
+    private List<ConflictedLibraryInfo> calculateConflictedVersionsLibrariesFor(@Nonnull Configuration configuration) {
         Map<String, String> fixedLibraries = getFixedLibraries(configuration);
-        Map<String, String> projectLibraries = getProjectLibraries(configuration);
-        List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedLibraries(fixedLibraries, projectLibraries);
-
-        if (!conflictedLibraries.isEmpty()) {
-            reporter.logConflictedLibrary(configuration, conflictedLibraries);
-        }
-
-        return conflictedLibraries.isEmpty();
+        Map<String, ArrayList<String>> requestedLibraries = getRequestedLibraries(configuration);
+        return calculateConflictedLibraries(fixedLibraries, requestedLibraries);
     }
 
     /**
-     * Возвращает набор всех используемых (Прямые и транзитивные зависимости) подключений библиотек в проекте для указанной
-     * конфигурации.
+     * Возвращает набор всех запрашиваемых (Прямые и транзитивные зависимости) библиотек в проекте для указанной
+     * конфигурации до работы ResolutionStrategy.
      *
      * @param configuration конфигурация сборки
-     * @return словарь: ключ - название библиотеки, значение - версия (после работы ResolutionStrategy)
+     * @return словарь: ключ - название библиотеки, значение - список всех найденных версий (до работы ResolutionStrategy)
      */
-    private static Map<String, String> getProjectLibraries(@Nonnull Configuration configuration) {
+    private static Map<String, ArrayList<String>> getRequestedLibraries(@Nonnull Configuration configuration) {
         Set<? extends DependencyResult> projectDependencies = configuration.getIncoming().getResolutionResult().getAllDependencies();
-        Map<String, String> projectLibraries = new HashMap<>();
+        Map<String, ArrayList<String>> requestedLibraries = new HashMap<>();
 
         for (DependencyResult dependency : projectDependencies) {
             ComponentSelector selector = dependency.getRequested();
@@ -81,11 +80,33 @@ public class CheckDependenciesTask extends DefaultTask {
                 String selectedLibrary = String.format("%s:%s", targetLibrary.getGroup(), targetLibrary.getModule());
                 String selectedVersion = targetLibrary.getVersion();
 
-                projectLibraries.put(selectedLibrary, selectedVersion);
+                addLibraryVersion(requestedLibraries, selectedLibrary, selectedVersion);
             }
         }
 
-        return projectLibraries;
+        return requestedLibraries;
+    }
+
+    /**
+     * Фиксирует указанную версию библиотеки в списке libraries
+     *
+     * @param libraries Словарь: ключ - название библиотеки, значение - список версий
+     * @param library   Название библиотеки
+     * @param version   Версия библиотеки
+     */
+    private static void addLibraryVersion(@Nonnull Map<String, ArrayList<String>> libraries, @Nonnull String library,
+                                          @Nonnull String version) {
+        ArrayList<String> versions;
+        if (libraries.containsKey(version)) {
+            versions = libraries.get(version);
+        } else {
+            versions = new ArrayList<>();
+            libraries.put(library, versions);
+        }
+
+        if (!versions.contains(version)) {
+            versions.add(version);
+        }
     }
 
     /**
@@ -108,13 +129,18 @@ public class CheckDependenciesTask extends DefaultTask {
      * @return список библиотек с конфликтом версий
      */
     private static List<ConflictedLibraryInfo> calculateConflictedLibraries(@Nonnull Map<String, String> fixedLibraries,
-                                                                            @Nonnull Map<String, String> projectLibraries) {
+                                                                            @Nonnull Map<String, ArrayList<String>> projectLibraries) {
         List<ConflictedLibraryInfo> conflictedLibraries = new ArrayList<>();
 
-        projectLibraries.forEach((library, version) -> {
+        projectLibraries.forEach((library, versions) -> {
             String fixedVersion = fixedLibraries.get(library);
-            if (fixedVersion != null && !Objects.equals(version, fixedVersion)) {
-                conflictedLibraries.add(new ConflictedLibraryInfo(library, version, fixedVersion));
+
+            if (fixedVersion != null) {
+                versions.forEach(requestedVersion -> {
+                    if (!Objects.equals(requestedVersion, fixedVersion)) {
+                        conflictedLibraries.add(new ConflictedLibraryInfo(library, requestedVersion, fixedVersion));
+                    }
+                });
             }
         });
         return conflictedLibraries;

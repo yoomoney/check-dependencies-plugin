@@ -5,19 +5,32 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.PluginAware;
 
 import javax.annotation.Nonnull;
 
 /**
- * Плагин для контроля версий используемых библиотек. Проект может использовать библиотеку, которая жестко фиксирует
- * версии, используемых внутри, библиотек (Например, так делает Spring-Boot). В случае, если проект использует
- * такую же библиотеку, но другой версии, может возникнуть конфликт версий, приводящий к ошибкам в runtime.
+ * Плагин проверяет легитимность изменения версий используемых библиотек (как прямо, так и по транзитивным зависимостям) в проекте.
  * <p>
- * Этот плагин проверяет все зависимости проекта:
+ * Зачастую проект может содержать большое количество повторно используемых библоиотек разных версий, найденных по транзитивным
+ * зависимостям. Однако, при запуске приложения может быть использована только одна версия одной и той же библиотеки.
+ * Чтобы гарантировать согласованность этой библиотеки с другими, Gradle имеет встроенный механизм решения конфликтов версий.
+ * По умолчанию Gradle из всех версий одной и той же библиотеки выбирает самую последнюю. При таком подходе нет гарантии, что самая
+ * новая версия библиотеки будет обратно совместима с предыдущей версией. А значит нельзя гарантировать, что такое повышение
+ * не сломает проект.
+ * <p>
+ * Для того, чтобы избежать не контролируемое изменение версий, используется подход с фиксацией набор версий бибилиотек, на которых
+ * гарантируется работа приложения.
+ * <p>
+ * Для фиксации используется сторонний плагин <b>IO Spring Dependency Management plugin</b>. Список фиксируемых библиотек с
+ * версиями хранится в maven xml.pom файле. Плагин предоставляет программный доступ к этому списку.
+ * <p>
+ * Обратной стороной фиксации служит неконтролируемое понижение версии библиотек. Чтобы сделать этот процесс изменения версий
+ * библиотек контролируемым сделан этот плагин.
+ * <p>
+ * После того, как все зависимости и версии библиотек определены плагин выполняет проверку. Правила проверки следующие:
  * <ol>
- * <li>Если изменение версии библиотеки связано с жесткой фиксации версии, плагин остановит билд с ошибкой.</li>
- * <li>Если изменение версии библиотеки не связано с жесткой фиксацией версии, то билд допускается к выполнению.</li>
+ * <li>Если изменение версии библиотеки связано с фиксацией версии, плагин остановит билд с ошибкой.</li>
+ * <li>Если изменение версии библиотеки не связано с фиксацией версии, то билд допускается к выполнению.</li>
  * </ol>
  *
  * @author Brovin Yaroslav (brovin@yamoney.ru)
@@ -35,23 +48,12 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project target) {
-        checkApplyingExternalPlugin(target, SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID);
+        if (!target.getPluginManager().hasPlugin(SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID)) {
+            throw new GradleException(String.format(ERROR_APPLYING_PLUGIN_REQUIRED, SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID));
+        }
 
         Task task = createCheckDependenciesTask(target);
         target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(task);
-    }
-
-    /**
-     * Проверяет, что плагин подключен к проекту.
-     *
-     * @param project проект
-     * @param pluginID идентификатор плагина
-     * @throws GradleException указанный плагин не подключен
-     */
-    private static void checkApplyingExternalPlugin(@Nonnull PluginAware project, @Nonnull String pluginID) {
-        if (!project.getPluginManager().hasPlugin(pluginID)) {
-            throw new GradleException(String.format(ERROR_APPLYING_PLUGIN_REQUIRED, pluginID));
-        }
     }
 
     /**

@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskAction;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,9 +40,7 @@ public class CheckDependenciesTask extends DefaultTask {
             List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
             if (!conflictedLibraries.isEmpty()) {
                 reporter.reportConflictedLibrariesForConfiguration(configuration, conflictedLibraries);
-            }
-            if (!hasVersionsConflict) {
-                hasVersionsConflict = !conflictedLibraries.isEmpty();
+                hasVersionsConflict = true;
             }
         }
 
@@ -58,7 +57,7 @@ public class CheckDependenciesTask extends DefaultTask {
      **/
     private List<ConflictedLibraryInfo> calculateConflictedVersionsLibrariesFor(@Nonnull Configuration configuration) {
         Map<String, String> fixedLibraries = getFixedLibraries(configuration);
-        Map<String, ArrayList<String>> requestedLibraries = getRequestedLibraries(configuration);
+        Map<String, Set<String>> requestedLibraries = getRequestedLibraries(configuration);
         return calculateConflictedLibraries(fixedLibraries, requestedLibraries);
     }
 
@@ -69,9 +68,9 @@ public class CheckDependenciesTask extends DefaultTask {
      * @param configuration конфигурация сборки
      * @return словарь: ключ - название библиотеки, значение - список всех найденных версий (до работы ResolutionStrategy)
      */
-    private static Map<String, ArrayList<String>> getRequestedLibraries(@Nonnull Configuration configuration) {
+    private static Map<String, Set<String>> getRequestedLibraries(@Nonnull Configuration configuration) {
         Set<? extends DependencyResult> projectDependencies = configuration.getIncoming().getResolutionResult().getAllDependencies();
-        Map<String, ArrayList<String>> requestedLibraries = new HashMap<>();
+        Map<String, Set<String>> requestedLibraries = new HashMap<>();
 
         for (DependencyResult dependency : projectDependencies) {
             ComponentSelector selector = dependency.getRequested();
@@ -80,33 +79,11 @@ public class CheckDependenciesTask extends DefaultTask {
                 String selectedLibrary = String.format("%s:%s", targetLibrary.getGroup(), targetLibrary.getModule());
                 String selectedVersion = targetLibrary.getVersion();
 
-                addLibraryVersion(requestedLibraries, selectedLibrary, selectedVersion);
+                requestedLibraries.computeIfAbsent(selectedLibrary, key -> new HashSet<>()).add(selectedVersion);
             }
         }
 
         return requestedLibraries;
-    }
-
-    /**
-     * Фиксирует указанную версию библиотеки в списке libraries
-     *
-     * @param libraries Словарь: ключ - название библиотеки, значение - список версий
-     * @param library   Название библиотеки
-     * @param version   Версия библиотеки
-     */
-    private static void addLibraryVersion(@Nonnull Map<String, ArrayList<String>> libraries, @Nonnull String library,
-                                          @Nonnull String version) {
-        ArrayList<String> versions;
-        if (libraries.containsKey(version)) {
-            versions = libraries.get(version);
-        } else {
-            versions = new ArrayList<>();
-            libraries.put(library, versions);
-        }
-
-        if (!versions.contains(version)) {
-            versions.add(version);
-        }
     }
 
     /**
@@ -129,7 +106,7 @@ public class CheckDependenciesTask extends DefaultTask {
      * @return список библиотек с конфликтом версий
      */
     private static List<ConflictedLibraryInfo> calculateConflictedLibraries(@Nonnull Map<String, String> fixedLibraries,
-                                                                            @Nonnull Map<String, ArrayList<String>> projectLibraries) {
+                                                                            @Nonnull Map<String, Set<String>> projectLibraries) {
         List<ConflictedLibraryInfo> conflictedLibraries = new ArrayList<>();
 
         projectLibraries.forEach((library, versions) -> {

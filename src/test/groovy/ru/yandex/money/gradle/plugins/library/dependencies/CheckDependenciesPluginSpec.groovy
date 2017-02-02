@@ -145,9 +145,9 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 }            
             """.stripIndent()
         when:
-        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
 
         then:
-        result.success
+        result.failure
     }
 }

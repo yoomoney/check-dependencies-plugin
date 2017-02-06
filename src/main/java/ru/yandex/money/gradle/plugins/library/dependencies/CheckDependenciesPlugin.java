@@ -25,13 +25,27 @@ import javax.annotation.Nonnull;
  * версиями хранится в maven xml.pom файле. Плагин предоставляет программный доступ к этому списку.
  * <p>
  * Обратной стороной фиксации служит неконтролируемое понижение версии библиотек. Чтобы сделать этот процесс изменения версий
- * библиотек контролируемым сделан этот плагин.
+ * библиотек контролируемым, сделан этот плагин.
  * <p>
  * После того, как все зависимости и версии библиотек определены плагин выполняет проверку. Правила проверки следующие:
  * <ol>
  * <li>Если изменение версии библиотеки связано с фиксацией версии, плагин остановит билд с ошибкой.</li>
  * <li>Если изменение версии библиотеки не связано с фиксацией версии, то билд допускается к выполнению.</li>
  * </ol>
+ * В большинстве случаев не возможно подобрать такой набор версий библиотек, который бы удовлетворил всем подключаемым библиотекам
+ * прямо и по транзититивным зависимостям. Поэтому плагин поддерживает введение исключение из правил. Удостоверившись,
+ * что более новая версия библиотеки полностью обратно совместима со старой версии, можно разрешить обновление с одной версии
+ * библиоетки до другой.
+ * <p>
+ * Правила исключения описываются в property файле. По умолчанию используется файл с названеим <c>library_versions_exclusions.properties</c>
+ * расположенные в корне проекта. Однако, плагин позволяет переопределить название и место расположение такого файла. Для этого
+ * используется расширение плагина:
+ * <p>
+ * <code>
+ * checkDependencies {
+ *     fileName = "Путь к файлу"
+ * }
+ * </code>
  *
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 09.01.2017
@@ -51,6 +65,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         if (!target.getPluginManager().hasPlugin(SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID)) {
             throw new GradleException(String.format(ERROR_APPLYING_PLUGIN_REQUIRED, SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID));
         }
+
+        target.getExtensions().create(CheckDependenciesPluginExtension.EXTENSION_NAME, CheckDependenciesPluginExtension.class, target);
 
         Task task = createCheckDependenciesTask(target);
         target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(task);

@@ -7,8 +7,13 @@ import org.gradle.api.artifacts.component.ComponentSelector;
 import org.gradle.api.artifacts.component.ModuleComponentSelector;
 import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.tasks.TaskAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,15 +32,20 @@ import java.util.Set;
  */
 public class CheckDependenciesTask extends DefaultTask {
 
+    private final Logger log = LoggerFactory.getLogger(CheckDependenciesTask.class);
+
     private static final String ERROR_CONFLICTED_DEPENDENCIES_MSG = "Versions conflict used libraries with fixed platform libraries. \n %s";
     private final CheckDependenciesReporter reporter = new CheckDependenciesReporter();
+    private final ConflictVersionsResolver conflictVersionsResolver = new ConflictVersionsResolver();
     private DependencyManagementExtension dependencyManagementExtension;
 
     @TaskAction
     public void check() {
+        CheckDependenciesPluginExtension extension = getProject().getExtensions().getByType(CheckDependenciesPluginExtension.class);
+        loadLibraryExcludingRules(extension.fileName);
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
-        boolean hasVersionsConflict = false;
 
+        boolean hasVersionsConflict = false;
         for (Configuration configuration : getProject().getConfigurations()) {
             List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
             if (!conflictedLibraries.isEmpty()) {
@@ -46,6 +56,21 @@ public class CheckDependenciesTask extends DefaultTask {
 
         if (hasVersionsConflict) {
             throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
+        }
+    }
+
+    /**
+     * Считывает из указанного файла разрешающие правила изменения версий библиотек.
+     *
+     * @param fileName имя файла с правилами
+     */
+    private void loadLibraryExcludingRules(@Nonnull String fileName) {
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            conflictVersionsResolver.load(fileInputStream);
+        } catch (FileNotFoundException e) {
+            log.warn("Cannot find file with upgrade versions rules.", e);
+        } catch (IOException e) {
+            log.warn("Cannot load file with upgrade versions rules.", e);
         }
     }
 
@@ -105,20 +130,26 @@ public class CheckDependenciesTask extends DefaultTask {
      * @param projectLibraries список проектных библиотек
      * @return список библиотек с конфликтом версий
      */
-    private static List<ConflictedLibraryInfo> calculateConflictedLibraries(@Nonnull Map<String, String> fixedLibraries,
-                                                                            @Nonnull Map<String, Set<String>> projectLibraries) {
+    private List<ConflictedLibraryInfo> calculateConflictedLibraries(@Nonnull Map<String, String> fixedLibraries,
+                                                                     @Nonnull Map<String, Set<String>> projectLibraries) {
         List<ConflictedLibraryInfo> conflictedLibraries = new ArrayList<>();
 
         projectLibraries.forEach((library, versions) -> {
             String fixedVersion = fixedLibraries.get(library);
 
-            if (fixedVersion != null) {
-                versions.forEach(requestedVersion -> {
-                    if (!Objects.equals(requestedVersion, fixedVersion)) {
+            if (fixedVersion == null) {
+                return;
+            }
+
+            versions.forEach(requestedVersion -> {
+                if (!Objects.equals(requestedVersion, fixedVersion)) {
+                    if (conflictVersionsResolver.checkChangingLibraryVersion(library, requestedVersion, fixedVersion)) {
+                        log.info("Approved changing version {} : {} -> {}", library, requestedVersion, fixedVersion);
+                    } else {
                         conflictedLibraries.add(new ConflictedLibraryInfo(library, requestedVersion, fixedVersion));
                     }
-                });
-            }
+                }
+            });
         });
         return conflictedLibraries;
     }

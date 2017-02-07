@@ -67,16 +67,18 @@ public class CheckDependenciesTask extends DefaultTask {
      * @param fileName имя файла с правилами
      */
     private void loadLibraryExcludingRules(@Nonnull String fileName) {
-        if (Files.isReadable(Paths.get(fileName))) {
-            try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
-                conflictVersionsResolver.load(fileInputStream);
-            } catch (FileNotFoundException e) {
-                log.warn("Cannot find file with upgrade versions rules.", e);
-            } catch (IOException e) {
-                log.warn("Cannot load file with upgrade versions rules.", e);
-            }
-        } else {
+        boolean canRead = Files.isReadable(Paths.get(fileName));
+        if (!canRead) {
             log.warn(String.format("Cannot read file \"%s\" with upgrade versions rules.", fileName));
+            return;
+        }
+
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            conflictVersionsResolver.load(fileInputStream);
+        } catch (FileNotFoundException e) {
+            log.warn("Cannot find file with upgrade versions rules.", e);
+        } catch (IOException e) {
+            log.warn("Cannot load file with upgrade versions rules.", e);
         }
     }
 

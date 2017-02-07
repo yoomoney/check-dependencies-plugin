@@ -45,26 +45,26 @@ class ConflictVersionsResolver {
      *
      * @param inputStream входной поток с правилами
      */
-    void load(@Nonnull InputStream inputStream) {
+    public void load(@Nonnull InputStream inputStream) {
+        Properties property = new Properties();
         try {
             rules.clear();
-            Properties property = new Properties();
             property.load(inputStream);
-            Set<String> libraries = property.stringPropertyNames();
-
-            for (String library : libraries) {
-                String value = property.getProperty(library).replace(" ", "");
-                String[] versionsRule = value.split("->");
-                if (versionsRule.length == 2) {
-                    String requestedVersions = versionsRule[0];
-                    String targetVersion = versionsRule[1];
-                    registerRules(library, requestedVersions.split(","), targetVersion);
-                } else {
-                    log.warn("Wrong value format of versions rule for {}: {}", library, value);
-                }
-            }
         } catch (IOException e) {
             log.warn("Cannot load of dependencies resolutions rules", e);
+        }
+        Set<String> libraries = property.stringPropertyNames();
+
+        for (String library : libraries) {
+            String value = property.getProperty(library).replace(" ", "");
+            String[] versionsRule = value.split("->");
+            if (versionsRule.length == 2) {
+                String requestedVersions = versionsRule[0];
+                String targetVersion = versionsRule[1];
+                registerRules(library, requestedVersions.split(","), targetVersion);
+            } else {
+                log.warn("Wrong value format of versions rule for {}: {}", library, value);
+            }
         }
     }
 
@@ -91,14 +91,14 @@ class ConflictVersionsResolver {
     private void registerRule(@Nonnull String library, @Nonnull String fromVersion, String toVersion) {
         int artifactIndex = library.lastIndexOf('.');
         if (artifactIndex == -1) {
-            log.warn("Wrong key format of library name. {}", library);
-        } else {
-            String group = library.substring(0, artifactIndex);
-            String artifact = library.substring(artifactIndex + 1);
-            String libraryID = String.format("%s:%s:%s", group, artifact, toVersion);
-
-            rules.computeIfAbsent(libraryID, version -> new HashSet<>()).add(fromVersion);
+            log.warn("Wrong key format of library name. library={}", library);
+            return;
         }
+        String group = library.substring(0, artifactIndex);
+        String artifact = library.substring(artifactIndex + 1);
+        String libraryID = String.format("%s:%s:%s", group, artifact, toVersion);
+
+        rules.computeIfAbsent(libraryID, version -> new HashSet<>()).add(fromVersion);
     }
 
     /**

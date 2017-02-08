@@ -71,9 +71,12 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
         CheckDependenciesTask task = createCheckDependenciesTask(target);
         target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(task);
+
         // В момент примения плагина ни один extension еще не объявлен. Поэтому брать оттуда значения до окончания формирования
-        // проекта бессмысленно. Поэтому вытаскиваем финальное имя файла исключений после того, как проект полностью сформирован.
-        target.afterEvaluate(project -> task.setExclusionFileName(extension.exclusionsFileName));
+        // проекта бессмысленно. Поэтому вытаскиваем имя файла исключений после того, как проект полностью сформирован.
+        // Так же стоит обратить внимание, что ConventionMapping - это список значений для свойств таски и значение из него берется
+        // только, если одноименное свойство в таске имеет null значение.
+        task.getConventionMapping().map("exclusionFileName", () -> extension.exclusionsFileName);
     }
 
     /**

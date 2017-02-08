@@ -153,7 +153,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
     def "success CheckDependenciesTask on project libraries and fixed versions and rules of changing libraries versions"() {
         given:
-        File exclusionFile = new File(projectDir, 'exclusion.properties')
+        def exclusionFile = new File(projectDir, 'exclusion.properties')
         exclusionFile<<"""
             org.hamcrest.hamcrest-core = 1.2 -> 1.3
         """.stripIndent()
@@ -205,7 +205,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success CheckDependenciesTask with wrong exlusions rules file"() {
+    def "success CheckDependenciesTask with wrong exclusions rules file"() {
         given:
         buildFile << """
                 buildscript {

@@ -1,7 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import io.spring.gradle.dependencymanagement.DependencyManagementExtension;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentSelector;
 import org.gradle.api.artifacts.component.ModuleComponentSelector;
@@ -10,8 +9,8 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPropertiesReader;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
 
+import org.gradle.api.internal.ConventionTask;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.Set;
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 27.01.2017
  */
-public class CheckDependenciesTask extends DefaultTask {
+public class CheckDependenciesTask extends ConventionTask {
 
     private final Logger log = LoggerFactory.getLogger(CheckDependenciesTask.class);
 
@@ -38,9 +37,37 @@ public class CheckDependenciesTask extends DefaultTask {
     private ConflictVersionsResolver conflictVersionsResolver;
     private DependencyManagementExtension dependencyManagementExtension;
 
+    private String exclusionFileName;
+
+    /**
+     * Возвращает название файла с правилами разрешающими изменение версии библиотек.
+     * <p>
+     * ВАЖНО: Не смотря на тривиальный код геттера, Gradle перехватывает вызов этого геттера и анализирует возвращаемое значение.
+     * Если оно null, то gradle попытается взять значение для свойства "exclusionFileName" из getConventionMapping().
+     *
+     * @return Путь к файлу правил
+     */
+    String getExclusionFileName() {
+        return exclusionFileName;
+    }
+
+    /**
+     * Задаем путь к файлу с правилами разрешающими изменение версий библиотек. Этот сеттер может быть использован из Gradle Build
+     * скрипта.
+     *
+     * @param exclusionFileName Путь к файлу правил
+     */
+    void setExclusionFileName(String exclusionFileName) {
+        this.exclusionFileName = exclusionFileName;
+    }
+
     @TaskAction
     public void check() {
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
+
+        String fileName = getExclusionFileName();
+        ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPropertiesReader(fileName);
+        conflictVersionsResolver = new ConflictVersionsResolver(reader.getRulesStorage());
 
         boolean hasVersionsConflict = false;
         for (Configuration configuration : getProject().getConfigurations()) {
@@ -54,16 +81,6 @@ public class CheckDependenciesTask extends DefaultTask {
         if (hasVersionsConflict) {
             throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
         }
-    }
-
-    /**
-     * Задание файла с правилами исключений.
-     *
-     * @param exclusionFileName имя properties файла
-     */
-    void setExclusionFileName(@Nonnull String exclusionFileName) {
-        ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPropertiesReader(exclusionFileName);
-        conflictVersionsResolver = new ConflictVersionsResolver(reader.getRulesStorage());
     }
 
     /**

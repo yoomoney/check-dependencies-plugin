@@ -9,13 +9,10 @@ import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPropertiesReader;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
 
 import javax.annotation.Nonnull;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,13 +35,11 @@ public class CheckDependenciesTask extends DefaultTask {
 
     private static final String ERROR_CONFLICTED_DEPENDENCIES_MSG = "Versions conflict used libraries with fixed platform libraries. \n %s";
     private final CheckDependenciesReporter reporter = new CheckDependenciesReporter();
-    private final ConflictVersionsResolver conflictVersionsResolver = new ConflictVersionsResolver();
+    private ConflictVersionsResolver conflictVersionsResolver;
     private DependencyManagementExtension dependencyManagementExtension;
 
     @TaskAction
     public void check() {
-        CheckDependenciesPluginExtension extension = getProject().getExtensions().getByType(CheckDependenciesPluginExtension.class);
-        loadLibraryExcludingRules(extension.fileName);
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
 
         boolean hasVersionsConflict = false;
@@ -62,24 +57,13 @@ public class CheckDependenciesTask extends DefaultTask {
     }
 
     /**
-     * Считывает из указанного файла разрешающие правила изменения версий библиотек.
+     * Задание файла с правилами исключений.
      *
-     * @param fileName имя файла с правилами
+     * @param exclusionFileName имя properties файла
      */
-    private void loadLibraryExcludingRules(@Nonnull String fileName) {
-        boolean canRead = Files.isReadable(Paths.get(fileName));
-        if (!canRead) {
-            log.warn(String.format("Cannot read file \"%s\" with upgrade versions rules.", fileName));
-            return;
-        }
-
-        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
-            conflictVersionsResolver.load(fileInputStream);
-        } catch (FileNotFoundException e) {
-            log.warn("Cannot find file with upgrade versions rules.", e);
-        } catch (IOException e) {
-            log.warn("Cannot load file with upgrade versions rules.", e);
-        }
+    void setExclusionFileName(@Nonnull String exclusionFileName) {
+        ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPropertiesReader(exclusionFileName);
+        conflictVersionsResolver = new ConflictVersionsResolver(reader.getRulesStorage());
     }
 
     /**

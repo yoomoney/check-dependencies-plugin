@@ -183,7 +183,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 
                 // Указываем путь к файлу с разрешающими правилами изменения версий библиотек
                 checkDependencies {
-                    fileName = '$exclusionFile.absolutePath'
+                    exclusionsFileName = '$exclusionFile.absolutePath'
                 }
                 
                 dependencies {
@@ -197,6 +197,33 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     testCompile group: 'junit', name: 'junit', version: '4.11'
                 }            
             """.stripIndent()
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def "success CheckDependenciesTask with wrong exlusions rules file"() {
+        given:
+        buildFile << """
+                buildscript {
+                    repositories {
+                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+                    }
+                    dependencies {
+                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+                    }
+                }
+                
+                // Указываем путь к несуществующему файлу
+                checkDependencies {
+                    exclusionsFileName = "not_existed_file.properties"
+                }
+                """.stripIndent()
+
         when:
         def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
 

@@ -118,15 +118,37 @@ readme {
 что более новая версия библиотеки полностью обратно совместима со старой версии, можно разрешить обновление с одной версии 
 библиоетки до другой.
 
-Правила исключения описываются в property файле. По умолчанию используется файл с названеим <b>library_versions_exclusions.properties</b>
-расположенные в корне проекта. Однако, плагин позволяет переопределить название и место расположение такого файла. Для этого
+Правила исключения описываются в property файле. По умолчанию используется файл с названием <b>libraries_versions_exclusions.properties</b>
+расположенный в корне проекта. Однако, плагин позволяет переопределить название и место расположение такого файла. Для этого
 используется расширение плагина:
+
 ```groovy
 checkDependencies {
-   fileName = "Путь к файлу"
+   exclusionsRulesSources = ["Путь к файлу", "Maven артефакт"]
 }
 ```
-При этом для описания правила может использоваться одна из следующих форм записи:
+
+Помимо чтения правил из файла, плагин поддерживает способ чтения правил из файла мавен артефакта. При этом можно указывать 
+полное название артефакта (группа, id артефакта и версия), так и опускать версию:
+
+```groovy
+checkDependencies {
+   exclusionsRulesSources = ["ru.yandex.money.platform:platform-dependencies:",
+                             "ru.yandex.money.platform:libraries-dependencies:1.0.2"]
+}
+```
+
+Так же плагин разрешает использовать несколько источников файлов с правилами:
+
+```groovy
+checkDependencies {
+   exclusionsRulesSources = ["my_libraries_versions_exclusions.properties", 
+                             "settings/additional_libraries_versions_exclusions.properties", 
+                             "ru.yandex.money.platform:platform-dependencies:"]
+}
+```
+
+Для описания самих правил может использоваться одна из следующих форм записи:
 
 ```properties
 org.slf4j.jul-to-slf4j = 1.7.15 -> 1.7.16

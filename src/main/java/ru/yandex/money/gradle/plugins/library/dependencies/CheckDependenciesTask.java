@@ -8,10 +8,15 @@ import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesFileReader;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPackageReader;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPropertiesReader;
 
 import org.gradle.api.internal.ConventionTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,37 +42,54 @@ public class CheckDependenciesTask extends ConventionTask {
     private ConflictVersionsResolver conflictVersionsResolver;
     private DependencyManagementExtension dependencyManagementExtension;
 
-    private String exclusionFileName;
+    private List<String> exclusionsRulesSources;
 
     /**
-     * Возвращает название файла с правилами разрешающими изменение версии библиотек.
+     * Возвращает список источников местоположений файлов с правилами разрешающими изменение версии библиотек.
      * <p>
      * ВАЖНО: Не смотря на тривиальный код геттера, Gradle перехватывает вызов этого геттера и анализирует возвращаемое значение.
-     * Если оно null, то gradle попытается взять значение для свойства "exclusionFileName" из getConventionMapping().
+     * Если оно null, то gradle попытается взять значение для свойства "exclusionsRulesSources" из getConventionMapping().
      *
-     * @return Путь к файлу правил
+     * @return список источников местоположений файлов
      */
-    String getExclusionFileName() {
-        return exclusionFileName;
+    @Nullable
+    List<String> getExclusionsRulesSources() {
+        return exclusionsRulesSources;
     }
 
     /**
-     * Задаем путь к файлу с правилами разрешающими изменение версий библиотек. Этот сеттер может быть использован из Gradle Build
-     * скрипта.
+     * Задает список местоположений файлов с правилами разрешающими изменение версий библиотек. Этот сеттер может быть использован
+     * из Gradle Build скрипта.
      *
-     * @param exclusionFileName Путь к файлу правил
+     * @param exclusionsRulesSources Путь к файлу правил
      */
-    void setExclusionFileName(String exclusionFileName) {
-        this.exclusionFileName = exclusionFileName;
+    void setExclusionsRulesSources(List<String> exclusionsRulesSources) {
+        this.exclusionsRulesSources = exclusionsRulesSources;
+    }
+
+    private static boolean isMavenArtifact(@Nonnull String name) {
+        return name.contains(":");
+    }
+
+    private void loadExclusionsRules(@Nonnull ExclusionsRulesStorage storage) {
+        List<String> exclusionsSources = getExclusionsRulesSources();
+        if (exclusionsSources == null) {
+            return;
+        }
+
+        for (String exclusionSource : exclusionsSources) {
+            ExclusionsRulesPropertiesReader reader = isMavenArtifact(exclusionSource) ? new ExclusionsRulesPackageReader(getProject(), exclusionSource, "libraries_versions_exclusions.properties")
+                                                                                      : new ExclusionsRulesFileReader(exclusionSource);
+            reader.loadTo(storage);
+        }
     }
 
     @TaskAction
     public void check() {
+        ExclusionsRulesStorage storage = new ExclusionsRulesStorage();
+        loadExclusionsRules(storage);
+        conflictVersionsResolver = new ConflictVersionsResolver(storage);
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
-
-        String fileName = getExclusionFileName();
-        ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPropertiesReader(fileName);
-        conflictVersionsResolver = new ConflictVersionsResolver(reader.getRulesStorage());
 
         boolean hasVersionsConflict = false;
         for (Configuration configuration : getProject().getConfigurations()) {

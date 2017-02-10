@@ -76,7 +76,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // проекта бессмысленно. Поэтому вытаскиваем имя файла исключений после того, как проект полностью сформирован.
         // Так же стоит обратить внимание, что ConventionMapping - это список значений для свойств таски и значение из него берется
         // только, если одноименное свойство в таске имеет null значение.
-        task.getConventionMapping().map("exclusionFileName", () -> extension.exclusionsFileName);
+        task.getConventionMapping().map("exclusionsRulesSources", () -> extension.exclusionsRulesSources);
     }
 
     /**

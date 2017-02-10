@@ -65,7 +65,7 @@ public class ExclusionsRulesStorage {
      * Возвращает список версий библиотеки <b>requestedLibrary</b>, разрешенных к изменению до <b>targetVersion</b>
      *
      * @param requestedLibrary запрашиваемая библиотека
-     * @param targetVersion конечная (зафиксированная) версия
+     * @param targetVersion    конечная (зафиксированная) версия
      * @return список версий, разрешеных к изменению до <b>targetVersion</b>
      */
     public Set<String> getAllowedRequestedVersions(@Nonnull String requestedLibrary, @Nonnull String targetVersion) {

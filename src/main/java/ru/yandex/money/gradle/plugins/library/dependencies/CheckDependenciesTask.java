@@ -43,6 +43,40 @@ public class CheckDependenciesTask extends ConventionTask {
     private DependencyManagementExtension dependencyManagementExtension;
 
     private List<String> exclusionsRulesSources;
+    private List<String> excludedConfigurations;
+
+    @TaskAction
+    public void check() {
+        ExclusionsRulesStorage storage = new ExclusionsRulesStorage();
+        loadExclusionsRules(storage);
+        conflictVersionsResolver = new ConflictVersionsResolver(storage);
+        dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
+
+        boolean hasVersionsConflict = false;
+        for (Configuration configuration : getCheckedConfigurations()) {
+            List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
+            if (!conflictedLibraries.isEmpty()) {
+                reporter.reportConflictedLibrariesForConfiguration(configuration, conflictedLibraries);
+                hasVersionsConflict = true;
+            }
+        }
+
+        if (hasVersionsConflict) {
+            throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
+        }
+    }
+
+    /**
+     * Возвращает сет проверяемых конфигураций с учетом настройки плагина (Списка исключенных из проверки конфигураций)
+     *
+     * @return Набор проверяемых конфигураций
+     */
+    private Iterable<Configuration> getCheckedConfigurations() {
+        List<String> excludedConfigurations = getExcludedConfigurations();
+        return getProject().getConfigurations().matching(configuration ->
+                    excludedConfigurations == null || !excludedConfigurations.contains(configuration.getName())
+            );
+    }
 
     /**
      * Возвращает список источников местоположений файлов с правилами разрешающими изменение версии библиотек.
@@ -61,10 +95,32 @@ public class CheckDependenciesTask extends ConventionTask {
      * Задает список местоположений файлов с правилами разрешающими изменение версий библиотек. Этот сеттер может быть использован
      * из Gradle Build скрипта.
      *
-     * @param exclusionsRulesSources Путь к файлу правил
+     * @param exclusionsRulesSources набор местоположений файлов правил
      */
     void setExclusionsRulesSources(List<String> exclusionsRulesSources) {
-        this.exclusionsRulesSources = exclusionsRulesSources;
+        this.exclusionsRulesSources = new ArrayList<>(exclusionsRulesSources);
+    }
+
+    /**
+     * Возвращает список конфигураций, которые не должны проверяться плагином.
+     * <p>
+     * ВАЖНО: Не смотря на тривиальный код геттера, Gradle перехватывает вызов этого геттера и анализирует возвращаемое значение.
+     * Если оно null, то gradle попытается взять значение для свойства "excludedConfigurations" из getConventionMapping().
+     *
+     * @return список исключенных из проверки конфигураций
+     */
+    @Nullable
+    List<String> getExcludedConfigurations() {
+        return excludedConfigurations;
+    }
+
+    /**
+     * Задает список конфигураций, которые не должны проверяться плагином.
+     *
+     * @param excludedConfigurations список исключаемых конфигураций
+     */
+    void setExcludedConfigurations(List<String> excludedConfigurations) {
+        this.excludedConfigurations = new ArrayList<>(excludedConfigurations);
     }
 
     private static boolean isMavenArtifact(@Nonnull String name) {
@@ -81,27 +137,6 @@ public class CheckDependenciesTask extends ConventionTask {
             ExclusionsRulesPropertiesReader reader = isMavenArtifact(exclusionSource) ? new ExclusionsRulesPackageReader(getProject(), exclusionSource, "libraries_versions_exclusions.properties")
                                                                                       : new ExclusionsRulesFileReader(exclusionSource);
             reader.loadTo(storage);
-        }
-    }
-
-    @TaskAction
-    public void check() {
-        ExclusionsRulesStorage storage = new ExclusionsRulesStorage();
-        loadExclusionsRules(storage);
-        conflictVersionsResolver = new ConflictVersionsResolver(storage);
-        dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
-
-        boolean hasVersionsConflict = false;
-        for (Configuration configuration : getProject().getConfigurations()) {
-            List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
-            if (!conflictedLibraries.isEmpty()) {
-                reporter.reportConflictedLibrariesForConfiguration(configuration, conflictedLibraries);
-                hasVersionsConflict = true;
-            }
-        }
-
-        if (hasVersionsConflict) {
-            throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
         }
     }
 

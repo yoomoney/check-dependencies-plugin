@@ -77,6 +77,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // Так же стоит обратить внимание, что ConventionMapping - это список значений для свойств таски и значение из него берется
         // только, если одноименное свойство в таске имеет null значение.
         task.getConventionMapping().map("exclusionsRulesSources", () -> extension.exclusionsRulesSources);
+        task.getConventionMapping().map("excludedConfigurations", () -> extension.excludedConfigurations);
     }
 
     /**

@@ -313,4 +313,64 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
+
+    def "success check on project libraries and excluded compile configuration" () {
+        given:
+        buildFile << """
+                buildscript {
+                    repositories {
+                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+                    }
+                    dependencies {
+                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+                    } 
+                }
+                
+                dependencyManagement {                
+                    // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
+                    overriddenByDependencies = false
+                    
+                    // Фиксируем версии библиотек из pom.xml файла
+                    imports {
+                        mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
+                    }   
+                    
+                    dependencies {
+                        dependency 'org.springframework:spring-core:4.2.5.RELEASE'
+                        dependency 'org.hamcrest:hamcrest-core:1.2'
+                    }
+                    
+                    testCompile {
+                        dependencies {
+                            dependency 'junit:junit:4.11'
+                            dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
+                        }
+                    }                               
+                }                
+                
+                // Указываем путь к несуществующему файлу
+                checkDependencies {
+                    excludedConfigurations = ["testCompile", "testRuntime"]
+                }
+                                
+                dependencies {
+                    // Ожидается 4.2.5.RELEASE
+                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+                    // Ожидается 1.2
+                    compile 'org.hamcrest:hamcrest-core:1.2'
+                
+                    // Ожидается 4.11
+                    // Использует org.hamcrest:hamcrest-core:1.3
+                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                }   
+                """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
 }

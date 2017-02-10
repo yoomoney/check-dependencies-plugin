@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,5 +24,8 @@ public class CheckDependenciesPluginExtension {
      */
     public List<String> exclusionsRulesSources = Collections.singletonList("libraries_versions_exclusions.properties");
 
-
+    /**
+     * Список конфигурация для которых не требуется выполнять проверку версий библиотек.
+     */
+    public List<String> excludedConfigurations = new ArrayList<>();
 }

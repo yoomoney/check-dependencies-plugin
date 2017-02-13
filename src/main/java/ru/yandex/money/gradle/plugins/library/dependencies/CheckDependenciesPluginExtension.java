@@ -17,9 +17,9 @@ public class CheckDependenciesPluginExtension {
      * <p>
      * Возможны следующие значения:
      * <ul>
-     *     <li>Путь к файлу настроек в локальной файловой системе</li>
-     *     <li>Название артефакта с настройками: <b>"Название группы" : "Название артефакта"</b>. Будет искаться файл с именем
-     *     <b>"libraries_versions_exclusions.properties"</b></li>
+     * <li>Путь к файлу настроек в локальной файловой системе</li>
+     * <li>Название артефакта с настройками: <b>"Название группы" : "Название артефакта"</b>. Будет искаться файл с именем
+     * <b>"libraries_versions_exclusions.properties"</b></li>
      * </ul>
      */
     public List<String> exclusionsRulesSources = Collections.singletonList("libraries_versions_exclusions.properties");

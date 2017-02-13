@@ -40,7 +40,7 @@ public abstract class ExclusionsRulesPropertiesReader {
      * названия артефакта. При чтении правил, считается, что название после последней точки - название артефакта.
      *
      * @param rulesStorage хранилище правил изменения версий библиотек
-     * @param inputStream входной поток с правилами
+     * @param inputStream  входной поток с правилами
      */
     void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream inputStream) {
         Properties property = new Properties();

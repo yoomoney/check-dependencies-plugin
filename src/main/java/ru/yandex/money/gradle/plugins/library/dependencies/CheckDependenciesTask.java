@@ -74,8 +74,8 @@ public class CheckDependenciesTask extends ConventionTask {
     private Iterable<Configuration> getCheckedConfigurations() {
         List<String> excludedConfigurations = getExcludedConfigurations();
         return getProject().getConfigurations().matching(configuration ->
-                    excludedConfigurations == null || !excludedConfigurations.contains(configuration.getName())
-            );
+                excludedConfigurations == null || !excludedConfigurations.contains(configuration.getName())
+        );
     }
 
     /**

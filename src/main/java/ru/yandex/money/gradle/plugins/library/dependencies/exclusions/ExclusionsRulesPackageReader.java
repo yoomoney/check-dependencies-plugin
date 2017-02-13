@@ -41,8 +41,8 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
      * Ищет указанный файл в указанном мавен артефакте с учетом текущей конфигурации
      *
      * @param configuration конфигурация с входящими зависимостями
-     * @param artifact мавен артефакт
-     * @param fileName имя файла внутри артефакта
+     * @param artifact      мавен артефакт
+     * @param fileName      имя файла внутри артефакта
      * @return файл, если он был найден, null - в противном случае
      */
     @Nullable
@@ -56,7 +56,7 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
      * наличия несколько подходящих пакетов, вернет первый найденный.
      *
      * @param configuration конфигурация с входящими зависимостями
-     * @param artifact мавен артефакт. Может опускать версию и содержать только группу и id
+     * @param artifact      мавен артефакт. Может опускать версию и содержать только группу и id
      * @return файл артефакта, если он был найден, null - в противном случае
      */
     @Nullable
@@ -74,7 +74,7 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
     /**
      * Ищет в указанном zip архиве указанный файл
      *
-     * @param zipFile zip архив
+     * @param zipFile  zip архив
      * @param fileName имя разыскиваемого файла
      * @return Файл, если он есть в архиве, null - в противном случае
      */

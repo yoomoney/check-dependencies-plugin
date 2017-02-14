@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 public class CheckChangelogTask extends DefaultTask {
 
     static final String CHANGELOG_FILE_NAME = "CHANGELOG.md";
-    private static final String SNAPSHOT_VERSION_POSTFIX = "-SNAPSHOT";
     @InputFile
     private final File changelogFile = getProject().file(CHANGELOG_FILE_NAME);
 
@@ -41,8 +40,9 @@ public class CheckChangelogTask extends DefaultTask {
         }
     }
 
-
     private String getReleaseVersion() {
-        return getProject().getVersion().toString().replace(SNAPSHOT_VERSION_POSTFIX, "");
+        String version = getProject().getVersion().toString();
+        int suffixIndex = version.indexOf('-');
+        return suffixIndex == -1 ? version : version.substring(0, suffixIndex);
     }
 }

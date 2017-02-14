@@ -1,3 +1,4 @@
+apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-git-flow.gradle'
 apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/release/library-release.gradle'
 
 apply plugin: 'java-gradle-plugin'

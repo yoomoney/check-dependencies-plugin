@@ -43,11 +43,34 @@ jar{
     baseName "yamoney-library-project-plugin"
 }
 
+ext {
+    releaseRepoProxyUrl = 'http://nexus.yamoney.ru/content/repositories/releases/'
+    snapshotRepoProxyUrl = 'http://nexus.yamoney.ru/content/repositories/snapshots/'
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             artifactId jar.getBaseName()
+        }
+    }
+
+    repositories {
+        maven {
+            url project.version.endsWith('-SNAPSHOT') ? project.ext.snapshotRepoProxyUrl : project.ext.releaseRepoProxyUrl
+            credentials {
+                def nexusUser = System.getenv('NEXUS_USER')
+                if (nexusUser == "") {
+                    throw new IllegalStateException("Cannot publish plugins. Nexus user name is empty.'")
+                }
+                def nexusPassword = System.getenv('NEXUS_PASSWORD')
+                if (nexusPassword == "") {
+                    throw new IllegalStateException("Cannot publish plugins. Nexus user name is password.'")
+                }
+                username nexusUser
+                password nexusPassword
+            }
         }
     }
 }

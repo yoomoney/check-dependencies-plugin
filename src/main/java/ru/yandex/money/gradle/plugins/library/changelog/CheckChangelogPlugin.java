@@ -22,15 +22,15 @@ public class CheckChangelogPlugin implements Plugin<Project> {
     private GitRepositoryProperties gitRepositoryProperties;
 
     @Override
-    public void apply(Project project) {
-        if (!project.getPluginManager().hasPlugin(JAVA_PLUGIN_ID)) {
+    public void apply(Project target) {
+        if (!target.getPluginManager().hasPlugin(JAVA_PLUGIN_ID)) {
             throw new GradleException("Java plugin must be applied before CheckChangelogPlugin");
         }
 
-        gitRepositoryProperties = new GitRepositoryProperties(project.getProjectDir().getAbsolutePath());
+        gitRepositoryProperties = new GitRepositoryProperties(target.getProjectDir().getAbsolutePath());
 
-        Task checkChangelogTask = addCheckChangelogTask(project);
-        project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(checkChangelogTask);
+        Task checkChangelogTask = addCheckChangelogTask(target);
+        target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(checkChangelogTask);
     }
 
     private Task addCheckChangelogTask(Project project) {
@@ -40,7 +40,7 @@ public class CheckChangelogPlugin implements Plugin<Project> {
                 !gitRepositoryProperties.isReleaseBranch() &&
                 !gitRepositoryProperties.isDevBranch());
         task.setGroup(CHECK_CHANGELOG_TASK_GROUP);
-        task.setDescription("Check description for current release version in file " + CheckChangelogTask.CHANGELOG_FILE_NAME);
+        task.setDescription(String.format("Check description for current release version in file %s", CheckChangelogTask.CHANGELOG_FILE_NAME));
         return task;
     }
 }

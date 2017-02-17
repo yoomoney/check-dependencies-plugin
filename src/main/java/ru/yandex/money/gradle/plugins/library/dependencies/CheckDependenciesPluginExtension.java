@@ -19,10 +19,10 @@ public class CheckDependenciesPluginExtension {
      * <ul>
      * <li>Путь к файлу настроек в локальной файловой системе</li>
      * <li>Название артефакта с настройками: <b>"Название группы" : "Название артефакта"</b>. Будет искаться файл с именем
-     * <b>"libraries_versions_exclusions.properties"</b></li>
+     * <b>"libraries-versions-exclusions.properties"</b></li>
      * </ul>
      */
-    public List<String> exclusionsRulesSources = Collections.singletonList("libraries_versions_exclusions.properties");
+    public List<String> exclusionsRulesSources = Collections.singletonList("libraries-versions-exclusions.properties");
 
     /**
      * Список конфигурация для которых не требуется выполнять проверку версий библиотек.

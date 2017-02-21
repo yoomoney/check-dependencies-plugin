@@ -134,7 +134,7 @@ public class CheckDependenciesTask extends ConventionTask {
         }
 
         for (String exclusionSource : exclusionsSources) {
-            ExclusionsRulesPropertiesReader reader = isMavenArtifact(exclusionSource) ? new ExclusionsRulesPackageReader(getProject(), exclusionSource, "libraries_versions_exclusions.properties")
+            ExclusionsRulesPropertiesReader reader = isMavenArtifact(exclusionSource) ? new ExclusionsRulesPackageReader(getProject(), exclusionSource, "libraries-versions-exclusions.properties")
                                                                                       : new ExclusionsRulesFileReader(exclusionSource);
             reader.loadTo(storage);
         }

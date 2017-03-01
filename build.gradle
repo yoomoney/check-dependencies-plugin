@@ -71,7 +71,7 @@ publishing {
                 }
                 def nexusPassword = System.getenv('NEXUS_PASSWORD')
                 if (nexusPassword == "") {
-                    throw new IllegalStateException("Cannot publish plugins. Nexus user name is password.'")
+                    throw new IllegalStateException("Cannot publish plugins. Nexus user password is empty.'")
                 }
                 username nexusUser
                 password nexusPassword

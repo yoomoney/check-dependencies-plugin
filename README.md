@@ -59,33 +59,6 @@ apply plugin: 'yamoney-library-project-plugin'
 
 # Описание плагинов
 
-## LibraryPlugin
-Плагин для объединения всех остальных плагинов, не нуждается в конфигурировании.
-Единственный плагин из всех в этом проекте, который виден внешним компонентам, используется для подключения всех остальных плагинов.
-
-## ReadmePlugin
-Плагин для работы с readme файлами библиотек. На данный момент плагин отвечает за публикацию readme файла на confluence.
-
-Конфигурация и значения по умолчанию: 
-```groovy
-readme {
-    authentication = System.getenv("CONFLUENCE_AUTH")
-    confluenceRestApiUrl = "https://wiki.yamoney.ru:443/rest/api/"
-    confluenceSpace = "WebPortal"
-    confluenceAncestorPageId = 128657081 //https://wiki.yamoney.ru/display/WebPortal/Libraries
-    prefix = "lib."
-    pathToDocument = project.getProjectDir().getPath() + "/README.md"
-    pageTitle = project.getName()
-}
-```
-Описание параметров конфигурации можно найти в javadoc'ах класса ReadmePluginExtension.
-
-## CheckChangelogPlugin
-Плагин проверяет наличие описания изменений в текущем релизе в файле CHANGELOG.md.
-При отсутствии вышеназванного файла проверка пропускается.
-
-Никаких дополнительных настроек данный плагин не добавляет.
-
 ## CheckDependenciesPlugin
 
 Плагин проверяет легитимность изменения версий используемых библиотек (как прямо, так и по транзитивным зависимостям) в проекте.

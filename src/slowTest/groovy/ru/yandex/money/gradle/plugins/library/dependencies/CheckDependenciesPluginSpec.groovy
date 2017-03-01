@@ -10,6 +10,19 @@ import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
  */
 class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
+    def "check that all custom tasks exist"() {
+        def expectedTasks = [CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME]
+
+        when:
+        def result = runTasksSuccessfully("tasks")
+
+        then:
+        expectedTasks.forEach({
+            assert result.standardOutput.contains(it)
+        })
+    }
+
+
     def "success check without fixing library versions"() {
         given:
         buildFile << """
@@ -35,6 +48,10 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on empty project libraries and fixed versions from Spring IO platform"() {
         given:
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
                 dependencyManagement {                    
                     // Фиксируем версии библиотек из pom.xml файла
                     imports {
@@ -54,6 +71,9 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on project libraries and empty fixed versions list"() {
         given:
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
                 dependencyManagement {                
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -154,11 +174,14 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on project libraries and fixed versions and rules of changing libraries versions"() {
         given:
         def exclusionFile = new File(projectDir, 'exclusion.properties')
-        exclusionFile<<"""
+        exclusionFile << """
             org.hamcrest.hamcrest-core = 1.2 -> 1.3
         """.stripIndent()
 
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
                 dependencyManagement {                
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -206,7 +229,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success check on empty project libraries and wrong exclusions: empty param" () {
+    def "success check on empty project libraries and wrong exclusions: empty param"() {
         given:
         buildFile << """
                 buildscript {
@@ -233,7 +256,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success check on empty project libraries and wrong exclusions: null param" () {
+    def "success check on empty project libraries and wrong exclusions: null param"() {
         given:
         buildFile << """
                 buildscript {
@@ -260,7 +283,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success check on empty project libraries and wrong exclusions: wrong file param" () {
+    def "success check on empty project libraries and wrong exclusions: wrong file param"() {
         given:
         buildFile << """
                 buildscript {
@@ -287,7 +310,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success check on empty project libraries and wrong exclusions: wrong artifact param" () {
+    def "success check on empty project libraries and wrong exclusions: wrong artifact param"() {
         given:
         buildFile << """
                 buildscript {
@@ -314,9 +337,12 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
-    def "success check on project libraries and excluded compile configuration" () {
+    def "success check on project libraries and excluded compile configuration"() {
         given:
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
                 buildscript {
                     repositories {
                         maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }

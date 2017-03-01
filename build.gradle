@@ -12,18 +12,15 @@ group 'ru.yandex.money.gradle.plugins'
 repositories {
     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
     maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-    maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
 }
 
 buildscript {
     repositories {
         maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
         maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-        maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
 
         dependencies {
             classpath 'org.ajoberstar:gradle-git:1.5.0'
-            classpath 'ru.yandex.money.common:yamoney-doc-publishing:1.0.1'
             classpath 'net.researchgate:gradle-release:2.3.0'
         }
     }
@@ -31,9 +28,8 @@ buildscript {
 
 dependencies {
     compile localGroovy(),
-            'org.ajoberstar:gradle-git:1.5.0',
-            'ru.yandex.money.common:yamoney-doc-publishing:1.0.1',
-            'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+            'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE',
+            'com.google.code.findbugs:jsr305:3.0.1'
 
     testCompile gradleTestKit(),
             "ru.yandex.money.common:yamoney-test-utils:5.0.4",
@@ -44,7 +40,7 @@ dependencies {
     }
 }
 
-jar{
+jar {
     baseName "yamoney-library-project-plugin"
 }
 
@@ -71,7 +67,7 @@ publishing {
                 }
                 def nexusPassword = System.getenv('NEXUS_PASSWORD')
                 if (nexusPassword == "") {
-                    throw new IllegalStateException("Cannot publish plugins. Nexus user name is password.'")
+                    throw new IllegalStateException("Cannot publish plugins. Nexus user password is empty.'")
                 }
                 username nexusUser
                 password nexusPassword

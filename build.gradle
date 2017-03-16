@@ -41,7 +41,7 @@ dependencies {
 }
 
 jar {
-    baseName "yamoney-library-project-plugin"
+    baseName "yamoney-check-dependencies-plugin"
 }
 
 ext {

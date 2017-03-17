@@ -1,6 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
-import io.spring.gradle.dependencymanagement.DependencyManagementExtension;
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentSelector;
 import org.gradle.api.artifacts.component.ModuleComponentSelector;
@@ -186,7 +186,7 @@ public class CheckDependenciesTask extends ConventionTask {
      * @return словарь: ключ - название библиотеки, значение - версия
      */
     private Map<String, String> getFixedLibraries(@Nonnull Configuration configuration) {
-        return (Map<String, String>) dependencyManagementExtension.forConfiguration(configuration.getName()).getManagedVersions();
+        return dependencyManagementExtension.getManagedVersionsForConfigurationHierarchy(configuration);
     }
 
     /**

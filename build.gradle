@@ -28,7 +28,7 @@ buildscript {
 
 dependencies {
     compile localGroovy(),
-            'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE',
+            'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE',
             'com.google.code.findbugs:jsr305:3.0.1'
 
     testCompile gradleTestKit(),

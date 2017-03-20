@@ -2,6 +2,10 @@
 
 ## NEXT_VERSION
 
+## [2.0.1]() (03-03-2017)
+
+Обновлены тесты для проверки работы с плагином io.spring.dependency-management версии 1.0.1.RELEASE
+
 ## [2.0.0]() (03-03-2017)
 
 Переход на io.spring.dependency-management 1.0.1.RELEASE

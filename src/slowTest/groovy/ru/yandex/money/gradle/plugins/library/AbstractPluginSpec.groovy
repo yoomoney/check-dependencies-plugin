@@ -12,10 +12,11 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
     protected static final String COMMON_BUILD_FILE_CONTENTS = """
     buildscript {
         repositories {
+            maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
             maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
         }
         dependencies {
-            classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+            classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'
         }
     }
     apply plugin: 'java'

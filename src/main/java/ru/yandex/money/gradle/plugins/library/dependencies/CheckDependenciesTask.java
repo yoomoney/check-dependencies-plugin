@@ -8,12 +8,9 @@ import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesFileReader;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPackageReader;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesPropertiesReader;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.*;
 
 import org.gradle.api.internal.ConventionTask;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,9 +34,9 @@ public class CheckDependenciesTask extends ConventionTask {
 
     private final Logger log = LoggerFactory.getLogger(CheckDependenciesTask.class);
 
-    private static final String ERROR_CONFLICTED_DEPENDENCIES_MSG = "Versions conflict used libraries with fixed platform libraries. \n %s";
     private final CheckDependenciesReporter reporter = new CheckDependenciesReporter();
     private ConflictVersionsResolver conflictVersionsResolver;
+    private StaleExclusionsDetector staleExclusionsDetector;
     private DependencyManagementExtension dependencyManagementExtension;
 
     private List<String> exclusionsRulesSources;
@@ -47,9 +44,10 @@ public class CheckDependenciesTask extends ConventionTask {
 
     @TaskAction
     public void check() {
-        ExclusionsRulesStorage storage = new ExclusionsRulesStorage();
-        loadExclusionsRules(storage);
-        conflictVersionsResolver = new ConflictVersionsResolver(storage);
+        ExclusionRulesLoader exclusionRulesLoader = new ExclusionRulesLoader();
+        loadExclusionsRules(exclusionRulesLoader);
+        conflictVersionsResolver = new ConflictVersionsResolver(exclusionRulesLoader.getTotalExclusionRules());
+        staleExclusionsDetector = StaleExclusionsDetector.create(exclusionRulesLoader.getLocalExclusionRules());
         dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
 
         boolean hasVersionsConflict = false;
@@ -62,7 +60,12 @@ public class CheckDependenciesTask extends ConventionTask {
         }
 
         if (hasVersionsConflict) {
-            throw new IllegalStateException(String.format(ERROR_CONFLICTED_DEPENDENCIES_MSG, reporter.getFormattedReport()));
+            throw new IllegalStateException(reporter.getFormattedReport());
+        }
+
+        if (staleExclusionsDetector.hasStaleExclusions()) {
+            reporter.reportStaleExclusions(staleExclusionsDetector.getStaleExclusions());
+            throw new IllegalStateException(reporter.getFormattedReport());
         }
     }
 
@@ -123,20 +126,10 @@ public class CheckDependenciesTask extends ConventionTask {
         this.excludedConfigurations = new ArrayList<>(excludedConfigurations);
     }
 
-    private static boolean isMavenArtifact(@Nonnull String name) {
-        return name.contains(":");
-    }
-
-    private void loadExclusionsRules(@Nonnull ExclusionsRulesStorage storage) {
+    private void loadExclusionsRules(@Nonnull ExclusionRulesLoader loader) {
         List<String> exclusionsSources = getExclusionsRulesSources();
-        if (exclusionsSources == null) {
-            return;
-        }
-
-        for (String exclusionSource : exclusionsSources) {
-            ExclusionsRulesPropertiesReader reader = isMavenArtifact(exclusionSource) ? new ExclusionsRulesPackageReader(getProject(), exclusionSource, "libraries-versions-exclusions.properties")
-                                                                                      : new ExclusionsRulesFileReader(exclusionSource);
-            reader.loadTo(storage);
+        if (exclusionsSources != null) {
+            loader.load(getProject(), exclusionsSources);
         }
     }
 
@@ -214,6 +207,7 @@ public class CheckDependenciesTask extends ConventionTask {
                     } else {
                         conflictedLibraries.add(new ConflictedLibraryInfo(library, requestedVersion, fixedVersion));
                     }
+                    staleExclusionsDetector.registerActualConflict(library, requestedVersion, fixedVersion);
                 }
             });
         });

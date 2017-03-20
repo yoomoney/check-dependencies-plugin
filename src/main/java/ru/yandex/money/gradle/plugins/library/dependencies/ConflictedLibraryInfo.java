@@ -7,7 +7,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies;
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 30.01.2017
  */
-class ConflictedLibraryInfo {
+public class ConflictedLibraryInfo {
 
     private final String library;
     private final String version;
@@ -19,15 +19,15 @@ class ConflictedLibraryInfo {
         this.fixedVersion = fixedVersion;
     }
 
-    String getLibrary() {
+    public String getLibrary() {
         return library;
     }
 
-    String getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    String getFixedVersion() {
+    public String getFixedVersion() {
         return fixedVersion;
     }
 }

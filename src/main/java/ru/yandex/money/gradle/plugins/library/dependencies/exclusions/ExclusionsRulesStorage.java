@@ -4,10 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Содержит правила исключения, допускающие изменение версий библиотек. Для любой библиотеки можно указать, с каких версий
@@ -70,6 +69,21 @@ public class ExclusionsRulesStorage {
      */
     public Set<String> getAllowedRequestedVersions(@Nonnull String requestedLibrary, @Nonnull String targetVersion) {
         return rules.get(String.format("%s:%s", requestedLibrary, targetVersion));
+    }
+
+    public List<ExclusionRule> getExclusionRules() {
+        return rules.entrySet()
+                    .stream()
+                    .flatMap(entry -> getExclusionRules(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+    }
+
+    private Stream<ExclusionRule> getExclusionRules(@Nonnull String artifact, @Nonnull Set<String> allowedRequestedVersion) {
+        int libraryLength = artifact.lastIndexOf(':');
+        String library = artifact.substring(0, libraryLength);
+        String fixedVersion = artifact.substring(libraryLength + 1);
+
+        return allowedRequestedVersion.stream().map(version -> new ExclusionRule(library, version, fixedVersion));
     }
 
     @Override

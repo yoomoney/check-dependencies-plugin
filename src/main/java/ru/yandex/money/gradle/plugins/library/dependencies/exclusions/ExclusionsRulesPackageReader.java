@@ -31,7 +31,7 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
     private final String artifact;
     private final String exclusionFileName;
 
-    public ExclusionsRulesPackageReader(@Nonnull Project project, @Nonnull String artifact, @Nonnull String exclusionFileName) {
+    ExclusionsRulesPackageReader(@Nonnull Project project, @Nonnull String artifact, @Nonnull String exclusionFileName) {
         this.project = project;
         this.artifact = artifact;
         this.exclusionFileName = exclusionFileName;

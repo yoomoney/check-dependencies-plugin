@@ -5,6 +5,8 @@ import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionR
 import java.util.Collection;
 
 /**
+ * Формирует отчет о неиспользуемых исключениях
+ *
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 19.03.2017
  */
@@ -16,6 +18,11 @@ public class StaleExclusionsReporter {
         this.messages = messages;
     }
 
+    /**
+     * Фиксирует в отчете информацию об несуществующем конфликте версий
+     *
+     * @param exclusionRules набор исключений
+     */
     public void report(Iterable<ExclusionRule> exclusionRules) {
         messages.add(HEADER);
         exclusionRules.forEach(exclusionRule -> messages.add(formatExclusionRule(exclusionRule)));

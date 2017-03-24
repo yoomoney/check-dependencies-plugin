@@ -6,6 +6,8 @@ import ru.yandex.money.gradle.plugins.library.dependencies.ConflictedLibraryInfo
 import java.util.Collection;
 
 /**
+ * Формирует отчет об обнаруженных конфликтах версий, не зарегистрированных в исключениях
+ *
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 19.03.2017
  */

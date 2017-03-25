@@ -18,7 +18,7 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
             maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
         }
         dependencies {
-            classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+            classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'
         }
     }
     apply plugin: 'java'

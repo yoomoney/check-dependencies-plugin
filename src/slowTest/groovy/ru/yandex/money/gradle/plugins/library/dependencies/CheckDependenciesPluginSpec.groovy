@@ -74,6 +74,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
+
                 dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -98,6 +99,10 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "fail check on conflicted versions between fixed versions in IO platform and project dependencies section in libraries"() {
         given:
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
                 dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -131,6 +136,10 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "fail check on project libraries and fixed versions, which are override in build script"() {
         given:
         buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
                 dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -182,6 +191,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
+
                 dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
@@ -232,16 +242,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on empty project libraries and wrong exclusions: empty param"() {
         given:
         buildFile << """
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    }
-                }
-
                 // Не указываем файлы
                 checkDependencies {
                     exclusionsRulesSources = []
@@ -259,16 +259,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on empty project libraries and wrong exclusions: null param"() {
         given:
         buildFile << """
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    }
-                }
-
                 // Указываем null список
                 checkDependencies {
                     exclusionsRulesSources = null
@@ -286,16 +276,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on empty project libraries and wrong exclusions: wrong file param"() {
         given:
         buildFile << """
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    }
-                }
-
                 // Указываем путь к несуществующему файлу
                 checkDependencies {
                     exclusionsRulesSources = ["not_existed_file.properties"]
@@ -313,16 +293,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "success check on empty project libraries and wrong exclusions: wrong artifact param"() {
         given:
         buildFile << """
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    }
-                }
-
                 // Указываем путь к несуществующему файлу
                 checkDependencies {
                     exclusionsRulesSources = ["ru.yandex.fakegroup:fakeartifact:"]
@@ -342,15 +312,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         buildFile << """
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                }
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    } 
                 }
                 
                 dependencyManagement {                
@@ -409,10 +370,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/thirdparty/' }
                 maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
             }
 
             // ожидается org.hamcrest:hamcrest-core:1.3
@@ -441,6 +399,38 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         then:
         result.failure
         result.standardError.contains('stale exclusions')
-        println result.standardError
+    }
+
+    def 'success check on project with stale imported exclusion rules'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                imports {
+                    mavenBom 'ru.yandex.money.platform:yamoney-libraries-dependencies:1.+'
+                }
+            }
+
+            // нет конфликтов версий с требуемыми в dependencyManagement секции
+            dependencies {
+                compile 'junit:junit:4.12'
+            }
+
+            // загружаем правила исключений из yamoney-libraries-dependencies
+            checkDependencies.exclusionsRulesSources = ['ru.yandex.money.platform:yamoney-libraries-dependencies']
+        """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 }

@@ -5,7 +5,7 @@ import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionR
 import java.util.Collection;
 
 /**
- * Формирует отчет о неиспользуемых исключениях
+ * Формирует отчет о неиспользуемых исключениях, определенных в локальных файлах
  *
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 19.03.2017

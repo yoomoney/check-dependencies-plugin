@@ -53,6 +53,11 @@ public final class ExclusionRule {
     }
 
     @Override
+    public int hashCode() {
+        return 7 * library.hashCode() + 5 * requestedVersion.hashCode() + fixedVersion.hashCode();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if ((obj == null) || !(obj instanceof ExclusionRule)) return false;

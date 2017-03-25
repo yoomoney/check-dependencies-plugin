@@ -24,19 +24,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
 
     def "success check without fixing library versions"() {
-        given:
-        buildFile << """
-                buildscript {
-                    repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    }
-                    dependencies {
-                        classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-                    }
-                }
-                """.stripIndent()
-
         when:
         def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
 
@@ -313,7 +300,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
-                
+
                 dependencyManagement {                
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false

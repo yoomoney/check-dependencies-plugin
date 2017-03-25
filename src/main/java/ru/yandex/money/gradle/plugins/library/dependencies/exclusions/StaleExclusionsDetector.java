@@ -1,6 +1,10 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ConflictRegister;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * Определяет неиспользуемые локальные правила исключений на основании зарегистрированных конфликтов версий.
@@ -9,7 +13,7 @@ import java.util.List;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 19.03.2017
  */
-public class StaleExclusionsDetector {
+public class StaleExclusionsDetector implements ConflictRegister {
     private final List<ExclusionRule> staleExclusionRules;
 
     /**
@@ -35,12 +39,11 @@ public class StaleExclusionsDetector {
     /**
      * Регистрирует обнаруженный конфликт версий
      *
-     * @param library имя библиотеки, для которой обнаружен конфликт
-     * @param requestedVersion требуемая версия библиотеки
+     * @param requestedArtifact требуемая библиотека
      * @param fixedVersion зафиксированная версия библиотеки
      */
-    public void registerActualConflict(String library, String requestedVersion, String fixedVersion) {
-        staleExclusionRules.remove(new ExclusionRule(library, requestedVersion, fixedVersion));
+    public void registerConflict(ArtifactName requestedArtifact, String fixedVersion) {
+        staleExclusionRules.remove(new ExclusionRule(requestedArtifact, fixedVersion));
     }
 
     /**

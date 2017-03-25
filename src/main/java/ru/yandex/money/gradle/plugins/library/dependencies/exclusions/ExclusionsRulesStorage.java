@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -67,7 +68,7 @@ public class ExclusionsRulesStorage {
      * @param targetVersion    конечная (зафиксированная) версия
      * @return список версий, разрешеных к изменению до <b>targetVersion</b>
      */
-    public Set<String> getAllowedRequestedVersions(@Nonnull String requestedLibrary, @Nonnull String targetVersion) {
+    public Set<String> getAllowedRequestedVersions(@Nonnull LibraryName requestedLibrary, @Nonnull String targetVersion) {
         return rules.get(String.format("%s:%s", requestedLibrary, targetVersion));
     }
 
@@ -80,7 +81,7 @@ public class ExclusionsRulesStorage {
 
     private Stream<ExclusionRule> getExclusionRules(@Nonnull String artifact, @Nonnull Set<String> allowedRequestedVersion) {
         int libraryLength = artifact.lastIndexOf(':');
-        String library = artifact.substring(0, libraryLength);
+        LibraryName library = LibraryName.parse(artifact.substring(0, libraryLength));
         String fixedVersion = artifact.substring(libraryLength + 1);
 
         return allowedRequestedVersion.stream().map(version -> new ExclusionRule(library, version, fixedVersion));

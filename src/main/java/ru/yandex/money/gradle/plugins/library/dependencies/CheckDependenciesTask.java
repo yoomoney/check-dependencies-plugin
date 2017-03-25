@@ -1,26 +1,21 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
-import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.component.ComponentSelector;
-import org.gradle.api.artifacts.component.ModuleComponentSelector;
-import org.gradle.api.artifacts.result.DependencyResult;
+import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.*;
-
-import org.gradle.api.internal.ConventionTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConfigurationConflictsAnalyzer;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictVersionsResolver;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictedLibraryInfo;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.FixedDependencies;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionRulesLoader;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.StaleExclusionsDetector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Задача на проверку согласованности изменений версий используемых библиотек. Если изменение версии библиотеки связано
@@ -37,18 +32,17 @@ public class CheckDependenciesTask extends ConventionTask {
     private final CheckDependenciesReporter reporter = new CheckDependenciesReporter();
     private ConflictVersionsResolver conflictVersionsResolver;
     private StaleExclusionsDetector staleExclusionsDetector;
-    private DependencyManagementExtension dependencyManagementExtension;
+    private FixedDependencies fixedDependencies;
 
     private List<String> exclusionsRulesSources;
     private List<String> excludedConfigurations;
 
     @TaskAction
     public void check() {
-        ExclusionRulesLoader exclusionRulesLoader = new ExclusionRulesLoader();
-        loadExclusionsRules(exclusionRulesLoader);
+        ExclusionRulesLoader exclusionRulesLoader = loadExclusionsRules();
         conflictVersionsResolver = new ConflictVersionsResolver(exclusionRulesLoader.getTotalExclusionRules());
         staleExclusionsDetector = StaleExclusionsDetector.create(exclusionRulesLoader.getLocalExclusionRules());
-        dependencyManagementExtension = getProject().getExtensions().getByType(DependencyManagementExtension.class);
+        fixedDependencies = new FixedDependencies(getProject());
 
         boolean hasVersionsConflict = false;
         for (Configuration configuration : getCheckedConfigurations()) {
@@ -79,6 +73,27 @@ public class CheckDependenciesTask extends ConventionTask {
         return getProject().getConfigurations().matching(configuration ->
                 excludedConfigurations == null || !excludedConfigurations.contains(configuration.getName())
         );
+    }
+
+    private ExclusionRulesLoader loadExclusionsRules() {
+        ExclusionRulesLoader loader = new ExclusionRulesLoader();
+        List<String> exclusionsSources = getExclusionsRulesSources();
+        if (exclusionsSources != null) {
+            loader.load(getProject(), exclusionsSources);
+        }
+        return loader;
+    }
+
+    /**
+     * Анализирует версии библиотек для конфигурации проекта и сравнивает их с со списком фиксированных версий библиотек для конфигурации.
+     *
+     * @param configuration конфигурация сборки
+     * @return Правомерны изменения версий библиотек или нет
+     **/
+    private List<ConflictedLibraryInfo> calculateConflictedVersionsLibrariesFor(@Nonnull Configuration configuration) {
+        return ConfigurationConflictsAnalyzer.create(fixedDependencies, configuration,
+                conflictVersionsResolver, staleExclusionsDetector)
+                .findConflictedLibraries();
     }
 
     /**
@@ -124,93 +139,5 @@ public class CheckDependenciesTask extends ConventionTask {
      */
     void setExcludedConfigurations(List<String> excludedConfigurations) {
         this.excludedConfigurations = new ArrayList<>(excludedConfigurations);
-    }
-
-    private void loadExclusionsRules(@Nonnull ExclusionRulesLoader loader) {
-        List<String> exclusionsSources = getExclusionsRulesSources();
-        if (exclusionsSources != null) {
-            loader.load(getProject(), exclusionsSources);
-        }
-    }
-
-    /**
-     * Анализирует версии проектных библиотек и сравнивает их с со списком фиксированных версий библиотек для конфигурации.
-     *
-     * @param configuration конфигурация сборки
-     * @return Правомерны изменения версий библиотек или нет
-     **/
-    private List<ConflictedLibraryInfo> calculateConflictedVersionsLibrariesFor(@Nonnull Configuration configuration) {
-        Map<String, String> fixedLibraries = getFixedLibraries(configuration);
-        Map<String, Set<String>> requestedLibraries = getRequestedLibraries(configuration);
-        return calculateConflictedLibraries(fixedLibraries, requestedLibraries);
-    }
-
-    /**
-     * Возвращает набор всех запрашиваемых (Прямые и транзитивные зависимости) библиотек в проекте для указанной
-     * конфигурации до работы ResolutionStrategy.
-     *
-     * @param configuration конфигурация сборки
-     * @return словарь: ключ - название библиотеки, значение - список всех найденных версий (до работы ResolutionStrategy)
-     */
-    private static Map<String, Set<String>> getRequestedLibraries(@Nonnull Configuration configuration) {
-        Set<? extends DependencyResult> projectDependencies = configuration.getIncoming().getResolutionResult().getAllDependencies();
-        Map<String, Set<String>> requestedLibraries = new HashMap<>();
-
-        for (DependencyResult dependency : projectDependencies) {
-            ComponentSelector selector = dependency.getRequested();
-            if (selector instanceof ModuleComponentSelector) {
-                ModuleComponentSelector targetLibrary = (ModuleComponentSelector) selector;
-                String selectedLibrary = String.format("%s:%s", targetLibrary.getGroup(), targetLibrary.getModule());
-                String selectedVersion = targetLibrary.getVersion();
-
-                requestedLibraries.computeIfAbsent(selectedLibrary, key -> new HashSet<>()).add(selectedVersion);
-            }
-        }
-
-        return requestedLibraries;
-    }
-
-    /**
-     * Возвращает набор всех библиотек с зафиксированными версиями в проекте для указанной конфигурации.
-     * <p>
-     * Использует результат работы стороннего плагина <c>io.spring.dependency-management</c>
-     *
-     * @param configuration конфигурация сборки
-     * @return словарь: ключ - название библиотеки, значение - версия
-     */
-    private Map<String, String> getFixedLibraries(@Nonnull Configuration configuration) {
-        return dependencyManagementExtension.getManagedVersionsForConfigurationHierarchy(configuration);
-    }
-
-    /**
-     * Анализирует версии проектных библиотек и сравнивает их с со списком фиксированных версий библиотек.
-     *
-     * @param fixedLibraries   список библиотек с зафиксированной версией
-     * @param projectLibraries список проектных библиотек
-     * @return список библиотек с конфликтом версий
-     */
-    private List<ConflictedLibraryInfo> calculateConflictedLibraries(@Nonnull Map<String, String> fixedLibraries,
-                                                                     @Nonnull Map<String, Set<String>> projectLibraries) {
-        List<ConflictedLibraryInfo> conflictedLibraries = new ArrayList<>();
-
-        projectLibraries.forEach((library, versions) -> {
-            String fixedVersion = fixedLibraries.get(library);
-
-            if (fixedVersion == null) {
-                return;
-            }
-
-            versions.forEach(requestedVersion -> {
-                if (!Objects.equals(requestedVersion, fixedVersion)) {
-                    if (conflictVersionsResolver.checkChangingLibraryVersion(library, requestedVersion, fixedVersion)) {
-                        log.info("Approved changing version {} : {} -> {}", library, requestedVersion, fixedVersion);
-                    } else {
-                        conflictedLibraries.add(new ConflictedLibraryInfo(library, requestedVersion, fixedVersion));
-                    }
-                    staleExclusionsDetector.registerActualConflict(library, requestedVersion, fixedVersion);
-                }
-            });
-        });
-        return conflictedLibraries;
     }
 }

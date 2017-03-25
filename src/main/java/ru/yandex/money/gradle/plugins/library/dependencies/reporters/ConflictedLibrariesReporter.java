@@ -39,8 +39,8 @@ public class ConflictedLibrariesReporter {
     public void report(Configuration configuration, Iterable<ConflictedLibraryInfo> conflictedLibraries) {
         addHeaderIfNecessary();
         addConfigurationSection(String.format("%s - %s", configuration.getName(), configuration.getDescription()));
-
         conflictedLibraries.forEach(conflict -> addConflictSection(conflict, 1));
+        addEmptyMessage();
     }
 
     private void addHeaderIfNecessary() {
@@ -52,7 +52,7 @@ public class ConflictedLibrariesReporter {
 
     private void addConfigurationSection(String configuration) {
         if (!messages.isEmpty()) {
-            addMessage("");
+            addEmptyMessage();
         }
         addMessage(configuration);
     }
@@ -61,6 +61,7 @@ public class ConflictedLibrariesReporter {
         addConflictHeader(conflictedLibraryInfo, indent);
         addMessage(CONFLICT_PATHS_HEADER, indent + 1);
         conflictedLibraryInfo.getDependentPaths().forEach(conflictPath -> addConflictPath(conflictPath, indent + 1));
+        addEmptyMessage();
     }
 
     private void addConflictHeader(ConflictedLibraryInfo conflictedLibraryInfo, int indent) {
@@ -79,6 +80,10 @@ public class ConflictedLibrariesReporter {
         return "--> " + StreamSupport.stream(dependencyPath.spliterator(), false)
                                      .map(dependency -> String.format("(%s)", DependencyFormatter.format(dependency)))
                                      .reduce((dep1, dep2) -> dep1 + " --> " + dep2).orElse("");
+    }
+
+    private void addEmptyMessage() {
+        addMessage("");
     }
 
     private void addMessage(String message) {

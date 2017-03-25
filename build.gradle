@@ -5,6 +5,7 @@ apply plugin: 'maven-publish'
 apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-git-flow.gradle'
 apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-test.gradle'
 apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/release/library-release.gradle'
+apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/coverage.gradle'
 
 description 'Plugin with all features for development and usage of yamoney librares.'
 group 'ru.yandex.money.gradle.plugins'

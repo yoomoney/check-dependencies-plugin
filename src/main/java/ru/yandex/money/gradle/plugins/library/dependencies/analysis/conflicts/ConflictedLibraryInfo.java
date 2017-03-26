@@ -1,11 +1,14 @@
-package ru.yandex.money.gradle.plugins.library.dependencies.analysis;
+package ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts;
 
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.ConflictPathResolutionResult;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Информация о конфликте:
@@ -24,7 +27,8 @@ public class ConflictedLibraryInfo {
     private final LibraryName library;
     private final String version;
     private final String fixedVersion;
-    private List<DependencyPath<ArtifactDependency>> dependentPaths;
+    private final List<DependencyPath<ArtifactDependency>> conflictDependentPaths;
+    private final Map<ArtifactName, ConflictPathResolutionResult> conflictPathResolutions = new HashMap<>();
 
     /**
      * Конструктор класса
@@ -47,11 +51,15 @@ public class ConflictedLibraryInfo {
      * @param dependentPaths пути зависимостей, в результате которых произошел конфликт версий
      */
     ConflictedLibraryInfo(LibraryName library, String version, String fixedVersion,
-                          List<DependencyPath<ArtifactDependency>> dependentPaths) {
+                          List<DependencyPath<ArtifactDependency>> conflictDependentPaths) {
         this.library = library;
         this.version = version;
         this.fixedVersion = fixedVersion;
-        this.dependentPaths = dependentPaths;
+        this.conflictDependentPaths = conflictDependentPaths;
+    }
+
+    public void addConflictPathResolution(ConflictPathResolutionResult resolutionResult) {
+        conflictPathResolutions.put(resolutionResult.getDirectDependency(), resolutionResult);
     }
 
     public LibraryName getLibrary() {
@@ -66,7 +74,11 @@ public class ConflictedLibraryInfo {
         return fixedVersion;
     }
 
-    public List<DependencyPath<ArtifactDependency>> getDependentPaths() {
-        return dependentPaths;
+    public List<DependencyPath<ArtifactDependency>> getConflictDependentPaths() {
+        return conflictDependentPaths;
+    }
+
+    public ConflictPathResolutionResult getResolutionFor(DependencyPath<ArtifactDependency> conflictPath) {
+        return conflictPathResolutions.get(conflictPath.getRoot().getRequestedArtifactName());
     }
 }

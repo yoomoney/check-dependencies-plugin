@@ -1,6 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies
 
 import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
+import ru.yandex.money.gradle.plugins.library.TestRepositories
 
 /**
  * Функциональные тесты для CheckDependenciesPlugin, проверяющего корректность изменения версий используемых библиотек в проекте.
@@ -520,11 +521,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
                 dependencies {
                     dependency 'junit:junit:4.12'
-                }
-            }
-
-            dependencies {
-                compile 'junit:junit:4.11'
+                                    compile 'junit:junit:4.11'
             }
 
             checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
@@ -535,5 +532,136 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then: 'rule was ignored'
         result.failure
+    }
+
+    def 'failed check on project with conflicts on unresolved dependency'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                imports {
+                    mavenBom 'ru.yandex.money.platform:yamoney-libraries-dependencies:1.+'
+                }
+
+                dependencies {
+                    dependency 'unresolved:dependency:1.0.0'
+                }
+            }
+
+            // нет конфликтов версий с требуемыми в dependencyManagement секции
+            dependencies {
+                compile 'unresolved:dependency:2.0.0'
+            }
+        """.stripIndent()
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def 'check that conflicts are not resolved when no version selectors are specified'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url '$TestRepositories.MAVEN_REPO_1' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                dependencies {
+                    dependency 'test:alpha:5.1.0'
+                }
+            }
+
+            dependencies {
+                compile 'test:beta:4.1.0'
+            }
+        """
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.standardError.contains("NO SOLUTIONS FOUND")
+    }
+
+    def 'check that conflicts for given dependency are resolved when version selector is specified'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url '$TestRepositories.MAVEN_REPO_1' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                dependencies {
+                    dependency 'test:alpha:5.1.0'
+                    dependency 'test:zeta:6.2.0'
+                }
+            }
+
+            dependencies {
+                // depends on test:alpha:4.1.0
+                compile 'test:beta:4.1.0'
+
+                compile 'test:zeta:5.2.0'
+            }
+
+            checkDependencies.versionSelectors = [
+                'test:beta': { it.tokenize(".")[0].toInteger() > 5 },
+            ]
+        """
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.standardError.contains("[6.2.0]")
+        !result.standardError.contains("[5.1.0]")
+    }
+
+    def 'check that conflicts for given dependency are resolved when version selector for given dependency is not specified'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url '$TestRepositories.MAVEN_REPO_1' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                dependencies {
+                    dependency 'test:alpha:5.1.0'
+                }
+            }
+
+            dependencies {
+                compile 'test:beta:4.1.0'
+            }
+
+            checkDependencies.versionSelectors = [
+                'test:zeta': { it.tokenize(".")[0].toInteger() > 5 },
+            ]
+        """
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.standardError.contains("NO SOLUTIONS FOUND")
     }
 }

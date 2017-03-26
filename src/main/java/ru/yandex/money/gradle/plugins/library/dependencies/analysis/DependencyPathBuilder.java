@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 13.03.2017
  */
-class DependencyPathBuilder<ArtifactT extends Artifact<ArtifactT>> implements Cloneable {
+public class DependencyPathBuilder<ArtifactT extends Artifact<ArtifactT>> implements Cloneable {
     private final LinkedList<ArtifactT> dependencies;
 
     /**

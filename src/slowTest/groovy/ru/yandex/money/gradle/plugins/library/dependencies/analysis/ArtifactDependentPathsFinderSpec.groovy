@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.analysis
 
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.Artifact
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName
+import ru.yandex.money.gradle.plugins.library.dependencies.utils.TestArtifact
 import spock.lang.Specification
 
 /**
@@ -22,19 +23,5 @@ class ArtifactDependentPathsFinderSpec extends Specification {
 
         then:
             true
-    }
-
-    private static class TestArtifact implements Artifact<TestArtifact> {
-        List<TestArtifact> dependencies = new ArrayList<>()
-        ArtifactName name
-
-        TestArtifact(ArtifactName name) {
-            this(name, Collections.emptyList())
-        }
-
-        TestArtifact(ArtifactName name, List<TestArtifact> dependencies) {
-            this.name = name
-            this.dependencies.addAll(dependencies)
-        }
     }
 }

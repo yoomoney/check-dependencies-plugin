@@ -13,6 +13,24 @@ public final class ArtifactName {
     private final String version;
 
     /**
+     * Парсит имя артефакта, заданное в формате group:name:version, из переданной строки
+     *
+     * @param name строка, содержащая имя артефакта
+     * @return объект класса {@link ArtifactName}
+     */
+    public static ArtifactName parse(String name) {
+        int libraryNameLength = name.lastIndexOf(':');
+        if (libraryNameLength == -1) {
+            throw new IllegalArgumentException("Passed artifact name has incorrect format");
+        }
+
+        String libraryName = name.substring(0, libraryNameLength);
+        String version = name.substring(libraryNameLength + 1);
+
+        return new ArtifactName(LibraryName.parse(libraryName), version);
+    }
+
+    /**
      * Конструктор класса
      *
      * @param group имя группы

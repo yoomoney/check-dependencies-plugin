@@ -60,7 +60,7 @@ class ResolvedArtifactDependency implements ArtifactDependency {
     public List<ArtifactDependency> getDependencies() {
         return component.getDependencies()
                         .stream()
-                        .map(dependency -> ArtifactDependency.create(configuration, dependency))
+                        .map(dependency -> ArtifactDependencyFactory.create(configuration, dependency))
                         .filter(dependency -> dependency != null).collect(Collectors.toList());
     }
 }

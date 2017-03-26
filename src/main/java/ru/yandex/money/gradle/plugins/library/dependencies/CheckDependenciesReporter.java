@@ -1,7 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import org.gradle.api.artifacts.Configuration;
-import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictedLibraryInfo;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.ConflictedLibraryInfo;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionRule;
 import ru.yandex.money.gradle.plugins.library.dependencies.reporters.ConflictedLibrariesReporter;
 import ru.yandex.money.gradle.plugins.library.dependencies.reporters.StaleExclusionsReporter;

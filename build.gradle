@@ -24,10 +24,26 @@ buildscript {
     }
 }
 
+ext {
+    aetherVersion = '1.13.1'
+}
+
 dependencies {
     compile localGroovy(),
             'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE',
             'com.google.code.findbugs:jsr305:3.0.1'
+
+    //TODO: использовать org.eclipse.aether как только перейдем на Gradle 3.+
+    compile "org.sonatype.aether:aether-api:${aetherVersion}",
+            "org.sonatype.aether:aether-util:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-wagon:${aetherVersion}",
+            "org.sonatype.aether:aether-impl:${aetherVersion}",
+            "org.sonatype.aether:aether-spi:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-file:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-asynchttpclient:${aetherVersion}",
+            "org.sonatype.aether:aether:${aetherVersion}",
+            "org.apache.maven:maven-aether-provider:3.0.4",
+            "org.apache.maven.wagon:wagon-http-lightweight:1.0"
 
     testCompile gradleTestKit(),
                 'ru.yandex.money.common:yamoney-test-utils:8.0.1',
@@ -37,3 +53,7 @@ dependencies {
         exclude module: 'groovy-all'
     }
 }
+
+excludedVersionConflictLibraries = {[
+        'org.codehaus.plexus:plexus-utils'
+]}

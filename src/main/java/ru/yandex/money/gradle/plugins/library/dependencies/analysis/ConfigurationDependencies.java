@@ -4,6 +4,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.artifacts.result.ResolvedComponentResult;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependencyFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependent;
 
 import javax.annotation.Nonnull;
@@ -17,10 +18,10 @@ import java.util.stream.Collectors;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 13.03.2017
  */
-class ConfigurationDependencies {
+public class ConfigurationDependencies {
     private final Configuration configuration;
 
-    ConfigurationDependencies(Configuration configuration) {
+    public ConfigurationDependencies(Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -29,7 +30,7 @@ class ConfigurationDependencies {
      *
      * @return корень дерева зависимостей
      */
-    ArtifactDependent<ArtifactDependency> root() {
+    public ArtifactDependent<ArtifactDependency> root() {
         return getDependencyRoot();
     }
 
@@ -47,9 +48,9 @@ class ConfigurationDependencies {
      *
      * @return список всех зависимостей
      */
-    List<ArtifactDependency> all() {
+    public List<ArtifactDependency> all() {
         return findAllDependencies(configuration).stream()
-                    .map(dependency -> ArtifactDependency.create(configuration, dependency))
+                    .map(dependency -> ArtifactDependencyFactory.create(configuration, dependency))
                     .filter(dependency -> dependency != null)
                     .collect(Collectors.toList());
     }
@@ -61,7 +62,7 @@ class ConfigurationDependencies {
     private ArtifactDependent<ArtifactDependency> getDependencyRoot() {
         ResolvedComponentResult root = configuration.getIncoming().getResolutionResult().getRoot();
         return () -> root.getDependencies().stream()
-                         .map(dependency -> ArtifactDependency.create(configuration, dependency))
+                         .map(dependency -> ArtifactDependencyFactory.create(configuration, dependency))
                          .filter(artifact -> artifact != null)
                          .collect(Collectors.toList());
     }

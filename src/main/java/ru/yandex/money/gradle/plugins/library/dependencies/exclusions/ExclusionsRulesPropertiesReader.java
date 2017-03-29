@@ -2,8 +2,10 @@ package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -57,10 +59,32 @@ public abstract class ExclusionsRulesPropertiesReader {
             if (versionsRule.length == 2) {
                 String requestedVersions = versionsRule[0];
                 String targetVersion = versionsRule[1];
-                rulesStorage.registerAllowedVersionsChanges(library, requestedVersions.split(","), targetVersion);
+                registerAllowedVersionsChanges(rulesStorage, library, requestedVersions.split(","), targetVersion);
             } else {
                 log.warn("Wrong value format of versions rule for {}: {}", library, value);
             }
         }
+    }
+
+    private void registerAllowedVersionsChanges(@Nonnull ExclusionsRulesStorage rulesStorage,
+                                                @Nonnull String library, @Nonnull String[] fromVersions, String toVersion) {
+        LibraryName libraryName = parseLibraryName(library);
+        if (libraryName != null) {
+            rulesStorage.registerAllowedVersionsChanges(libraryName, fromVersions, toVersion);
+        }
+    }
+
+    @Nullable
+    private LibraryName parseLibraryName(@Nonnull String library) {
+        int artifactIndex = library.lastIndexOf('.');
+        if (artifactIndex == -1) {
+            log.warn("Wrong key format of library name. library={}", library);
+            return null;
+        }
+
+        String group = library.substring(0, artifactIndex);
+        String artifact = library.substring(artifactIndex + 1);
+
+        return new LibraryName(group, artifact);
     }
 }

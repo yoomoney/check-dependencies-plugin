@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,7 @@ public class ExclusionsRulesStorage {
      * Ключ - название библиотеки с конечной (фиксированной) версией, Значение - набор версий с которых разрешено обновление до
      * фиксированной.
      */
-    private final Map<String, Set<String>> rules = new HashMap<>();
+    private final Map<ArtifactName, Set<String>> rules = new HashMap<>();
 
     /**
      * Регистрирует правила перехода библиотеки <i>library</i> с версий <i>fromVersions</i> до версии <i>toVersion</i>
@@ -39,7 +40,7 @@ public class ExclusionsRulesStorage {
      * @param fromVersions массив запрашиваемых версий
      * @param toVersion    конечная (фиксированная) версия
      */
-    void registerAllowedVersionsChanges(@Nonnull String library, @Nonnull String[] fromVersions, String toVersion) {
+    void registerAllowedVersionsChanges(@Nonnull LibraryName library, @Nonnull String[] fromVersions, String toVersion) {
         for (String fromVersion : fromVersions) {
             registerAllowedVersionChange(library, fromVersion, toVersion);
         }
@@ -52,17 +53,9 @@ public class ExclusionsRulesStorage {
      * @param fromVersion запрашиваемая версия
      * @param toVersion   конечная (фиксированная) версия
      */
-    private void registerAllowedVersionChange(@Nonnull String library, @Nonnull String fromVersion, @Nonnull String toVersion) {
-        int artifactIndex = library.lastIndexOf('.');
-        if (artifactIndex == -1) {
-            log.warn("Wrong key format of library name. library={}", library);
-            return;
-        }
-        String group = library.substring(0, artifactIndex);
-        String artifact = library.substring(artifactIndex + 1);
-        String libraryId = String.format("%s:%s:%s", group, artifact, toVersion);
-
-        rules.computeIfAbsent(libraryId, version -> new HashSet<>()).add(fromVersion);
+    private void registerAllowedVersionChange(@Nonnull LibraryName library, @Nonnull String fromVersion, @Nonnull String toVersion) {
+        ArtifactName targetArtifactName = new ArtifactName(library, toVersion);
+        rules.computeIfAbsent(targetArtifactName, version -> new HashSet<>()).add(fromVersion);
     }
 
     /**
@@ -73,7 +66,8 @@ public class ExclusionsRulesStorage {
      * @return список версий, разрешеных к изменению до <i>targetVersion</i>
      */
     public Set<String> getAllowedRequestedVersions(@Nonnull LibraryName requestedLibrary, @Nonnull String targetVersion) {
-        return rules.get(String.format("%s:%s", requestedLibrary, targetVersion));
+        ArtifactName requestedArtifactName = new ArtifactName(requestedLibrary, targetVersion);
+        return rules.get(requestedArtifactName);
     }
 
     /**
@@ -88,10 +82,9 @@ public class ExclusionsRulesStorage {
                     .collect(Collectors.toList());
     }
 
-    private Stream<ExclusionRule> getExclusionRules(@Nonnull String artifact, @Nonnull Set<String> allowedRequestedVersion) {
-        int libraryLength = artifact.lastIndexOf(':');
-        LibraryName library = LibraryName.parse(artifact.substring(0, libraryLength));
-        String fixedVersion = artifact.substring(libraryLength + 1);
+    private Stream<ExclusionRule> getExclusionRules(@Nonnull ArtifactName artifact, @Nonnull Set<String> allowedRequestedVersion) {
+        LibraryName library = artifact.getLibraryName();
+        String fixedVersion = artifact.getVersion();
 
         return allowedRequestedVersion.stream().map(version -> new ExclusionRule(library, version, fixedVersion));
     }

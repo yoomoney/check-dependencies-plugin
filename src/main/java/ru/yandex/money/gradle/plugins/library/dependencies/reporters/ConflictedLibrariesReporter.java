@@ -5,10 +5,12 @@ import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictedLi
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
+import java.util.Objects;
 
 /**
  * Формирует отчет об обнаруженных конфликтах версий, не зарегистрированных в исключениях
@@ -26,7 +28,8 @@ public class ConflictedLibrariesReporter {
     private final Collection<String> messages;
     private boolean isHeaderAdded;
 
-    public ConflictedLibrariesReporter(Collection<String> messages) {
+    public ConflictedLibrariesReporter(@Nonnull Collection<String> messages) {
+        Objects.nonNull(messages);
         this.messages = messages;
     }
 

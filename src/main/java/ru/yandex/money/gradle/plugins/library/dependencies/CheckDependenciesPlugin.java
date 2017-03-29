@@ -36,22 +36,26 @@ import javax.annotation.Nonnull;
  * что более новая версия библиотеки полностью обратно совместима со старой версии, можно разрешить обновление с одной версии
  * библиоетки до другой.
  * <p>
- * Правила исключения описываются в property файле. По умолчанию используется файл с названием <b>"library_versions_exclusions.properties"</b>
- * расположенные в корне проекта. Однако, плагин позволяет переопределить название и место расположение такого файла.
+ * Правила исключения описываются в property файле. По умолчанию используется файл
+ * с названием <b>"library_versions_exclusions.properties"</b>, расположенный в корне проекта.
+ * Однако, плагин позволяет переопределить название и место расположение такого файла.
  *
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 09.01.2017
  */
 public class CheckDependenciesPlugin implements Plugin<Project> {
-
+    /**
+     * Имя таски, добавляемой плагином при подключении к проекту
+     */
     public static final String CHECK_DEPENDENCIES_TASK_NAME = "checkLibraryDependencies";
+
     private static final String CHECK_DEPENDENCIES_TASK_GROUP = "verification";
     private static final String CHECK_DEPENDENCIES_TASK_DESCRIPTION = "Checks current used libraries versions on " +
                                                                       "conflict with platform libraries version.";
     private static final String CHECK_DEPENDENCIES_EXTENSION_NAME = "checkDependencies";
     private static final String SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID = "io.spring.dependency-management";
     private static final String ERROR_APPLYING_PLUGIN_REQUIRED = "\"%s\" plugin is required for correct working of check " +
-                                                                  "dependencies plugin.\n Apply this plugin in build script.";
+                                                                  "dependencies plugin.%n Apply this plugin in build script.";
 
     @Override
     public void apply(Project target) {

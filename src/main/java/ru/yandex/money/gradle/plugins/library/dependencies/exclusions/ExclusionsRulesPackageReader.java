@@ -31,6 +31,12 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
     private final String artifact;
     private final String exclusionFileName;
 
+    /**
+     * Конструктор класса
+     * @param project текущий проект
+     * @param artifact имя артефакта, содержащего файл с правилами исключений
+     * @param exclusionFileName имя файл с правилами исключениями внутри артефакта
+     */
     ExclusionsRulesPackageReader(@Nonnull Project project, @Nonnull String artifact, @Nonnull String exclusionFileName) {
         this.project = project;
         this.artifact = artifact;
@@ -63,8 +69,8 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
     private static File findArtifactFile(@Nonnull Configuration configuration, @Nonnull String artifact) {
         Set<ResolvedArtifact> artifacts = configuration.getResolvedConfiguration().getResolvedArtifacts();
         for (ResolvedArtifact requestedArtifact : artifacts) {
-            String artifactID = requestedArtifact.getId().getComponentIdentifier().getDisplayName();
-            if (artifactID.startsWith(artifact)) {
+            String artifactId = requestedArtifact.getId().getComponentIdentifier().getDisplayName();
+            if (artifactId.startsWith(artifact)) {
                 return requestedArtifact.getFile();
             }
         }
@@ -99,8 +105,8 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
                     log.warn("Cannot loadTo file with upgrade versions rules.", e);
                 }
             } else {
-                log.warn(String.format("Cannot find rules file \"%s\" with upgrade versions rules in specified artifact \"%s\" " +
-                                "for configuration \"%s\".", exclusionFileName, artifact, configuration.getName()));
+                log.warn("Cannot find rules file \"{}\" with upgrade versions rules in specified artifact \"{}\" for configuration \"{}\".",
+                         exclusionFileName, artifact, configuration.getName());
             }
         }
     }

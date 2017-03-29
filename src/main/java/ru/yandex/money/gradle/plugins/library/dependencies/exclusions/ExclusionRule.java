@@ -3,6 +3,8 @@ package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
+import java.util.Objects;
+
 /**
  * Представляет исключение из правила соответствия требуемой и фиксированной версиями библиотеки
  * во время сборки проекта
@@ -72,12 +74,13 @@ public final class ExclusionRule {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if ((obj == null) || !(obj instanceof ExclusionRule)) return false;
+        if (!(obj instanceof ExclusionRule)) {
+            return false;
+        }
 
         ExclusionRule other = (ExclusionRule)obj;
-        return library.equals(other.library) &&
-               requestedVersion.equals(other.requestedVersion) &&
-               fixedVersion.equals(other.fixedVersion);
+        return Objects.equals(library, other.library) &&
+               Objects.equals(requestedVersion, other.requestedVersion) &&
+               Objects.equals(fixedVersion, other.fixedVersion);
     }
 }

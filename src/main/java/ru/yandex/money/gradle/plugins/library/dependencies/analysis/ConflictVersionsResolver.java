@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * Проверяет корректность изменений версий библиотек с запрашиваемых на фиксированную. Позволяет проверить, разрешено ли
- * изменение запрашиваемой версии библиотеки до версии, зафиксированной <c>Spring Dependency Management Plugin</c>, или нет.
+ * изменение запрашиваемой версии библиотеки до версии, зафиксированной <i>Spring Dependency Management Plugin</i>, или нет.
  *
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 03.02.2017
@@ -24,8 +24,8 @@ public class ConflictVersionsResolver {
     }
 
     /**
-     * Разрешено ли изменение версии указанной библиотеки <c>requestedLibrary</c> с версии <c>requestedVersion</c> до
-     * <c>targetVersion</c>
+     * Разрешено ли изменение версии указанной библиотеки <i>requestedLibrary</i> с версии <i>requestedVersion</i> до
+     * <i>targetVersion</i>
      *
      * @param requestedLibrary проверяемая библиотека. Название состоит из: Имя группы + "." + имя артефакта
      * @param requestedVersion запрашиваемая версия

@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Задача на проверку согласованности изменений версий используемых библиотек. Если изменение версии библиотеки связано
- * с фиксацией версии в <c>Spring Dependency Management</c> плагине, то останавливает билд и выводит список библиотек,
+ * с фиксацией версии в <i>Spring Dependency Management</i> плагине, то останавливает билд и выводит список библиотек,
  * у которых изменение версий не запланировано.
  *
  * @author Brovin Yaroslav (brovin@yamoney.ru)
@@ -37,6 +37,9 @@ public class CheckDependenciesTask extends ConventionTask {
     private List<String> exclusionsRulesSources;
     private List<String> excludedConfigurations;
 
+    /**
+     * Запускается при выполнении таски
+     */
     @TaskAction
     public void check() {
         ExclusionRulesLoader exclusionRulesLoader = loadExclusionsRules();

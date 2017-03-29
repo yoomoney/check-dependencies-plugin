@@ -3,7 +3,6 @@ package ru.yandex.money.gradle.plugins.library.dependencies.reporters;
 import org.gradle.api.artifacts.Configuration;
 import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictedLibraryInfo;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -23,7 +22,6 @@ public class ConflictedLibrariesReporter {
     private static final String[] INDENTS = createIndents(MAX_INDENT_LEVEL);
 
     private static final String ERROR_CONFLICTED_DEPENDENCIES_MSG = "Versions conflict used libraries with fixed platform libraries.";
-    private static final String CONFLICT_PATHS_HEADER = "Following dependencies cause conflicts:";
 
     private final Collection<String> messages;
     private boolean isHeaderAdded;
@@ -62,7 +60,6 @@ public class ConflictedLibrariesReporter {
 
     private void addConflictSection(ConflictedLibraryInfo conflictedLibraryInfo, int indent) {
         addConflictHeader(conflictedLibraryInfo, indent);
-        addMessage(CONFLICT_PATHS_HEADER, indent + 1);
         conflictedLibraryInfo.getDependentPaths().forEach(conflictPath -> addConflictPath(conflictPath, indent + 1));
         addEmptyMessage();
     }

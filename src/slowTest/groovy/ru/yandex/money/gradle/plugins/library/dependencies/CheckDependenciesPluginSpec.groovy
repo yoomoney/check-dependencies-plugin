@@ -39,7 +39,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
-                dependencyManagement {                    
+                dependencyManagement {
                     // Фиксируем версии библиотек из pom.xml файла
                     imports {
                         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
@@ -61,15 +61,16 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
-                dependencyManagement {                
+
+                dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
                 }
-                
+
                 dependencies {
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     compile 'org.hamcrest:hamcrest-core:1.2'
-                    
+
                     testCompile group: 'junit', name: 'junit', version: '4.11'
                 }
                 """.stripIndent()
@@ -85,23 +86,27 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "fail check on conflicted versions between fixed versions in IO platform and project dependencies section in libraries"() {
         given:
         buildFile << """
-                dependencyManagement {                
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
+                dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
-                    
+
                     // Фиксируем версии библиотек из pom.xml файла
                     imports {
                         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
                     }
                 }
-                
+
                 // Специально определяем версии библиотек, которые конфликтуют с зафиксированными
                 dependencies {
                     // Ожидается 4.2.7.RELEASE
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.3
                     compile 'org.hamcrest:hamcrest-core:1.2'
-                
+
                     // Ожидается 4.12
                     // Использует org.hamcrest:hamcrest-core:1.3
                     testCompile group: 'junit', name: 'junit', version: '4.11'
@@ -118,38 +123,42 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
     def "fail check on project libraries and fixed versions, which are override in build script"() {
         given:
         buildFile << """
-                dependencyManagement {                
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
+                dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
-                    
+
                     // Фиксируем версии библиотек из pom.xml файла
                     imports {
                         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
                     }
-                    
+
                     dependencies {
                         dependency 'org.springframework:spring-core:4.2.5.RELEASE'
                         dependency 'org.hamcrest:hamcrest-core:1.2'
                     }
-                    
+
                     testCompile {
                         dependencies {
                             dependency 'junit:junit:4.11'
                             dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
                         }
-                    }                    
+                    }
                 }
-                
+
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.2
                     compile 'org.hamcrest:hamcrest-core:1.2'
-                
+
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
                     testCompile group: 'junit', name: 'junit', version: '4.11'
-                }            
+                }
             """.stripIndent()
         when:
         def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
@@ -169,44 +178,45 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
                 }
-                dependencyManagement {                
+
+                dependencyManagement {
                     // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
                     overriddenByDependencies = false
-                    
+
                     // Фиксируем версии библиотек из pom.xml файла
                     imports {
                         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
                     }
-                    
+
                     dependencies {
                         dependency 'org.springframework:spring-core:4.2.5.RELEASE'
                         dependency 'org.hamcrest:hamcrest-core:1.2'
                     }
-                    
+
                     testCompile {
                         dependencies {
                             dependency 'junit:junit:4.11'
                             dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
                         }
-                    }                    
+                    }
                 }
-                
+
                 // Указываем путь к файлу с разрешающими правилами изменения версий библиотек
                 checkDependencies {
                     exclusionsRulesSources = ['$exclusionFile.absolutePath',
                                               "ru.yandex.money.platform:platform-dependencies:"]
                 }
-                
+
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.2
                     compile 'org.hamcrest:hamcrest-core:1.2'
-                
+
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
                     testCompile group: 'junit', name: 'junit', version: '4.11'
-                }            
+                }
             """.stripIndent()
         when:
         def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
@@ -329,6 +339,79 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     testCompile group: 'junit', name: 'junit', version: '4.11'
                 }   
                 """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def 'fail check on project with stale local exclusion rules'() {
+        given:
+        def exclusionFile = new File(projectDir, 'exclusion.properties')
+        exclusionFile << """
+            org.hamcrest.hamcrest-core = 1.0, 1.2 -> 1.3
+        """.stripIndent()
+
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+            }
+
+            // ожидается org.hamcrest:hamcrest-core:1.3
+            dependencyManagement {
+                // Запрещаем переопределять версии библиотек в обычной секции Gradle dependencies
+                overriddenByDependencies = false
+
+                // Наследуем правила фиксации версии от Spring-Boot 1.3.3
+                imports {
+                    mavenBom 'org.springframework.boot:spring-boot-dependencies:1.5.2.RELEASE'
+                }
+            }
+
+            // используется только правило org.hamcrest.hamcrest-core:1.2 -> 1.3
+            // правило org.hamcrest.hamcrest-core:1.0 -> 1.3 'просрочено'
+            dependencies {
+                compile 'org.hamcrest:hamcrest-core:1.2'
+            }
+
+            checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
+        """.stripIndent()
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        result.failure
+        result.standardError.contains('stale exclusions')
+    }
+
+    def 'success check on project with stale imported exclusion rules'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                imports {
+                    mavenBom 'ru.yandex.money.platform:yamoney-libraries-dependencies:1.+'
+                }
+            }
+
+            // нет конфликтов версий с требуемыми в dependencyManagement секции
+            dependencies {
+                compile 'junit:junit:4.12'
+            }
+
+            // загружаем правила исключений из yamoney-libraries-dependencies
+            checkDependencies.exclusionsRulesSources = ['ru.yandex.money.platform:yamoney-libraries-dependencies']
+        """.stripIndent()
 
         when:
         def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)

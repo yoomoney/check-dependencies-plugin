@@ -21,14 +21,14 @@ public class ExclusionsRulesFileReader extends ExclusionsRulesPropertiesReader {
     private final Logger log = LoggerFactory.getLogger(ExclusionsRulesFileReader.class);
     private final String fileName;
 
-    public ExclusionsRulesFileReader(@Nonnull String fileName) {
+    ExclusionsRulesFileReader(@Nonnull String fileName) {
         this.fileName = fileName;
     }
 
     @Override
     public void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage) {
         if (!Files.isReadable(Paths.get(fileName))) {
-            log.warn(String.format("Cannot read file \"%s\" with upgrade versions rules.", fileName));
+            log.warn("Cannot read file \"{}\" with upgrade versions rules.", fileName);
             return;
         }
 

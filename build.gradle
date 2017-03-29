@@ -1,18 +1,13 @@
+apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-common-without-plugins.gradle'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
-apply plugin: 'maven-publish'
-
-apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-git-flow.gradle'
-apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-test.gradle'
-apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/release/library-release.gradle'
 
 description 'Plugin with all features for development and usage of yamoney librares.'
-group 'ru.yandex.money.gradle.plugins'
 
-repositories {
-    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-    maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-}
+//noinspection GroovyUnusedAssignment
+groupIdSuffix = "gradle.plugins"
+//noinspection GroovyUnusedAssignment
+artifactID = "yamoney-check-dependencies-plugin"
 
 buildscript {
     repositories {
@@ -37,41 +32,5 @@ dependencies {
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude module: 'groovy-all'
-    }
-}
-
-jar {
-    baseName "yamoney-check-dependencies-plugin"
-}
-
-ext {
-    releaseRepoProxyUrl = 'http://nexus.yamoney.ru/content/repositories/releases/'
-    snapshotRepoProxyUrl = 'http://nexus.yamoney.ru/content/repositories/snapshots/'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId jar.getBaseName()
-        }
-    }
-
-    repositories {
-        maven {
-            url project.version.endsWith('-SNAPSHOT') ? project.ext.snapshotRepoProxyUrl : project.ext.releaseRepoProxyUrl
-            credentials {
-                def nexusUser = System.getenv('NEXUS_USER')
-                if (nexusUser == "") {
-                    throw new IllegalStateException("Cannot publish plugins. Nexus user name is empty.'")
-                }
-                def nexusPassword = System.getenv('NEXUS_PASSWORD')
-                if (nexusPassword == "") {
-                    throw new IllegalStateException("Cannot publish plugins. Nexus user password is empty.'")
-                }
-                username nexusUser
-                password nexusPassword
-            }
-        }
     }
 }

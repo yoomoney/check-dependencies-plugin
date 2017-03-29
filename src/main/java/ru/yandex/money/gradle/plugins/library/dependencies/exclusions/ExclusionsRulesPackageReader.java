@@ -105,8 +105,8 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
                     log.warn("Cannot loadTo file with upgrade versions rules.", e);
                 }
             } else {
-                log.warn(String.format("Cannot find rules file \"%s\" with upgrade versions rules in specified artifact \"%s\" " +
-                                "for configuration \"%s\".", exclusionFileName, artifact, configuration.getName()));
+                log.warn("Cannot find rules file \"{}\" with upgrade versions rules in specified artifact \"{}\" for configuration \"{}\".",
+                         exclusionFileName, artifact, configuration.getName());
             }
         }
     }

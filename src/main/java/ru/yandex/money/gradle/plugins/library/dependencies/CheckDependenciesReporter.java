@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 class CheckDependenciesReporter {
 
-    private static final String MESSAGES_INDENT = "\t";
+    private static final char MESSAGES_INDENT = '\t';
     private static final int BASE_REPORTER_CAPACITY = 1000;
     private final Collection<String> messages = new ArrayList<>();
 

@@ -28,7 +28,7 @@ public class ExclusionsRulesFileReader extends ExclusionsRulesPropertiesReader {
     @Override
     public void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage) {
         if (!Files.isReadable(Paths.get(fileName))) {
-            log.warn(String.format("Cannot read file \"%s\" with upgrade versions rules.", fileName));
+            log.warn("Cannot read file \"{}\" with upgrade versions rules.", fileName);
             return;
         }
 

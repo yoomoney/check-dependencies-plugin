@@ -55,7 +55,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String CHECK_DEPENDENCIES_EXTENSION_NAME = "checkDependencies";
     private static final String SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID = "io.spring.dependency-management";
     private static final String ERROR_APPLYING_PLUGIN_REQUIRED = "\"%s\" plugin is required for correct working of check " +
-                                                                  "dependencies plugin.\n Apply this plugin in build script.";
+                                                                  "dependencies plugin.%n Apply this plugin in build script.";
 
     @Override
     public void apply(Project target) {

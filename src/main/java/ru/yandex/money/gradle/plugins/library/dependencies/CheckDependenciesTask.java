@@ -8,9 +8,10 @@ import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.*;
 
 import org.gradle.api.internal.ConventionTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionRulesLoader;
+import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.StaleExclusionsDetector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

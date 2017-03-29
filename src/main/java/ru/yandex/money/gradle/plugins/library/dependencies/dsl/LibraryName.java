@@ -35,9 +35,9 @@ public final class LibraryName implements Comparable<LibraryName> {
     }
 
     /**
-     * Возвращает идентификтор группы, к которой принадлежит библиотека
+     * Возвращает идентификатор группы, к которой принадлежит библиотека
      *
-     * @return
+     * @return идентификатор группы, к которой принадлежит библиотека
      */
     public String getGroup() {
         return group;

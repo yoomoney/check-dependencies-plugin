@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 /**
  * Ищет в переданном дереве артефактов все пути до артефактов, удовлетворяющих данному условию
  *
+ * @param <ArtifactT> тип артефакта, реализующий интерфейс {@link Artifact}
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 14.03.2017
  */
@@ -69,7 +70,7 @@ class ArtifactDependentPathsFinder<ArtifactT extends Artifact<ArtifactT>> {
 
         visitedArtifacts.add(dependency.getName());
 
-        for(ArtifactT childDependency: dependency.getDependencies()) {
+        for (ArtifactT childDependency: dependency.getDependencies()) {
             visitDependency(childDependency, dependencyPathBuilder);
         }
     }

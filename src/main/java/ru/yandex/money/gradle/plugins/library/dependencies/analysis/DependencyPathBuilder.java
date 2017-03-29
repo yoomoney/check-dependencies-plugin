@@ -6,15 +6,22 @@ import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
 import java.util.LinkedList;
 
 /**
- * Хранит текущий построенный путь до зависимости
+ * Последовательно строит путь до зависимости
  *
+ * @param <ArtifactT> тип артефакта
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 13.03.2017
  */
-public class DependencyPathBuilder<T extends Artifact<T>> implements Cloneable {
-    private final LinkedList<T> dependencies;
+class DependencyPathBuilder<ArtifactT extends Artifact<ArtifactT>> implements Cloneable {
+    private final LinkedList<ArtifactT> dependencies;
 
-    public static <T extends Artifact<T>> DependencyPathBuilder<T> create() {
+    /**
+     * Создает новый инстанс класса с пустым путем зависимых артефактов
+     *
+     * @param <T> тип артефакта
+     * @return новый инстанс класса
+     */
+    static <T extends Artifact<T>> DependencyPathBuilder<T> create() {
         return new DependencyPathBuilder<>();
     }
 
@@ -22,7 +29,7 @@ public class DependencyPathBuilder<T extends Artifact<T>> implements Cloneable {
         this(new LinkedList<>());
     }
 
-    private DependencyPathBuilder(LinkedList<T> dependencies) {
+    private DependencyPathBuilder(LinkedList<ArtifactT> dependencies) {
         this.dependencies = dependencies;
     }
 
@@ -32,7 +39,7 @@ public class DependencyPathBuilder<T extends Artifact<T>> implements Cloneable {
      * @param dependency добавляемая зависимость
      * @return текущий инстанс билдера
      */
-    public DependencyPathBuilder<T> add(T dependency) {
+    DependencyPathBuilder<ArtifactT> add(ArtifactT dependency) {
         dependencies.add(dependency);
         return this;
     }
@@ -43,8 +50,8 @@ public class DependencyPathBuilder<T extends Artifact<T>> implements Cloneable {
      * @return новый экземпляр билдера
      */
     @SuppressWarnings("unchecked")
-    public DependencyPathBuilder<T> copy() {
-        return new DependencyPathBuilder((LinkedList<T>) dependencies.clone());
+    DependencyPathBuilder<ArtifactT> copy() {
+        return new DependencyPathBuilder((LinkedList<ArtifactT>) dependencies.clone());
     }
 
     /**
@@ -52,7 +59,7 @@ public class DependencyPathBuilder<T extends Artifact<T>> implements Cloneable {
      *
      * @return путь до зависимости
      */
-    public DependencyPath<T> build() {
+    DependencyPath<ArtifactT> build() {
         return new DependencyPath<>(dependencies);
     }
 

@@ -3,10 +3,22 @@ package ru.yandex.money.gradle.plugins.library.dependencies.analysis;
 import org.gradle.api.artifacts.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.*;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependent;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactNameSet;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ConflictRegister;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -23,6 +35,15 @@ public class ConfigurationConflictsAnalyzer {
     private final ConflictVersionsResolver conflictResolver;
     private final ConflictRegister conflictRegister;
 
+    /**
+     * Фабричный метод для создания объекта класса.
+     *
+     * @param projectFixedDependencies зависимости проекта, указанные в dependencyManagement секции
+     * @param configuration проверяемая конфигурация проекта
+     * @param conflictResolver объект, проверяющий допустимость конфликта
+     * @param conflictRegister объект для регистрации обнаруженных конфликтов
+     * @return новый объект класса для анализа конфиктов в конфигурации
+     */
     public static ConfigurationConflictsAnalyzer create(@Nonnull FixedDependencies projectFixedDependencies,
                                                         @Nonnull Configuration configuration,
                                                         @Nonnull ConflictVersionsResolver conflictResolver,
@@ -36,7 +57,7 @@ public class ConfigurationConflictsAnalyzer {
      * Констурктор класса
      *
      * @param configuration объект конфигурации проекта
-     * @param fixedDependencies фиксированные зависимости проекта
+     * @param fixedDependencies фиксированные зависимости конфигурации
      * @param conflictResolver объект, проверяющий допустимость изменения версии
      * @param conflictRegister объект для регистрации обнаруженных конфликтов
      */
@@ -68,7 +89,7 @@ public class ConfigurationConflictsAnalyzer {
      */
     private ArtifactNameSet getRequestedDependencies() {
         Map<LibraryName, Set<String>> requestedLibraryVersions = new HashMap<>();
-        for(ArtifactDependency artifact: dependencies.all()) {
+        for (ArtifactDependency artifact: dependencies.all()) {
             requestedLibraryVersions.computeIfAbsent(artifact.getRequestedLibraryName(), l -> new HashSet<>())
                     .add(artifact.getRequestedVersion());
         }

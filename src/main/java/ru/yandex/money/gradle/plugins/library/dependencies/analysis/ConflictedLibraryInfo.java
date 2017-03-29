@@ -26,11 +26,26 @@ public class ConflictedLibraryInfo {
     private final String fixedVersion;
     private List<DependencyPath<ArtifactDependency>> dependentPaths;
 
+    /**
+     * Конструктор класса
+     *
+     * @param artifact имя первоначально запрашиваемого артефакта
+     * @param fixedVersion конечная версия
+     * @param dependentPaths пути зависимостей, в результате которых произошел конфликт версий
+     */
     ConflictedLibraryInfo(ArtifactName artifact, String fixedVersion,
                           List<DependencyPath<ArtifactDependency>> dependentPaths) {
         this(artifact.getLibraryName(), artifact.getVersion(), fixedVersion, dependentPaths);
     }
 
+    /**
+     * Конструктор класса
+     *
+     * @param library имя библиотеки
+     * @param version имя первоначально запрашиваемой версии
+     * @param fixedVersion конечная версия библиотеки
+     * @param dependentPaths пути зависимостей, в результате которых произошел конфликт версий
+     */
     ConflictedLibraryInfo(LibraryName library, String version, String fixedVersion,
                           List<DependencyPath<ArtifactDependency>> dependentPaths) {
         this.library = library;

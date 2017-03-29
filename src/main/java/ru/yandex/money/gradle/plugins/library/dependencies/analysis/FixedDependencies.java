@@ -28,12 +28,12 @@ public class FixedDependencies {
     /**
      * Возвращает набор имен артефактов, указанных в секции dependencyManagement, для данной конфигурации
      * <p>
-     * Использует результат работы стороннего плагина <c>io.spring.dependency-management</c>
+     * Использует результат работы стороннего плагина <i>io.spring.dependency-management</i>
      *
      * @param configuration конфигурация, для которой необходимо получить набор имен артефактов
      * @return набор имен артефактов, указанных в секции dependencyManagement
      */
-    public ArtifactNameSet forConfiguration(@Nonnull Configuration configuration) {
+    ArtifactNameSet forConfiguration(@Nonnull Configuration configuration) {
         return ArtifactNameSet.fromLibraryVersions(getManagedLibraries(configuration));
     }
 

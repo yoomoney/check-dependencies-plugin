@@ -1,6 +1,11 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.dsl;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Описывает набор имен артефактов
@@ -11,6 +16,13 @@ import java.util.*;
 public class ArtifactNameSet implements Iterable<ArtifactName> {
     private final Map<LibraryName, Set<String>> libraryVersions;
 
+    /**
+     * Создает набор имен артефактов на основе переданной имени библиотеки и её версий
+     *
+     * @param library имя библиотеки
+     * @param versions набор версий
+     * @return новый инстанс класса
+     */
     public static ArtifactNameSet fromLibraryVersions(LibraryName library, Set<String> versions) {
         Map<LibraryName, Set<String>> libraryVersions = new HashMap<>();
         libraryVersions.put(library, versions);

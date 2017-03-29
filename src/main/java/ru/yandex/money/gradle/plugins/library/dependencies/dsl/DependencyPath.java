@@ -10,12 +10,18 @@ import java.util.LinkedList;
  * Путь до транзитивной зависимости начинается с прямой зависимости проекта (или библиотеки),
  * содержит все промежуточные зависимости (зависимости зависимостей) и саму транзитивную зависимость.
  *
+ * @param <T> тип артефакта, реализующий интерфейс {@link Artifact}
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 13.03.2017
  */
 public class DependencyPath<T extends Artifact<T>> implements Iterable<T> {
     private LinkedList<T> dependencies;
 
+    /**
+     * Конструктор класса
+     *
+     * @param dependencies последовательность зависимостей, образующий путь от прямой зависимости до таргетной
+     */
     public DependencyPath(LinkedList<T> dependencies) {
         if (dependencies.size() < 1) {
             throw new IllegalArgumentException("Unexpected dependency path length! " +

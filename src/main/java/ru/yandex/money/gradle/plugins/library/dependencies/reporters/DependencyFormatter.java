@@ -9,11 +9,11 @@ import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
  * <ul>
  *     <li>
  *         Если в результате резолва поменялась только версия артефакта,
- *         то имя артефакта представляется в формате: <i>group:name:oldVersion -> newVersion<i/>
+ *         то имя артефакта представляется в формате: <i>group:name:oldVersion -> newVersion</i>
  *     </li>
  *     <li>
  *         Если в результате резолва поменялось имя артефакта,
- *         то имя артефакта представляется в формате: <i>oldGroup:oldName:oldVersion -> newGroup:newName:newVersion<i/>
+ *         то имя артефакта представляется в формате: <i>oldGroup:oldName:oldVersion -> newGroup:newName:newVersion</i>
  *     </li>
  * </ul>
  *

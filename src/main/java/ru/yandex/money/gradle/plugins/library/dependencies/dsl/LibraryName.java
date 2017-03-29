@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.dsl;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,12 +54,13 @@ public final class LibraryName implements Comparable<LibraryName> {
 
     @Override
     public boolean equals(Object object) {
-        if (object == this) return true;
-        if ((object == null) || !(object instanceof LibraryName)) return false;
+        if (!(object instanceof LibraryName)) {
+            return false;
+        }
 
         LibraryName other = (LibraryName) object;
 
-        return other.group.equals(group) && other.name.equals(name);
+        return Objects.equals(group, other.group) && Objects.equals(name, other.name);
     }
 
     @Override

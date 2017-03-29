@@ -1,5 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.dsl;
 
+import java.util.Objects;
+
 /**
  * Имя артефакта. Состоит из полного имени библиотеки, описываемой {@link LibraryName}, и версии библиотеки
  *
@@ -52,11 +54,13 @@ public final class ArtifactName {
 
     @Override
     public boolean equals(Object object) {
-        if (object == this) return true;
-        if ((object == null) || !(object instanceof ArtifactName)) return false;
+        if (!(object instanceof ArtifactName)) {
+            return false;
+        }
 
         ArtifactName other = (ArtifactName)object;
-        return other.libraryName.equals(libraryName) && other.version.equals(version);
+
+        return Objects.equals(libraryName, other.libraryName) && Objects.equals(version, other.version);
     }
 
     @Override

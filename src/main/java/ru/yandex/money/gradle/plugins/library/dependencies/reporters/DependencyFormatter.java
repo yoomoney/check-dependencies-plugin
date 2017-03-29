@@ -37,7 +37,7 @@ class DependencyFormatter {
      * @return форматированное имя артефакта
      */
     static String format(ArtifactDependency dependency) {
-        return new DependencyFormatter(dependency).format();
+        return new DependencyFormatter(dependency).formatArtifactDependency();
     }
 
     private DependencyFormatter(ArtifactDependency dependency) {
@@ -50,24 +50,24 @@ class DependencyFormatter {
         this.selectedVersion = dependency.getSelectedVersion();
     }
 
-    private String format() {
+    private String formatArtifactDependency() {
         if (hasSameLibraryNames()) {
             if (hasSameVersions()) {
-                return new ArtifactName(requestedLibraryName, requestedVersion).toString();
+                return formatArtifactName(new ArtifactName(requestedLibraryName, requestedVersion));
             }
 
-            return String.format("%s:%s -> %s", format(requestedLibraryName), requestedVersion, selectedVersion);
+            return String.format("%s:%s -> %s", formatLibraryName(requestedLibraryName), requestedVersion, selectedVersion);
         }
 
-        return String.format("%s -> %s", format(dependency.getRequestedArtifactName()),
-                                         format(dependency.getSelectedArtifactName()));
+        return String.format("%s -> %s", formatArtifactName(dependency.getRequestedArtifactName()),
+                                         formatArtifactName(dependency.getSelectedArtifactName()));
     }
 
-    private String format(LibraryName libraryName) {
+    private String formatLibraryName(LibraryName libraryName) {
         return NameFormatter.format(libraryName);
     }
 
-    private String format(ArtifactName artifactName) {
+    private String formatArtifactName(ArtifactName artifactName) {
         return NameFormatter.format(artifactName);
     }
 

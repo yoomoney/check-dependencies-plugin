@@ -75,11 +75,11 @@ public class ConflictedLibrariesReporter {
         addMessage(message, indent);
     }
 
-    private void addConflictPath(DependencyPath<ArtifactDependency> conflictPath, int indent) {
+    private void addConflictPath(Iterable<ArtifactDependency> conflictPath, int indent) {
         addMessage(getDependencyPathString(conflictPath), indent);
     }
 
-    private String getDependencyPathString(DependencyPath<ArtifactDependency> dependencyPath) {
+    private String getDependencyPathString(Iterable<ArtifactDependency> dependencyPath) {
         return "--> " + StreamSupport.stream(dependencyPath.spliterator(), false)
                                      .map(dependency -> String.format("(%s)", DependencyFormatter.format(dependency)))
                                      .reduce((dep1, dep2) -> dep1 + " --> " + dep2).orElse("");

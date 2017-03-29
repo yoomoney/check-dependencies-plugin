@@ -56,9 +56,6 @@ public interface ArtifactDependency extends Artifact<ArtifactDependency> {
     LibraryName getSelectedLibraryName();
     String getSelectedVersion();
 
-//    @Override
-//    List<ArtifactDependency> getDependencies();
-
     @Override
     default ArtifactName getName() {
         return getRequestedArtifactName();

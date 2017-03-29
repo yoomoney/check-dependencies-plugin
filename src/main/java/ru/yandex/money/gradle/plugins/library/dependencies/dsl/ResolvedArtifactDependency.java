@@ -16,14 +16,21 @@ import java.util.stream.Collectors;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 14.03.2017
  */
-public class ResolvedArtifactDependency implements ArtifactDependency {
+class ResolvedArtifactDependency implements ArtifactDependency {
     private final Configuration configuration;
     private final ResolvedComponentResult component;
     private final ModuleComponentSelector selector;
 
-    public ResolvedArtifactDependency(Configuration configuration,
-                                      ResolvedDependencyResult dependency,
-                                      ModuleComponentSelector selector) {
+    /**
+     * Конструктор класса
+     *
+     * @param configuration проверяемая конфигурация проекта
+     * @param dependency успешно разрезолвленная зависимость
+     * @param selector селектор для получения первоначально запрашиваемого имени зависимости
+     */
+    ResolvedArtifactDependency(Configuration configuration,
+                               ResolvedDependencyResult dependency,
+                               ModuleComponentSelector selector) {
         this.configuration = configuration;
         this.component = dependency.getSelected();
         this.selector = selector;

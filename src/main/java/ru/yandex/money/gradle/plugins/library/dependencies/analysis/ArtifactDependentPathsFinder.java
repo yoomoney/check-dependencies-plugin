@@ -17,14 +17,14 @@ import java.util.function.Predicate;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 14.03.2017
  */
-class ArtifactDependentPathsFinder<TArtifact extends Artifact<TArtifact>> {
-    private final ArtifactDependent<TArtifact> root;
+class ArtifactDependentPathsFinder<ArtifactT extends Artifact<ArtifactT>> {
+    private final ArtifactDependent<ArtifactT> root;
     private final Predicate<? super ArtifactName> isRequestedArtifact;
 
     private Set<ArtifactName> visitedArtifacts;
-    private List<DependencyPath<TArtifact>> foundPaths;
+    private List<DependencyPath<ArtifactT>> foundPaths;
 
-    ArtifactDependentPathsFinder(ArtifactDependent<TArtifact> root,
+    ArtifactDependentPathsFinder(ArtifactDependent<ArtifactT> root,
                                  Predicate<? super ArtifactName> isRequestedArtifact) {
         this.root = root;
         this.isRequestedArtifact = isRequestedArtifact;
@@ -35,7 +35,7 @@ class ArtifactDependentPathsFinder<TArtifact extends Artifact<TArtifact>> {
      *
      * @return список найденных путей
      */
-    List<DependencyPath<TArtifact>> findPaths() {
+    List<DependencyPath<ArtifactT>> findPaths() {
         initialize();
 
         traverse(root, DependencyPathBuilder.create());
@@ -48,13 +48,13 @@ class ArtifactDependentPathsFinder<TArtifact extends Artifact<TArtifact>> {
         foundPaths = new ArrayList<>();
     }
 
-    private void traverse(ArtifactDependent<TArtifact> root, DependencyPathBuilder<TArtifact> dependencyPathBuilder) {
-        for (TArtifact artifact: root.getDependencies()) {
+    private void traverse(ArtifactDependent<ArtifactT> root, DependencyPathBuilder<ArtifactT> dependencyPathBuilder) {
+        for (ArtifactT artifact: root.getDependencies()) {
             visitDependency(artifact, dependencyPathBuilder);
         }
     }
 
-    private void visitDependency(TArtifact dependency, DependencyPathBuilder<TArtifact> dependencyPathBuilder) {
+    private void visitDependency(ArtifactT dependency, DependencyPathBuilder<ArtifactT> dependencyPathBuilder) {
         dependencyPathBuilder = dependencyPathBuilder.copy();
         dependencyPathBuilder.add(dependency);
 
@@ -69,12 +69,12 @@ class ArtifactDependentPathsFinder<TArtifact extends Artifact<TArtifact>> {
 
         visitedArtifacts.add(dependency.getName());
 
-        for(TArtifact childDependency: dependency.getDependencies()) {
+        for(ArtifactT childDependency: dependency.getDependencies()) {
             visitDependency(childDependency, dependencyPathBuilder);
         }
     }
 
-    private boolean isRequested(TArtifact foundArtifact) {
+    private boolean isRequested(ArtifactT foundArtifact) {
         ArtifactName foundArtifactName = foundArtifact.getName();
         return isRequestedArtifact.test(foundArtifactName);
     }

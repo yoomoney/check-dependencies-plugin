@@ -8,7 +8,6 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult;
 import org.gradle.api.artifacts.result.UnresolvedDependencyResult;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * <p>Предоставляет информацию о зависимости от артефакта, которая описывается:</p>
@@ -57,8 +56,10 @@ public interface ArtifactDependency extends Artifact<ArtifactDependency> {
     LibraryName getSelectedLibraryName();
     String getSelectedVersion();
 
-    List<ArtifactDependency> getDependencies();
+//    @Override
+//    List<ArtifactDependency> getDependencies();
 
+    @Override
     default ArtifactName getName() {
         return getRequestedArtifactName();
     }

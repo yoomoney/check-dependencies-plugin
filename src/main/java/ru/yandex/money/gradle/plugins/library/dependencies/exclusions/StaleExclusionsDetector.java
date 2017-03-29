@@ -42,6 +42,7 @@ public class StaleExclusionsDetector implements ConflictRegister {
      * @param requestedArtifact требуемая библиотека
      * @param fixedVersion зафиксированная версия библиотеки
      */
+    @Override
     public void registerConflict(ArtifactName requestedArtifact, String fixedVersion) {
         staleExclusionRules.remove(new ExclusionRule(requestedArtifact, fixedVersion));
     }

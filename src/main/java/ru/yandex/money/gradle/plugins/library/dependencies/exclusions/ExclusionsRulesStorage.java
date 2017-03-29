@@ -4,7 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +32,7 @@ public class ExclusionsRulesStorage {
     private final Map<String, Set<String>> rules = new HashMap<>();
 
     /**
-     * Регистрирует правила перехода библиотеки <c>library</c> с версий <c>fromVersions</c> до версии <c>toVersion</c>
+     * Регистрирует правила перехода библиотеки <i>library</i> с версий <i>fromVersions</i> до версии <i>toVersion</i>
      *
      * @param library      название библиотеки
      * @param fromVersions массив запрашиваемых версий
@@ -41,7 +45,7 @@ public class ExclusionsRulesStorage {
     }
 
     /**
-     * Регистрирует правило перехода библиотеки <c>library</c> версии <c>fromVersion</c> до версии <c>toVersion</c>
+     * Регистрирует правило перехода библиотеки <i>library</i> версии <i>fromVersion</i> до версии <i>toVersion</i>
      *
      * @param library     название библиотеки
      * @param fromVersion запрашиваемая версия
@@ -55,22 +59,27 @@ public class ExclusionsRulesStorage {
         }
         String group = library.substring(0, artifactIndex);
         String artifact = library.substring(artifactIndex + 1);
-        String libraryID = String.format("%s:%s:%s", group, artifact, toVersion);
+        String libraryId = String.format("%s:%s:%s", group, artifact, toVersion);
 
-        rules.computeIfAbsent(libraryID, version -> new HashSet<>()).add(fromVersion);
+        rules.computeIfAbsent(libraryId, version -> new HashSet<>()).add(fromVersion);
     }
 
     /**
-     * Возвращает список версий библиотеки <b>requestedLibrary</b>, разрешенных к изменению до <b>targetVersion</b>
+     * Возвращает список версий библиотеки <i>requestedLibrary</i>, разрешенных к изменению до <i>targetVersion</i>
      *
      * @param requestedLibrary запрашиваемая библиотека
      * @param targetVersion    конечная (зафиксированная) версия
-     * @return список версий, разрешеных к изменению до <b>targetVersion</b>
+     * @return список версий, разрешеных к изменению до <i>targetVersion</i>
      */
     public Set<String> getAllowedRequestedVersions(@Nonnull String requestedLibrary, @Nonnull String targetVersion) {
         return rules.get(String.format("%s:%s", requestedLibrary, targetVersion));
     }
 
+    /**
+     * Возвращает набор правил исключений
+     *
+     * @return набор правил исключений
+     */
     public List<ExclusionRule> getExclusionRules() {
         return rules.entrySet()
                     .stream()

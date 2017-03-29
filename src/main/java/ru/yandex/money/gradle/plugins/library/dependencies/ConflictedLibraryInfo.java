@@ -13,6 +13,13 @@ public class ConflictedLibraryInfo {
     private final String version;
     private final String fixedVersion;
 
+    /**
+     * Конструктор класс
+     *
+     * @param library имя библиотеки
+     * @param version первоначально запрашиваемая версия библиотеки
+     * @param fixedVersion конечная версия библиотеки
+     */
     ConflictedLibraryInfo(String library, String version, String fixedVersion) {
         this.library = library;
         this.version = version;

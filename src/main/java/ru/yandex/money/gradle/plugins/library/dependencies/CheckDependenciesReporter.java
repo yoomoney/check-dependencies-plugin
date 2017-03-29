@@ -22,6 +22,7 @@ class CheckDependenciesReporter {
 
     private final ConflictedLibrariesReporter conflictedLibrariesReporter = new ConflictedLibrariesReporter(messages);
     private final StaleExclusionsReporter staleExclusionsReporter = new StaleExclusionsReporter(messages);
+
     /**
      * Фиксация в отчете списка проблемных библиотек с конфликтными версиями
      *

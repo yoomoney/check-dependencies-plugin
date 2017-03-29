@@ -54,10 +54,10 @@ public class ExclusionRulesLoader {
      */
     private void load(final Project project, final String exclusionSource) {
         if (isMavenArtifact(exclusionSource)) {
-            ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPackageReader(project, exclusionSource, "libraries-versions-exclusions.properties");
+            ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPackageReader(project, exclusionSource,
+                                                                                      "libraries-versions-exclusions.properties");
             reader.loadTo(totalExclusionRules);
-        }
-        else {
+        } else {
             ExclusionsRulesPropertiesReader reader = new ExclusionsRulesFileReader(exclusionSource);
             reader.loadTo(localExclusionRules);
             reader.loadTo(totalExclusionRules);

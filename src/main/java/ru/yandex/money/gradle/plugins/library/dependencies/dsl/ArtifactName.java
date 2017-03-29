@@ -61,11 +61,6 @@ public final class ArtifactName {
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s:%s", libraryName, version);
+        return 7 * libraryName.hashCode() + version.hashCode();
     }
 }

@@ -63,16 +63,15 @@ public final class LibraryName implements Comparable<LibraryName> {
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s:%s", group, name);
+        return 7 * group.hashCode() + name.hashCode();
     }
 
     @Override
     public int compareTo(LibraryName other) {
-        return toString().compareTo(other.toString());
+        int res;
+        if ((res = group.compareTo(other.group)) == 0) {
+            res = name.compareTo(other.name);
+        }
+        return res;
     }
 }

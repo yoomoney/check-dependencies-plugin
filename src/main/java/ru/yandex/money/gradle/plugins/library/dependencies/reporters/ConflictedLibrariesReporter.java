@@ -69,7 +69,7 @@ public class ConflictedLibrariesReporter {
 
     private void addConflictHeader(ConflictedLibraryInfo conflictedLibraryInfo, int indent) {
         String message = String.format("--- %-50s: %s -> %s",
-                conflictedLibraryInfo.getLibrary(),
+                NameFormatter.format(conflictedLibraryInfo.getLibrary()),
                 conflictedLibraryInfo.getVersion(),
                 conflictedLibraryInfo.getFixedVersion());
         addMessage(message, indent);

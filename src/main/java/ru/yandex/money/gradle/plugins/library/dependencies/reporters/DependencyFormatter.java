@@ -64,11 +64,11 @@ class DependencyFormatter {
     }
 
     private String format(LibraryName libraryName) {
-        return String.format("%s:%s", libraryName.getGroup(), libraryName.getName());
+        return NameFormatter.format(libraryName);
     }
 
     private String format(ArtifactName artifactName) {
-        return String.format("%s:%s", format(artifactName.getLibraryName()), artifactName.getVersion());
+        return NameFormatter.format(artifactName);
     }
 
     private boolean hasSameLibraryNames() {

@@ -3,7 +3,9 @@ package ru.yandex.money.gradle.plugins.library.dependencies.reporters;
 import org.gradle.api.artifacts.Configuration;
 import ru.yandex.money.gradle.plugins.library.dependencies.ConflictedLibraryInfo;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Формирует отчет об обнаруженных конфликтах версий, не зарегистрированных в исключениях
@@ -17,7 +19,8 @@ public class ConflictedLibrariesReporter {
     private final Collection<String> messages;
     private boolean isHeaderAdded;
 
-    public ConflictedLibrariesReporter(Collection<String> messages) {
+    public ConflictedLibrariesReporter(@Nonnull Collection<String> messages) {
+        Objects.nonNull(messages);
         this.messages = messages;
     }
 

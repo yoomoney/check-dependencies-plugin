@@ -106,6 +106,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.3
                     compile 'org.hamcrest:hamcrest-core:1.2'
+                    // Использует hamcrest-core:1.2
+                    compile 'org.hamcrest:hamcrest-library:1.2'
 
                     // Ожидается 4.12
                     // Использует org.hamcrest:hamcrest-core:1.3
@@ -411,6 +413,36 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             // загружаем правила исключений из yamoney-libraries-dependencies
             checkDependencies.exclusionsRulesSources = ['ru.yandex.money.platform:yamoney-libraries-dependencies']
+        """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def 'success check on project with unresolved dependency'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                imports {
+                    mavenBom 'ru.yandex.money.platform:yamoney-libraries-dependencies:1.+'
+                }
+            }
+
+            // нет конфликтов версий с требуемыми в dependencyManagement секции
+            dependencies {
+                compile 'unresolved:dependency'
+            }
         """.stripIndent()
 
         when:

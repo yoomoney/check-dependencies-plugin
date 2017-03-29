@@ -1,6 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.dsl;
 
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ModuleComponentSelector;
 
 import java.util.Collections;
@@ -15,18 +14,10 @@ import java.util.List;
  * @since 14.03.2017
  */
 public class UnresolvedArtifactDependency implements ArtifactDependency {
-    private final Configuration configuration;
     private final ModuleComponentSelector selector;
 
-    public UnresolvedArtifactDependency(Configuration configuration,
-                                        ModuleComponentSelector selector) {
-        this.configuration = configuration;
+    public UnresolvedArtifactDependency(ModuleComponentSelector selector) {
         this.selector = selector;
-    }
-
-    @Override
-    public Configuration getConfiguration() {
-        return configuration;
     }
 
     @Override

@@ -50,13 +50,11 @@ public interface ArtifactDependency extends Artifact<ArtifactDependency> {
             }
 
             if (dependency instanceof UnresolvedDependencyResult) {
-                return new UnresolvedArtifactDependency(configuration, moduleSelector);
+                return new UnresolvedArtifactDependency(moduleSelector);
             }
         }
         return null;
     }
-
-    Configuration getConfiguration();
 
     LibraryName getRequestedLibraryName();
 

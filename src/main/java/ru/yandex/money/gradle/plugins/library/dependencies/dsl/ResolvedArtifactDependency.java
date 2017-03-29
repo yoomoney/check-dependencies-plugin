@@ -37,11 +37,6 @@ class ResolvedArtifactDependency implements ArtifactDependency {
     }
 
     @Override
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
     public LibraryName getRequestedLibraryName() {
         return new LibraryName(selector.getGroup(), selector.getModule());
     }

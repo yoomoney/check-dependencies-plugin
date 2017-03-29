@@ -29,7 +29,7 @@ public class StaleExclusionsReporter {
     }
 
     private static String formatExclusionRule(ExclusionRule exclusionRule) {
-        return String.format("   --- %-50s: %s -> %s", exclusionRule.getLibrary(),
+        return String.format("   --- %-50s: %s -> %s", NameFormatter.format(exclusionRule.getLibrary()),
                                                        exclusionRule.getRequestedVersion(),
                                                        exclusionRule.getFixedVersion());
     }

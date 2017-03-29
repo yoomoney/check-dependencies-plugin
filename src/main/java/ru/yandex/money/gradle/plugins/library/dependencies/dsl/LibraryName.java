@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 13.03.2017
  */
-public final class LibraryName implements Comparable<LibraryName> {
+public final class LibraryName {
     private static final Pattern LIBRARY_NAME_PATTERN = Pattern.compile("(?<group>.+):(?<name>.+)");
 
     private final String group;
@@ -66,14 +66,5 @@ public final class LibraryName implements Comparable<LibraryName> {
     @Override
     public int hashCode() {
         return 7 * group.hashCode() + name.hashCode();
-    }
-
-    @Override
-    public int compareTo(LibraryName other) {
-        int res;
-        if ((res = group.compareTo(other.group)) == 0) {
-            res = name.compareTo(other.name);
-        }
-        return res;
     }
 }

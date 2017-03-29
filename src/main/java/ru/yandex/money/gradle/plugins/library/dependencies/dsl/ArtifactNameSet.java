@@ -1,7 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.dsl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -17,19 +16,6 @@ public class ArtifactNameSet implements Iterable<ArtifactName> {
     private final Map<LibraryName, Set<String>> libraryVersions;
 
     /**
-     * Создает набор имен артефактов на основе переданной имени библиотеки и её версий
-     *
-     * @param library имя библиотеки
-     * @param versions набор версий
-     * @return новый инстанс класса
-     */
-    public static ArtifactNameSet fromLibraryVersions(LibraryName library, Set<String> versions) {
-        Map<LibraryName, Set<String>> libraryVersions = new HashMap<>();
-        libraryVersions.put(library, versions);
-        return ArtifactNameSet.fromLibraryVersions(libraryVersions);
-    }
-
-    /**
      * Создает набор имен артефактов на основании переданного отображения из имени библиотеки в набор версий
      *
      * @param libraryVersions отображение из имени библиотеки в набор версий библиотеки
@@ -41,26 +27,6 @@ public class ArtifactNameSet implements Iterable<ArtifactName> {
 
     private ArtifactNameSet(Map<LibraryName, Set<String>> libraryVersions) {
         this.libraryVersions = libraryVersions;
-    }
-
-    /**
-     * Проверяет, содержатся ли имена артефактов с указанным именем библиотеки
-     *
-     * @param libraryName имя библиотеки
-     * @return true, если содержатся, и false - в противном случае
-     */
-    public boolean contains(LibraryName libraryName) {
-        return libraryVersions.containsKey(libraryName);
-    }
-
-    /**
-     * Возвращает набор всех имен библиотек, для каждого из которых содержится как минимум один артефакт
-     *
-     * @return набор имен библиотек
-     *
-     * */
-    public Set<LibraryName> getLibraryNames() {
-        return libraryVersions.keySet();
     }
 
     /**

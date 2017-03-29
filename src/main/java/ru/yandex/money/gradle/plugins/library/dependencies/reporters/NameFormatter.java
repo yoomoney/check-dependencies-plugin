@@ -10,8 +10,6 @@ import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
  * @since 29.03.2017
  */
 class NameFormatter {
-    private NameFormatter() { }
-
     static String format(LibraryName libraryName) {
         return String.format("%s:%s", libraryName.getGroup(), libraryName.getName());
     }

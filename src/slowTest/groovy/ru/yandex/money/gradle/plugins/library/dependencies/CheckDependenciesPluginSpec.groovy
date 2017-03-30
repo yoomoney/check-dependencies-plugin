@@ -154,6 +154,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     compile 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.2
                     compile 'org.hamcrest:hamcrest-core:1.2'
+                    //Использует slf4j-api:1.20, ожидается slf4j-api:1.21
+                    compile 'ch.qos.logback:logback-classic:1.1.7'
 
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
@@ -165,6 +167,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.failure
+        println result.standardError
     }
 
     def "success check on project libraries and fixed versions and rules of changing libraries versions"() {
@@ -177,6 +180,12 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         buildFile << """
                 repositories {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
+                buildscript {
+                    dependencies {
+                        classpath group: 'ru.yandex.money.platform', name: 'yamoney-libraries-dependencies', version: '2.+', ext: 'zip'
+                    }
                 }
 
                 dependencyManagement {
@@ -204,7 +213,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 // Указываем путь к файлу с разрешающими правилами изменения версий библиотек
                 checkDependencies {
                     exclusionsRulesSources = ['$exclusionFile.absolutePath',
-                                              "ru.yandex.money.platform:platform-dependencies:"]
+                                              "ru.yandex.money.platform:yamoney-libraries-dependencies:"]
                 }
 
                 dependencies {
@@ -411,6 +420,36 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             // загружаем правила исключений из yamoney-libraries-dependencies
             checkDependencies.exclusionsRulesSources = ['ru.yandex.money.platform:yamoney-libraries-dependencies']
+        """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def 'success check on project with unresolved dependency'() {
+        given:
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+            }
+
+            dependencyManagement {
+                overriddenByDependencies = false
+
+                imports {
+                    mavenBom 'ru.yandex.money.platform:yamoney-libraries-dependencies:1.+'
+                }
+            }
+
+            // нет конфликтов версий с требуемыми в dependencyManagement секции
+            dependencies {
+                compile 'unresolved:dependency'
+            }
         """.stripIndent()
 
         when:

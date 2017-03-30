@@ -1,5 +1,6 @@
-package ru.yandex.money.gradle.plugins.library.dependencies;
+package ru.yandex.money.gradle.plugins.library.dependencies.analysis;
 
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
 
 import javax.annotation.Nonnull;
@@ -12,13 +13,13 @@ import java.util.Set;
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 03.02.2017
  */
-class ConflictVersionsResolver {
+public class ConflictVersionsResolver {
     /**
      * Хранилище правил исключений изменения версий библиотек
      */
     private final ExclusionsRulesStorage rulesStorage;
 
-    ConflictVersionsResolver(@Nonnull ExclusionsRulesStorage storage) {
+    public ConflictVersionsResolver(@Nonnull ExclusionsRulesStorage storage) {
         this.rulesStorage = storage;
     }
 
@@ -31,7 +32,7 @@ class ConflictVersionsResolver {
      * @param targetVersion    конечная (фиксированная) версия
      * @return true, если есть правило перехода с указанной версии на конечную, false - в противном случае.
      */
-    boolean checkChangingLibraryVersion(@Nonnull String requestedLibrary, String requestedVersion, String targetVersion) {
+    boolean checkChangingLibraryVersion(@Nonnull LibraryName requestedLibrary, String requestedVersion, String targetVersion) {
         Set<String> versions = rulesStorage.getAllowedRequestedVersions(requestedLibrary, targetVersion);
         return versions != null && versions.contains(requestedVersion);
     }

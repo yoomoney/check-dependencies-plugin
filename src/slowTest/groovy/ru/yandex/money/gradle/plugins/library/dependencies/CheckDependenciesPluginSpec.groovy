@@ -459,4 +459,45 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
+
+    def 'success read exclusion rules with library name in different formats'() {
+        given:
+        def exclusionFile = new File(projectDir, 'exclusion.properties')
+        exclusionFile << """
+            ## new library name format
+            org.hamcrest:hamcrest-core = 1.0 -> 1.3
+
+            ## deprecated library name format
+            junit.junit = 4.11 -> 4.12
+        """.stripIndent()
+
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+            }
+
+            dependencyManagement {
+                // Запрещаем переопределять версии библиотек в обычной секции Gradle dependencies
+                overriddenByDependencies = false
+
+                dependencies {
+                    dependency 'org.hamcrest:hamcrest-core:1.3'
+                    dependency 'junit:junit:4.12'
+                }
+            }
+
+            dependencies {
+                compile 'org.hamcrest:hamcrest-core:1.0'
+                compile 'junit:junit:4.11'
+            }
+
+            checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
+        """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        result.success
+    }
 }

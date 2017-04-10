@@ -1,15 +1,22 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Абстрактный базовый класс читателя правил исключения изменения версий из properties файла. Читает правила из потока
@@ -19,7 +26,7 @@ import java.util.Set;
  * @since 08.02.2017
  */
 public abstract class ExclusionsRulesPropertiesReader {
-
+    private static final Pattern EXCLUSION_RULE_PATTERN = Pattern.compile("(?<library>.+)=(?<requestedVersions>.+)->(?<targetVersion>.+)");
     private final Logger log = LoggerFactory.getLogger(ExclusionsRulesPropertiesReader.class);
 
     /**
@@ -45,23 +52,17 @@ public abstract class ExclusionsRulesPropertiesReader {
      * @param inputStream  входной поток с правилами
      */
     void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream inputStream) {
-        Properties property = new Properties();
-        try {
-            property.load(inputStream);
-        } catch (IOException e) {
-            log.warn("Cannot loadTo of dependencies resolutions rules", e);
-        }
-        Set<String> libraries = property.stringPropertyNames();
+        Set<String> exclusionRules = readExclusionRules(inputStream);
 
-        for (String library : libraries) {
-            String value = property.getProperty(library).replace(" ", "");
-            String[] versionsRule = value.split("->");
-            if (versionsRule.length == 2) {
-                String requestedVersions = versionsRule[0];
-                String targetVersion = versionsRule[1];
+        for (String exclusionRule : exclusionRules) {
+            Matcher matcher = EXCLUSION_RULE_PATTERN.matcher(exclusionRule);
+            if (matcher.matches()) {
+                String library = matcher.group("library");
+                String requestedVersions = matcher.group("requestedVersions");
+                String targetVersion = matcher.group("targetVersion");
                 registerAllowedVersionsChanges(rulesStorage, library, requestedVersions.split(","), targetVersion);
             } else {
-                log.warn("Wrong value format of versions rule for {}: {}", library, value);
+                log.warn("Wrong value format of versions rule: {}", exclusionRule);
             }
         }
     }
@@ -76,6 +77,12 @@ public abstract class ExclusionsRulesPropertiesReader {
 
     @Nullable
     private LibraryName parseLibraryName(@Nonnull String library) {
+        try {
+            return LibraryName.parse(library);
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to parse library name in <group>:<name> format");
+        }
+
         int artifactIndex = library.lastIndexOf('.');
         if (artifactIndex == -1) {
             log.warn("Wrong key format of library name. library={}", library);
@@ -86,5 +93,22 @@ public abstract class ExclusionsRulesPropertiesReader {
         String artifact = library.substring(artifactIndex + 1);
 
         return new LibraryName(group, artifact);
+    }
+
+    private Set<String> readExclusionRules(InputStream inputStream) {
+        Set<String> exclusionRules = new HashSet<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.replaceAll("\\s+", "");
+                if (!Strings.isNullOrEmpty(line) && !line.startsWith("#")) {
+                    exclusionRules.add(line);
+                }
+            }
+        } catch (IOException e) {
+            log.warn("Cannot loadTo of dependencies resolutions rules", e);
+        }
+        return exclusionRules;
     }
 }

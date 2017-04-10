@@ -82,7 +82,7 @@ public abstract class ExclusionsRulesPropertiesReader {
         try {
             return LibraryName.parse(library);
         } catch (IllegalArgumentException e) {
-            log.warn("Failed to parse library name '{}' as <group>:<name>. Try to parse as <group>.<name>...");
+            log.warn("Failed to parse library name '{}' as <group>:<name>. Try to parse as <group>.<name>...", library);
         }
 
         int artifactIndex = library.lastIndexOf('.');

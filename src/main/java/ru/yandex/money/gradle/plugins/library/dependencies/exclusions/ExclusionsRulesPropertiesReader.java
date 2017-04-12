@@ -51,10 +51,10 @@ public abstract class ExclusionsRulesPropertiesReader {
      * что название после последней точки - название артефакта.
      *
      * @param rulesStorage хранилище правил изменения версий библиотек
-     * @param inputStream  входной поток с правилами
+     * @param exclusionRulesInputStream  входной поток с правилами
      */
-    void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream inputStream) {
-        Set<String> exclusionRules = readExclusionRules(inputStream);
+    void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream exclusionRulesInputStream) {
+        Set<String> exclusionRules = readExclusionRules(exclusionRulesInputStream);
 
         for (String exclusionRule : exclusionRules) {
             Matcher matcher = EXCLUSION_RULE_PATTERN.matcher(exclusionRule);
@@ -82,7 +82,7 @@ public abstract class ExclusionsRulesPropertiesReader {
         try {
             return LibraryName.parse(library);
         } catch (IllegalArgumentException e) {
-            log.warn("Failed to parse library name '{}' as <group>:<name>. Try to parse as <group>.<name>...", library);
+            log.warn("Failed to parse library name as <group>:<name>. Try to parse as <group>.<name>. library={}", library);
         }
 
         int artifactIndex = library.lastIndexOf('.');
@@ -97,9 +97,9 @@ public abstract class ExclusionsRulesPropertiesReader {
         return new LibraryName(group, artifact);
     }
 
-    private Set<String> readExclusionRules(InputStream inputStream) {
+    private Set<String> readExclusionRules(InputStream exclusionRulesInputStream) {
         Set<String> exclusionRules = new HashSet<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionRulesInputStream, UTF_8));
         try {
             String line;
             while ((line = reader.readLine()) != null) {

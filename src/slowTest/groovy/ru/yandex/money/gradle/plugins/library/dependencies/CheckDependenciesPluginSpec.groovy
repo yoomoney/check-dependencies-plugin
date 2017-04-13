@@ -500,4 +500,40 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         then:
         result.success
     }
+
+    def 'success check on project with exclusion rule in incorrect format'() {
+        given:
+        def exclusionFile = new File(projectDir, 'exclusion.properties')
+        exclusionFile << """
+            ## incorrect library name format
+            junit-junit = 4.11 -> 4.12
+        """.stripIndent()
+
+        buildFile << """
+            repositories {
+                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+            }
+
+            dependencyManagement {
+                // Запрещаем переопределять версии библиотек в обычной секции Gradle dependencies
+                overriddenByDependencies = false
+
+                dependencies {
+                    dependency 'junit:junit:4.12'
+                }
+            }
+
+            dependencies {
+                compile 'junit:junit:4.11'
+            }
+
+            checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
+        """.stripIndent()
+
+        when:
+        def result = runTasksWithFailure(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then: 'rule was ignored'
+        result.failure
+    }
 }

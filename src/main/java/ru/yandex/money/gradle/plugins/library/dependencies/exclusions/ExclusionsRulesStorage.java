@@ -1,7 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
@@ -23,8 +21,6 @@ import java.util.stream.Stream;
  */
 public class ExclusionsRulesStorage {
 
-    private final Logger log = LoggerFactory.getLogger(ExclusionsRulesStorage.class);
-
     /**
      * Содержит правила разрешающие изменение версий библиотек.
      * <p>
@@ -34,28 +30,22 @@ public class ExclusionsRulesStorage {
     private final Map<ArtifactName, Set<String>> rules = new HashMap<>();
 
     /**
-     * Регистрирует правила перехода библиотеки <i>library</i> с версий <i>fromVersions</i> до версии <i>toVersion</i>
+     * Регистрирует правила исключений
      *
-     * @param library      название библиотеки
-     * @param fromVersions массив запрашиваемых версий
-     * @param toVersion    конечная (фиксированная) версия
+     * @param exclusionRules набор правил исключений
      */
-    void registerAllowedVersionsChanges(@Nonnull LibraryName library, @Nonnull String[] fromVersions, String toVersion) {
-        for (String fromVersion : fromVersions) {
-            registerAllowedVersionChange(library, fromVersion, toVersion);
-        }
+    void registerExclusionRules(@Nonnull Set<ExclusionRule> exclusionRules) {
+        exclusionRules.forEach(this::registerExclusionRule);
     }
 
     /**
-     * Регистрирует правило перехода библиотеки <i>library</i> версии <i>fromVersion</i> до версии <i>toVersion</i>
+     * Регистрирует правило исключений
      *
-     * @param library     название библиотеки
-     * @param fromVersion запрашиваемая версия
-     * @param toVersion   конечная (фиксированная) версия
+     * @param exclusionRule правило исключений
      */
-    private void registerAllowedVersionChange(@Nonnull LibraryName library, @Nonnull String fromVersion, @Nonnull String toVersion) {
-        ArtifactName targetArtifactName = new ArtifactName(library, toVersion);
-        rules.computeIfAbsent(targetArtifactName, version -> new HashSet<>()).add(fromVersion);
+    private void registerExclusionRule(@Nonnull ExclusionRule exclusionRule) {
+        ArtifactName targetArtifactName = new ArtifactName(exclusionRule.getLibrary(), exclusionRule.getFixedVersion());
+        rules.computeIfAbsent(targetArtifactName, version -> new HashSet<>()).add(exclusionRule.getRequestedVersion());
     }
 
     /**
@@ -75,7 +65,7 @@ public class ExclusionsRulesStorage {
      *
      * @return набор правил исключений
      */
-    public List<ExclusionRule> getExclusionRules() {
+    List<ExclusionRule> getExclusionRules() {
         return rules.entrySet()
                     .stream()
                     .flatMap(entry -> getExclusionRules(entry.getKey(), entry.getValue()))

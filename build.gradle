@@ -1,4 +1,5 @@
 apply from: 'http://jenkins-dev.yamoney.ru/build-scripts/backend-platform/build-common-without-plugins.gradle'
+apply plugin: 'yamoney-library-project-plugin'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
 
@@ -13,10 +14,12 @@ buildscript {
     repositories {
         maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
         maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+        maven { url 'http://nexus.yamoney.ru/content/repositories/jcenter.bintray.com/' }
 
         dependencies {
             classpath 'org.ajoberstar:gradle-git:1.5.0'
             classpath 'net.researchgate:gradle-release:2.3.0'
+            classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:1.1.1'
         }
     }
 }

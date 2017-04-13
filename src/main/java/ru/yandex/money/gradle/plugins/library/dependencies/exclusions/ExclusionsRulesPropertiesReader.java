@@ -1,15 +1,17 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.io.InputStreamReader;
 import java.util.Set;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Абстрактный базовый класс читателя правил исключения изменения версий из properties файла. Читает правила из потока
@@ -18,8 +20,7 @@ import java.util.Set;
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 08.02.2017
  */
-public abstract class ExclusionsRulesPropertiesReader {
-
+abstract class ExclusionsRulesPropertiesReader {
     private final Logger log = LoggerFactory.getLogger(ExclusionsRulesPropertiesReader.class);
 
     /**
@@ -30,61 +31,27 @@ public abstract class ExclusionsRulesPropertiesReader {
     public abstract void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage);
 
     /**
-     * Считывает из входного потока правила допустимых изменений версий библиотек.
-     * Формат записи правила:
-     * <p>
-     * {@code
-     * com.fasterxml.jackson.core.jackson-annotations = 2.4.3, 2.4.5, 2.6.0 -> 2.6.5
-     * commons-digester.commons-digester = 1.8.1 -> 2.1
-     * }
-     * <p>
-     * Property файл не позволяет использовать двоеточие в названии ключа, поэтому используем точку, как разделитель группы и
-     * названия артефакта. При чтении правил, считается, что название после последней точки - название артефакта.
-     *
-     * @param rulesStorage хранилище правил изменения версий библиотек
-     * @param inputStream  входной поток с правилами
+     * Считывает из входного потока правила допустимых изменений версий библиотек
+     * и сохраняет их в переданное хранилище правил исключений
      */
-    void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream inputStream) {
-        Properties property = new Properties();
+    void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream exclusionRulesInputStream) {
+        ExclusionRulesParser exclusionRulesParser = new ExclusionRulesParser();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionRulesInputStream, UTF_8));
         try {
-            property.load(inputStream);
-        } catch (IOException e) {
-            log.warn("Cannot loadTo of dependencies resolutions rules", e);
-        }
-        Set<String> libraries = property.stringPropertyNames();
-
-        for (String library : libraries) {
-            String value = property.getProperty(library).replace(" ", "");
-            String[] versionsRule = value.split("->");
-            if (versionsRule.length == 2) {
-                String requestedVersions = versionsRule[0];
-                String targetVersion = versionsRule[1];
-                registerAllowedVersionsChanges(rulesStorage, library, requestedVersions.split(","), targetVersion);
-            } else {
-                log.warn("Wrong value format of versions rule for {}: {}", library, value);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.replaceAll("\\s+", "");
+                if (!Strings.isNullOrEmpty(line) && !isComment(line)) {
+                    Set<ExclusionRule> rules = exclusionRulesParser.parseFrom(line);
+                    rulesStorage.registerExclusionRules(rules);
+                }
             }
+        } catch (IOException e) {
+            log.warn("Cannot load dependencies resolutions rules", e);
         }
     }
 
-    private void registerAllowedVersionsChanges(@Nonnull ExclusionsRulesStorage rulesStorage,
-                                                @Nonnull String library, @Nonnull String[] fromVersions, String toVersion) {
-        LibraryName libraryName = parseLibraryName(library);
-        if (libraryName != null) {
-            rulesStorage.registerAllowedVersionsChanges(libraryName, fromVersions, toVersion);
-        }
-    }
-
-    @Nullable
-    private LibraryName parseLibraryName(@Nonnull String library) {
-        int artifactIndex = library.lastIndexOf('.');
-        if (artifactIndex == -1) {
-            log.warn("Wrong key format of library name. library={}", library);
-            return null;
-        }
-
-        String group = library.substring(0, artifactIndex);
-        String artifact = library.substring(artifactIndex + 1);
-
-        return new LibraryName(group, artifact);
+    private static boolean isComment(String line) {
+        return line.startsWith("#");
     }
 }

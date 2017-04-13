@@ -10,6 +10,7 @@ import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactNameSet;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ConflictRegister;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
+import ru.yandex.money.gradle.plugins.library.dependencies.reporters.NameFormatter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public class ConfigurationConflictsAnalyzer {
 
             conflictRegister.registerConflict(artifact, fixedVersion);
             if (canSkipConflict(artifact, fixedVersion)) {
-                log.info("Approved changing version {} : {} -> {}", artifact.getLibraryName(),
+                log.info("Approved changing version {} : {} -> {}", NameFormatter.format(artifact.getLibraryName()),
                                                                     requestedVersion, fixedVersion);
             } else {
                 conflictedLibraries.add(new ConflictedLibraryInfo(artifact, fixedVersion, findDependentPaths(artifact)));

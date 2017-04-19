@@ -45,7 +45,7 @@ public class CheckDependenciesTask extends ConventionTask {
         ExclusionRulesLoader exclusionRulesLoader = loadExclusionsRules();
         conflictVersionsResolver = new ConflictVersionsResolver(exclusionRulesLoader.getTotalExclusionRules());
         staleExclusionsDetector = StaleExclusionsDetector.create(exclusionRulesLoader.getLocalExclusionRules());
-        fixedDependencies = new FixedDependencies(getProject());
+        fixedDependencies = FixedDependencies.from(getProject());
 
         boolean hasVersionsConflict = false;
         for (Configuration configuration : getCheckedConfigurations()) {

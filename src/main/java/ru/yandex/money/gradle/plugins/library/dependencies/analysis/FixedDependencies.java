@@ -19,37 +19,70 @@ import java.util.stream.Collectors;
  * @since 13.03.2017
  */
 public class FixedDependencies {
-    private final Project project;
+    /**
+     * Хранит отображение имени конфигурации в набор зависимостей, указанных в секции dependencyManagement
+     */
+    private final Map<String, ArtifactNameSet> configurationManagedDependencies;
 
-    public FixedDependencies(Project project) {
-        this.project = project;
+    /**
+     * Жадно загружает все зависимости, указанные в секции dependencyManagement, для каждой из конфигураций проекта.
+     * Использует результат работы стороннего плагина <i>io.spring.dependency-management</i>
+     *
+     * ВАЖНО: необходимо загрузить все managed-зависимости до первого резолва зависимостей,
+     * который происходит при первом обращении к resolution result любой конфигурации.
+     * Иначе результат вызова {@link DependencyManagementExtension#getManagedVersionsForConfigurationHierarchy(Configuration)}
+     * для каждой следующей конфигурации содержит также прямые зависимости конфигурации.
+     *
+     * @param project текущий проект
+     * @return объект класса
+     */
+    public static FixedDependencies from(Project project) {
+        ManagedDependenciesLoader loader = new ManagedDependenciesLoader(project);
+        Map<String, ArtifactNameSet> configurationManagedDependencies = project.getConfigurations().stream()
+                                                                               .collect(Collectors.toMap(Configuration::getName,
+                                                                                                         loader::loadManagedDependencies));
+        return new FixedDependencies(configurationManagedDependencies);
+    }
+
+    private FixedDependencies(Map<String, ArtifactNameSet> configurationManagedDependencies) {
+        this.configurationManagedDependencies = configurationManagedDependencies;
     }
 
     /**
      * Возвращает набор имен артефактов, указанных в секции dependencyManagement, для данной конфигурации
-     * <p>
-     * Использует результат работы стороннего плагина <i>io.spring.dependency-management</i>
      *
      * @param configuration конфигурация, для которой необходимо получить набор имен артефактов
      * @return набор имен артефактов, указанных в секции dependencyManagement
      */
     ArtifactNameSet forConfiguration(@Nonnull Configuration configuration) {
-        return ArtifactNameSet.fromLibraryVersions(getManagedLibraries(configuration));
+        return configurationManagedDependencies.get(configuration.getName());
     }
 
-    private Map<LibraryName, Set<String>> getManagedLibraries(@Nonnull Configuration configuration) {
-        return getManagedLibraryVersions(configuration)
-                .entrySet().stream()
-                .collect(Collectors.toMap(entry -> LibraryName.parse(entry.getKey()),
-                                          entry -> Collections.singleton(entry.getValue())));
-    }
+    private static class ManagedDependenciesLoader {
+        private final Project project;
 
-    @SuppressWarnings("unchecked")
-    private Map<String, String> getManagedLibraryVersions(@Nonnull Configuration configuration) {
-        return getDependencyManagementExtension().getManagedVersionsForConfigurationHierarchy(configuration);
-    }
+        private ManagedDependenciesLoader(Project project) {
+            this.project = project;
+        }
 
-    private DependencyManagementExtension getDependencyManagementExtension() {
-        return project.getExtensions().getByType(DependencyManagementExtension.class);
+        ArtifactNameSet loadManagedDependencies(@Nonnull Configuration configuration) {
+            return ArtifactNameSet.fromLibraryVersions(getManagedLibraries(configuration));
+        }
+
+        private Map<LibraryName, Set<String>> getManagedLibraries(@Nonnull Configuration configuration) {
+            return getManagedLibraryVersions(configuration)
+                    .entrySet().stream()
+                    .collect(Collectors.toMap(entry -> LibraryName.parse(entry.getKey()),
+                            entry -> Collections.singleton(entry.getValue())));
+        }
+
+        @SuppressWarnings("unchecked")
+        private Map<String, String> getManagedLibraryVersions(@Nonnull Configuration configuration) {
+            return getDependencyManagementExtension().getManagedVersionsForConfigurationHierarchy(configuration);
+        }
+
+        private DependencyManagementExtension getDependencyManagementExtension() {
+            return project.getExtensions().getByType(DependencyManagementExtension.class);
+        }
     }
 }

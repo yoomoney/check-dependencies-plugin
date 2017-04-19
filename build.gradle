@@ -43,11 +43,16 @@ dependencies {
             "org.sonatype.aether:aether-connector-asynchttpclient:${aetherVersion}",
             "org.sonatype.aether:aether:${aetherVersion}",
             "org.apache.maven:maven-aether-provider:3.0.4",
-            "org.apache.maven.wagon:wagon-http-lightweight:1.0"
+            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
+            'org.codehaus.plexus:plexus-utils:2.0.7',
+            'org.codehaus.plexus:plexus-interpolation:1.14'
 
     testCompile gradleTestKit(),
                 'ru.yandex.money.common:yamoney-test-utils:8.0.1',
-                'com.netflix.nebula:nebula-test:4.0.0'
+                'com.netflix.nebula:nebula-test:4.0.0',
+                'com.google.guava:guava-jdk5:17.0',
+                'org.codehaus.plexus:plexus-utils:2.0.7',
+                'org.codehaus.plexus:plexus-interpolation:1.14'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude module: 'groovy-all'

@@ -44,8 +44,8 @@ dependencies {
             "org.sonatype.aether:aether:${aetherVersion}",
             "org.apache.maven:maven-aether-provider:3.0.4",
             "org.apache.maven.wagon:wagon-http-lightweight:1.0",
-            'org.codehaus.plexus:plexus-utils:2.0.7',
-            'org.codehaus.plexus:plexus-interpolation:1.14'
+            "org.codehaus.plexus:plexus-utils:2.0.7",
+            "org.codehaus.plexus:plexus-interpolation:1.14"
 
     testCompile gradleTestKit(),
                 'ru.yandex.money.common:yamoney-test-utils:8.0.1',

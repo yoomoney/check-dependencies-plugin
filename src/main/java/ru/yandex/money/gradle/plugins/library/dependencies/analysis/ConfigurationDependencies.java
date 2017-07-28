@@ -3,10 +3,13 @@ package ru.yandex.money.gradle.plugins.library.dependencies.analysis;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.result.DependencyResult;
 import org.gradle.api.artifacts.result.ResolvedComponentResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependent;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
  * @since 13.03.2017
  */
 class ConfigurationDependencies {
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationDependencies.class);
+
     private final Configuration configuration;
 
     ConfigurationDependencies(Configuration configuration) {
@@ -55,7 +60,13 @@ class ConfigurationDependencies {
     }
 
     private Set<? extends DependencyResult> findAllDependencies(@Nonnull Configuration configuration) {
-        return configuration.getIncoming().getResolutionResult().getAllDependencies();
+        try {
+            return configuration.getIncoming().getResolutionResult().getAllDependencies();
+        } catch (Exception ex) {
+            log.info("Failed to resolve dependencies of configuration {} with message: {}",
+                    configuration.getName(), ex.getMessage());
+            return Collections.emptySet();
+        }
     }
 
     private ArtifactDependent<ArtifactDependency> getDependencyRoot() {

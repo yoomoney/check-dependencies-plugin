@@ -31,7 +31,8 @@ ext {
 dependencies {
     compile localGroovy(),
             'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE',
-            'com.google.code.findbugs:jsr305:3.0.1'
+            'com.google.code.findbugs:jsr305:3.0.1',
+            'com.google.code.findbugs:annotations:3.0.1'
 
     //TODO: использовать org.eclipse.aether как только перейдем на Gradle 3.+
     compile "org.sonatype.aether:aether-api:${aetherVersion}",

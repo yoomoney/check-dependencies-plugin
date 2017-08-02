@@ -99,7 +99,7 @@ public class AetherRepository implements Repository {
         try {
             result = repositorySystem.readArtifactDescriptor(session, request);
         } catch (ArtifactDescriptorException e) {
-            e.printStackTrace();
+            log.debug("Failed to obtain artifact dependencies: request={}", request);
         }
 
         if (result != null) {
@@ -118,7 +118,7 @@ public class AetherRepository implements Repository {
     }
 
     private ArtifactDescriptorRequest createDirectDependenciesRequest(ArtifactName artifactName) {
-        Artifact artifact = new DefaultArtifact(getDirectDependenciesRequestString(artifactName));
+        Artifact artifact = new DefaultArtifact(formatArtifactName(artifactName));
         ArtifactDescriptorRequest request = new ArtifactDescriptorRequest();
 
         request.setArtifact(artifact);
@@ -127,7 +127,7 @@ public class AetherRepository implements Repository {
         return request;
     }
 
-    private String getDirectDependenciesRequestString(ArtifactName artifactName) {
+    private static String formatArtifactName(ArtifactName artifactName) {
         LibraryName libraryName = artifactName.getLibraryName();
         return String.format(ARTIFACT_DIRECT_DEPENDENCIES_REQUEST_FORMAT,
                              libraryName.getGroup(), libraryName.getName(), artifactName.getVersion());

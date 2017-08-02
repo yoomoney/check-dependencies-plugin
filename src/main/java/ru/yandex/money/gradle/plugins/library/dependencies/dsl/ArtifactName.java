@@ -31,6 +31,17 @@ public final class ArtifactName {
     }
 
     /**
+     * Возвращает новый объект {@link ArtifactName} с переданной версией
+     *
+     * @param artifactName исходный объект
+     * @param version требуемая версия
+     * @return новый объект {@link ArtifactName} с переданной версией
+     */
+    public static ArtifactName changeVersion(ArtifactName artifactName, String version) {
+        return new ArtifactName(artifactName.getLibraryName(), version);
+    }
+
+    /**
      * Конструктор класса
      *
      * @param group имя группы

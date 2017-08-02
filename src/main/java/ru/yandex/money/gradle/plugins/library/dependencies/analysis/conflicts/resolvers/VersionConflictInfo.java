@@ -1,6 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers;
 
-import ru.yandex.money.gradle.plugins.library.dependencies.extensions.ArtifactNameEx;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.DependencyPath;
@@ -26,7 +25,7 @@ public class VersionConflictInfo {
     }
 
     ArtifactName getTargetFixedDependency() {
-        return ArtifactNameEx.changeVersion(conflictPath.getTargetDependency().getName(), targetDependencyFixedVersion);
+        return ArtifactName.changeVersion(conflictPath.getTargetDependency().getName(), targetDependencyFixedVersion);
     }
 
     DependencyPath<ArtifactDependency> getConflictPath() {

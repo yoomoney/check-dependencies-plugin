@@ -1,4 +1,4 @@
-package ru.yandex.money.gradle.plugins.library.dependencies.analysis;
+package ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts;
 
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionsRulesStorage;
@@ -13,13 +13,13 @@ import java.util.Set;
  * @author Brovin Yaroslav (brovin@yamoney.ru)
  * @since 03.02.2017
  */
-public class ConflictVersionsResolver {
+public class ConflictVersionsChecker {
     /**
      * Хранилище правил исключений изменения версий библиотек
      */
     private final ExclusionsRulesStorage rulesStorage;
 
-    public ConflictVersionsResolver(@Nonnull ExclusionsRulesStorage storage) {
+    public ConflictVersionsChecker(@Nonnull ExclusionsRulesStorage storage) {
         this.rulesStorage = storage;
     }
 

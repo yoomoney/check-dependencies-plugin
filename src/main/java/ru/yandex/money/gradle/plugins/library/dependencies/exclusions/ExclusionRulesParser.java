@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
@@ -40,6 +41,7 @@ class ExclusionRulesParser {
      * @param exclusionRules правила исключений для одной библиотеки в виде строки
      * @return набор правил исключений
      */
+    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
     Set<ExclusionRule> parseFrom(String exclusionRules) {
         Matcher matcher = EXCLUSION_RULE_PATTERN.matcher(exclusionRules);
         if (!matcher.matches()) {

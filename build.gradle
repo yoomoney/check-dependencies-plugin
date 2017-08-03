@@ -19,21 +19,47 @@ buildscript {
         dependencies {
             classpath 'org.ajoberstar:gradle-git:1.5.0'
             classpath 'net.researchgate:gradle-release:2.3.0'
-            classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:1.1.1'
+            classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:1.1.3'
         }
     }
+}
+
+ext {
+    aetherVersion = '1.13.1'
 }
 
 dependencies {
     compile localGroovy(),
             'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE',
-            'com.google.code.findbugs:jsr305:3.0.1'
+            'com.google.code.findbugs:jsr305:3.0.1',
+            'com.google.code.findbugs:annotations:3.0.1'
+
+    //TODO: использовать org.eclipse.aether как только перейдем на Gradle 3.+
+    compile "org.sonatype.aether:aether-api:${aetherVersion}",
+            "org.sonatype.aether:aether-util:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-wagon:${aetherVersion}",
+            "org.sonatype.aether:aether-impl:${aetherVersion}",
+            "org.sonatype.aether:aether-spi:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-file:${aetherVersion}",
+            "org.sonatype.aether:aether-connector-asynchttpclient:${aetherVersion}",
+            "org.sonatype.aether:aether:${aetherVersion}",
+            "org.apache.maven:maven-aether-provider:3.0.4",
+            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
+            "org.codehaus.plexus:plexus-utils:2.0.7",
+            "org.codehaus.plexus:plexus-interpolation:1.14"
 
     testCompile gradleTestKit(),
                 'ru.yandex.money.common:yamoney-test-utils:8.0.1',
-                'com.netflix.nebula:nebula-test:4.0.0'
+                'com.netflix.nebula:nebula-test:4.0.0',
+                'com.google.guava:guava-jdk5:17.0',
+                'org.codehaus.plexus:plexus-utils:2.0.7',
+                'org.codehaus.plexus:plexus-interpolation:1.14'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
+
+excludedVersionConflictLibraries = {[
+        'org.codehaus.plexus:plexus-utils'
+]}

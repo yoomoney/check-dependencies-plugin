@@ -30,32 +30,6 @@ import javax.annotation.Nullable;
  */
 public interface ArtifactDependency extends Artifact<ArtifactDependency> {
 
-    /**
-     * Фабричный метод для создания объекта, реализующуего данный интерфейс,
-     * на основе переданной конфигурации проекта и результата резолва зависимости
-     *
-     * @param configuration конфигурация проекта
-     * @param dependency зависимость (прямая или транзитивная) конфигурации проекта
-     * @return новый объект, реализующий данный интерфейс
-     */
-    @Nullable
-    static ArtifactDependency create(Configuration configuration, DependencyResult dependency) {
-        ComponentSelector selector = dependency.getRequested();
-        if (selector instanceof ModuleComponentSelector) {
-            ModuleComponentSelector moduleSelector = (ModuleComponentSelector) selector;
-
-            if (dependency instanceof ResolvedDependencyResult) {
-                ResolvedDependencyResult resolvedDependency = (ResolvedDependencyResult) dependency;
-                return new ResolvedArtifactDependency(configuration, resolvedDependency, moduleSelector);
-            }
-
-            if (dependency instanceof UnresolvedDependencyResult) {
-                return new UnresolvedArtifactDependency(moduleSelector);
-            }
-        }
-        return null;
-    }
-
     LibraryName getRequestedLibraryName();
 
     String getRequestedVersion();

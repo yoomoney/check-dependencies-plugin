@@ -54,7 +54,7 @@ public class FixedDependencies {
      * @param configuration конфигурация, для которой необходимо получить набор имен артефактов
      * @return набор имен артефактов, указанных в секции dependencyManagement
      */
-    ArtifactNameSet forConfiguration(@Nonnull Configuration configuration) {
+    public ArtifactNameSet forConfiguration(@Nonnull Configuration configuration) {
         return configurationManagedDependencies.get(configuration.getName());
     }
 

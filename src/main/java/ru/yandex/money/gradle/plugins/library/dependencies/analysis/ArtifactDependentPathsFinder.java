@@ -18,15 +18,15 @@ import java.util.function.Predicate;
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 14.03.2017
  */
-class ArtifactDependentPathsFinder<ArtifactT extends Artifact<ArtifactT>> {
+public class ArtifactDependentPathsFinder<ArtifactT extends Artifact<ArtifactT>> {
     private final ArtifactDependent<ArtifactT> root;
     private final Predicate<? super ArtifactName> isRequestedArtifact;
 
     private Set<ArtifactName> visitedArtifacts;
     private List<DependencyPath<ArtifactT>> foundPaths;
 
-    ArtifactDependentPathsFinder(ArtifactDependent<ArtifactT> root,
-                                 Predicate<? super ArtifactName> isRequestedArtifact) {
+    public ArtifactDependentPathsFinder(ArtifactDependent<ArtifactT> root,
+                                        Predicate<? super ArtifactName> isRequestedArtifact) {
         this.root = root;
         this.isRequestedArtifact = isRequestedArtifact;
     }
@@ -36,7 +36,7 @@ class ArtifactDependentPathsFinder<ArtifactT extends Artifact<ArtifactT>> {
      *
      * @return список найденных путей
      */
-    List<DependencyPath<ArtifactT>> findPaths() {
+    public List<DependencyPath<ArtifactT>> findPaths() {
         initialize();
 
         traverse(root, DependencyPathBuilder.create());

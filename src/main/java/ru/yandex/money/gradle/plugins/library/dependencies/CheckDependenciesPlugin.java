@@ -4,6 +4,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 
 import javax.annotation.Nonnull;
 
@@ -75,6 +76,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // только, если одноименное свойство в таске имеет null значение.
         task.getConventionMapping().map("exclusionsRulesSources", () -> extension.exclusionsRulesSources);
         task.getConventionMapping().map("excludedConfigurations", () -> extension.excludedConfigurations);
+        task.getConventionMapping().map("versionSelectors", () -> new VersionSelectors(extension.versionSelectors));
     }
 
     /**

@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ public class ExclusionsRulesFileReader extends ExclusionsRulesPropertiesReader {
         this.fileName = fileName;
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @Override
     public void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage) {
         if (!Files.isReadable(Paths.get(fileName))) {

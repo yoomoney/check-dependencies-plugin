@@ -1,20 +1,29 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.repositories.ArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConfigurationConflictsAnalyzer;
-import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictVersionsResolver;
-import ru.yandex.money.gradle.plugins.library.dependencies.analysis.ConflictedLibraryInfo;
 import ru.yandex.money.gradle.plugins.library.dependencies.analysis.FixedDependencies;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.ConfigurationConflictsAnalyzer;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.ConflictVersionsChecker;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.ConflictedLibraryInfo;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.DummyVersionConflictResolver;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.RepositoryVersionConflictResolver;
+import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.VersionConflictResolver;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.ExclusionRulesLoader;
 import ru.yandex.money.gradle.plugins.library.dependencies.exclusions.StaleExclusionsDetector;
+import ru.yandex.money.gradle.plugins.library.dependencies.repositories.Repository;
+import ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether.AetherRepository;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,12 +39,14 @@ public class CheckDependenciesTask extends ConventionTask {
     private final Logger log = LoggerFactory.getLogger(CheckDependenciesTask.class);
 
     private final CheckDependenciesReporter reporter = new CheckDependenciesReporter();
-    private ConflictVersionsResolver conflictVersionsResolver;
+    private ConflictVersionsChecker conflictVersionsChecker;
     private StaleExclusionsDetector staleExclusionsDetector;
     private FixedDependencies fixedDependencies;
+    private VersionConflictResolver conflictResolver;
 
     private List<String> exclusionsRulesSources;
     private List<String> excludedConfigurations;
+    private VersionSelectors versionSelectors;
 
     /**
      * Запускается при выполнении таски
@@ -43,9 +54,10 @@ public class CheckDependenciesTask extends ConventionTask {
     @TaskAction
     public void check() {
         ExclusionRulesLoader exclusionRulesLoader = loadExclusionsRules();
-        conflictVersionsResolver = new ConflictVersionsResolver(exclusionRulesLoader.getTotalExclusionRules());
+        conflictVersionsChecker = new ConflictVersionsChecker(exclusionRulesLoader.getTotalExclusionRules());
         staleExclusionsDetector = StaleExclusionsDetector.create(exclusionRulesLoader.getLocalExclusionRules());
         fixedDependencies = FixedDependencies.from(getProject());
+        conflictResolver = createVersionConflictResolver();
 
         boolean hasVersionsConflict = false;
         for (Configuration configuration : getCheckedConfigurations()) {
@@ -64,6 +76,32 @@ public class CheckDependenciesTask extends ConventionTask {
             reporter.reportStaleExclusions(staleExclusionsDetector.getStaleExclusions());
             throw new IllegalStateException(reporter.getFormattedReport());
         }
+    }
+
+    private VersionConflictResolver createVersionConflictResolver() {
+        VersionSelectors versionSelectors = getVersionSelectors();
+
+        if (versionSelectors.count() > 0) {
+            Repository repository = AetherRepository.create(getMavenRepositoryUrls());
+            return new RepositoryVersionConflictResolver(repository, getVersionSelectors());
+        }
+
+        return new DummyVersionConflictResolver();
+    }
+
+    private List<String> getMavenRepositoryUrls() {
+        Collection<ArtifactRepository> repositories = getProject().getRepositories().getAsMap().values();
+        List<String> mavenUrls = new ArrayList<>(repositories.size());
+
+        for (ArtifactRepository repository: repositories) {
+            if (repository instanceof MavenArtifactRepository) {
+                mavenUrls.add(((MavenArtifactRepository)repository).getUrl().toString());
+            } else {
+                log.warn("Non-maven repository was skipped: {}", repository.getName());
+            }
+        }
+
+        return mavenUrls;
     }
 
     /**
@@ -95,7 +133,7 @@ public class CheckDependenciesTask extends ConventionTask {
      **/
     private List<ConflictedLibraryInfo> calculateConflictedVersionsLibrariesFor(@Nonnull Configuration configuration) {
         return ConfigurationConflictsAnalyzer.create(fixedDependencies, configuration,
-                conflictVersionsResolver, staleExclusionsDetector)
+                conflictVersionsChecker, staleExclusionsDetector, conflictResolver)
                 .findConflictedLibraries();
     }
 
@@ -142,5 +180,13 @@ public class CheckDependenciesTask extends ConventionTask {
      */
     void setExcludedConfigurations(List<String> excludedConfigurations) {
         this.excludedConfigurations = new ArrayList<>(excludedConfigurations);
+    }
+
+    VersionSelectors getVersionSelectors() {
+        return versionSelectors;
+    }
+
+    void setVersionSelector(VersionSelectors versionSelectors) {
+        this.versionSelectors = versionSelectors;
     }
 }

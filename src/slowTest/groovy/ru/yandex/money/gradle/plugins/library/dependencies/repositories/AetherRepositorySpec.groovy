@@ -4,6 +4,7 @@ import ru.yandex.money.gradle.plugins.library.TestRepositories
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName
 import ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether.AetherRepository
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -43,9 +44,10 @@ class AetherRepositorySpec extends Specification {
             ])
     }
 
+    @Ignore
     def 'check that library versions are found on remote repository'() {
         given: 'remote repositories'
-            def urls = ['http://nexus.yamoney.ru/content/repositories/central']
+        def urls = ['https://nexus.yamoney.ru/content/repositories/central']
             def repository = AetherRepository.create(urls.toList())
 
         when: 'requesting versions'
@@ -56,9 +58,10 @@ class AetherRepositorySpec extends Specification {
             versions.containsAll(['4.9', '4.10', '4.11', '4.12'])
     }
 
+    @Ignore
     def 'check that library versions are found on multiple repositories'() {
         given: 'local and remote repositories'
-            def urls = [TestRepositories.MAVEN_REPO_2, 'http://nexus.yamoney.ru/content/repositories/central/']
+        def urls = [TestRepositories.MAVEN_REPO_2, 'https://nexus.yamoney.ru/content/repositories/central/']
             def repository = AetherRepository.create(urls.toList())
 
         when: 'requesting versions'

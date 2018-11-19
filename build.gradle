@@ -19,6 +19,7 @@ def aetherVersion = '1.13.1'
 dependencies {
     compile localGroovy(),
             'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE',
+            'com.google.guava:guava:18.0',
             'com.google.code.findbugs:jsr305:3.0.1',
             'com.google.code.findbugs:annotations:3.0.1'
 
@@ -38,7 +39,6 @@ dependencies {
 
     testCompile gradleTestKit(),
                 'com.netflix.nebula:nebula-test:4.0.0',
-                'com.google.guava:guava-jdk5:17.0',
                 'org.codehaus.plexus:plexus-utils:2.0.7',
                 'org.codehaus.plexus:plexus-interpolation:1.14'
 

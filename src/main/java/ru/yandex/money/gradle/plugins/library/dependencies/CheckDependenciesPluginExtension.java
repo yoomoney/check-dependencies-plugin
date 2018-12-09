@@ -42,4 +42,15 @@ public class CheckDependenciesPluginExtension {
      * Представляет собой отображение имени библиотеки в формате group:name на селектор версий.
      */
     public Map<String, Closure<Boolean>> versionSelectors = Collections.emptyMap();
+
+    /**
+     * Установка необходимости производить проверку конфликта версий библиотек
+     */
+    public boolean enableVersionConflictCheck = true;
+
+    /**
+     * Список библиотек, для которых не требуется выполнять проверку конфликта версий библиотек
+     */
+    public List<String> excludedVersionConflictLibraries = new ArrayList<>();
+
 }

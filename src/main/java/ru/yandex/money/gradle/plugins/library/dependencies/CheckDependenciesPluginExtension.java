@@ -4,8 +4,10 @@ import groovy.lang.Closure;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Класс, позволяющий настраивать CheckDependenciesPlugin.
@@ -51,6 +53,17 @@ public class CheckDependenciesPluginExtension {
     /**
      * Список библиотек, для которых не требуется выполнять проверку конфликта версий библиотек
      */
-    public List<String> excludedVersionConflictLibraries = new ArrayList<>();
+    public Set<String> excludedVersionConflictLibraries = new HashSet<>();
+
+    /**
+     * Установка необходимости вывода внутренних библиотек
+     */
+    public boolean showInnerDependencies = true;
+
+    /**
+     * Установка необходимости вывода внешних библиотек
+     */
+    public boolean showOuterDependencies = false;
+
 
 }

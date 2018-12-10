@@ -63,11 +63,11 @@ class CheckVersionSpec extends AbstractPluginSpec {
                
                 """.stripIndent()
         when:
-        def result2 = runTasksSuccessfully("dependencies")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
-        !(result2.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-enum-utils"))
-        result2.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-xml-utils")
+        !(result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-xml-utils")
     }
 
     def "Found conflict, dependencies has major version equals '+'"() {

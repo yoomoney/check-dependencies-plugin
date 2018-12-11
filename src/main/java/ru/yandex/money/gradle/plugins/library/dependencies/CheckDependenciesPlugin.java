@@ -55,7 +55,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String PRINT_INNER_DEPENDENCIES_TASK_NAME = "printNewInnerDependenciesVersions";
     private static final String PRINT_OUTER_DEPENDENCIES_TASK_NAME = "printNewOuterDependenciesVersions";
 
-    private static final String PRINT_OUTER_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
+    private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
     private static final String CHECK_DEPENDENCIES_TASK_GROUP = "verification";
     private static final String CHECK_DEPENDENCIES_TASK_DESCRIPTION = "Checks current used libraries versions on " +
@@ -87,15 +87,11 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
-                    if (extension.enableVersionConflictCheck) {
-                        VersionChecker.runCheckVersion(project, extension.excludedVersionConflictLibraries);
+                    if (extension.enableMajorVersionCheck) {
+                        VersionChecker.runCheckVersion(project, extension.excludedMajorVersionCheckLibraries);
                     }
-                    if (extension.showInnerDependencies && isFeatureBranch(target)) {
-                        createPrintInnerDependenciesVersionsTask(target);
-                    }
-                    if (extension.showOuterDependencies && isFeatureBranch(target)) {
-                        createPrintOuterDependenciesVersionsTask(target);
-                    }
+                    createPrintInnerDependenciesVersionsTask(target);
+                    createPrintOuterDependenciesVersionsTask(target);
                 }
         );
     }
@@ -122,10 +118,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static void createPrintInnerDependenciesVersionsTask(@Nonnull Project project) {
         PrintInnerDependenciesVersionsTask task = project.getTasks()
                 .create(PRINT_INNER_DEPENDENCIES_TASK_NAME, PrintInnerDependenciesVersionsTask.class);
-        task.setGroup(PRINT_OUTER_DEPENDENCIES_TASK_GROUP);
-        task.setDescription("Prints available new versions of inner dependencies");
-
-        project.getTasks().findByName("compileJava").dependsOn(task);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints new available versions of inner dependencies");
     }
 
     /**
@@ -136,10 +130,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static void createPrintOuterDependenciesVersionsTask(@Nonnull Project project) {
         PrintOuterDependenciesVersionsTask task = project.getTasks()
                 .create(PRINT_OUTER_DEPENDENCIES_TASK_NAME, PrintOuterDependenciesVersionsTask.class);
-        task.setGroup(PRINT_OUTER_DEPENDENCIES_TASK_GROUP);
-        task.setDescription("Prints available new versions of outer dependencies");
-
-        project.getTasks().findByName("compileJava").dependsOn(task);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints new available versions of outer dependencies");
     }
 
     private static boolean isFeatureBranch(Project project) {

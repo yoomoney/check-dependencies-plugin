@@ -23,11 +23,11 @@ class CheckVersionSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-xml-utils")
-        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-json-utils")
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
     }
 
-    def "Not found conflict for guava libraries"() {
+    def "Not found conflict for outer libraries"() {
 
         given:
         buildFile << """
@@ -57,7 +57,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
                } 
                
                checkDependencies {
-                    excludedVersionConflictLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
+                    excludedMajorVersionCheckLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
                }
                         
                
@@ -66,8 +66,8 @@ class CheckVersionSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        !(result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-enum-utils"))
-        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-xml-utils")
+        !(result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
     }
 
     def "Found conflict, dependencies has major version equals '+'"() {
@@ -85,7 +85,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-json-utils")
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
     }
 
     def "Found conflict, dependencies has version with '+'"() {
@@ -103,6 +103,6 @@ class CheckVersionSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        result.standardError.contains("There is major vesion conflict for dependepcy=ru.yandex.money.common:yamoney-json-utils")
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
     }
 }

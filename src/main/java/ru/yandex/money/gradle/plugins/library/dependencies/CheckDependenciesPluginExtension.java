@@ -48,22 +48,10 @@ public class CheckDependenciesPluginExtension {
     /**
      * Установка необходимости производить проверку конфликта версий библиотек
      */
-    public boolean enableVersionConflictCheck = true;
+    public boolean enableMajorVersionCheck = true;
 
     /**
      * Список библиотек, для которых не требуется выполнять проверку конфликта версий библиотек
      */
-    public Set<String> excludedVersionConflictLibraries = new HashSet<>();
-
-    /**
-     * Установка необходимости вывода внутренних библиотек
-     */
-    public boolean showInnerDependencies = true;
-
-    /**
-     * Установка необходимости вывода внешних библиотек
-     */
-    public boolean showOuterDependencies = false;
-
-
+    public Set<String> excludedMajorVersionCheckLibraries = new HashSet<>();
 }

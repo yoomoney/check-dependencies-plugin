@@ -35,7 +35,7 @@ class CheckVersionAction implements Action<DependencyResolveDetails> {
         String moduleGroupAndName = dependency.getRequested().getGroup() + ':' + dependency.getRequested().getName();
 
         if (conflictModules.containsKey(moduleGroupAndName)) {
-            String errorMsg = "There is major vesion conflict for dependepcy=" + moduleGroupAndName + ", versions=" +
+            String errorMsg = "There is major vesion conflict for dependency=" + moduleGroupAndName + ", versions=" +
                     conflictModules.get(moduleGroupAndName);
 
             if (project.getGradle().getStartParameter().getTaskNames().get(0).endsWith("dependencies")) {

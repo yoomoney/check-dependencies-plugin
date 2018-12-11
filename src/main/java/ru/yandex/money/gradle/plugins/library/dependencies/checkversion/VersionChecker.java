@@ -19,7 +19,7 @@ import java.util.Set;
  * @author horyukova
  * @since 07.12.2018
  */
-public class VersionChecker extends DefaultTask {
+public class VersionChecker {
     private static final Map<String, Set<String>> conflictModules = new HashMap<>();
 
     /**

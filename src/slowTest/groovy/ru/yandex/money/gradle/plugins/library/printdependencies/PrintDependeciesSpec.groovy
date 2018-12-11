@@ -15,6 +15,9 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
                 }
                 
+                checkDependencies {
+                    enableMajorVersionCheck = false
+                }
         """.stripIndent()
     }
 
@@ -26,7 +29,7 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
             dependencies {
                 compile 'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'ru.yandex.money.common:yamoney-xml-utils:1.0.0',
-                        'com.google.guava:guava:22.0'                       
+                        'com.google.guava:guava:18.0'                       
             } 
             
         """.stripIndent()

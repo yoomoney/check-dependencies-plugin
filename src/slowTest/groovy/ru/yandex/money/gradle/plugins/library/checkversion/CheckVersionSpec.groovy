@@ -17,6 +17,10 @@ class CheckVersionSpec extends AbstractPluginSpec {
                         'ru.yandex.money.common:yamoney-json-utils:4.0.3'
                        
             } 
+            checkDependencies {
+                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
+            }
+            
                 """.stripIndent()
 
         when:
@@ -31,11 +35,16 @@ class CheckVersionSpec extends AbstractPluginSpec {
 
         given:
         buildFile << """
-                dependencies {
+            dependencies {
                 compile 'com.google.guava:guava:22.0',
                         'com.google.guava:guava:23.0'
                         
-               } 
+            }
+            
+            checkDependencies {
+                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
+            }
+             
                 """.stripIndent()
         when:
         def result = runTasksSuccessfully("dependencies")
@@ -58,6 +67,58 @@ class CheckVersionSpec extends AbstractPluginSpec {
                
                checkDependencies {
                     excludedMajorVersionCheckLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
+               }
+                        
+               
+                """.stripIndent()
+        when:
+        def result = runTasksSuccessfully("dependencies")
+
+        then:
+        !(result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+    }
+
+
+    def "Found conflict for all libraries"() {
+
+        given:
+        buildFile << """
+                dependencies {
+                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                        'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                        'com.google.guava:guava:22.0',
+                        'com.google.guava:guava:23.0'
+                        
+               } 
+                
+               
+                """.stripIndent()
+        when:
+        def result = runTasksSuccessfully("dependencies")
+
+        then:
+        result.standardError.contains("There is major vesion conflict for dependency=com.google.guava:guava")
+        result.standardError.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+    }
+
+
+    def "Not found conflict for includeMajorVersionCheckLibraries + excludedVersionConflictLibraries"() {
+
+        given:
+        buildFile << """
+                dependencies {
+                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                        'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                        'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
+                        'ru.yandex.money.common:yamoney-enum-utils:4.0.3'
+                        
+               } 
+               
+               checkDependencies {
+                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
+                    excludedMajorVersionCheckLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
+
                }
                         
                

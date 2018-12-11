@@ -6,6 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.DependencyResolveDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,9 +22,9 @@ class CheckVersionAction implements Action<DependencyResolveDetails> {
 
     private final Project project;
 
-    private final Map<String, Set<String>> conflictModules;
+    private final Map<LibraryName, Set<String>> conflictModules;
 
-    CheckVersionAction(Project project, Map<String, Set<String>> conflictModules) {
+    CheckVersionAction(Project project, Map<LibraryName, Set<String>> conflictModules) {
         this.project = project;
         this.conflictModules = conflictModules;
 
@@ -32,11 +33,11 @@ class CheckVersionAction implements Action<DependencyResolveDetails> {
     @Override
     public void execute(DependencyResolveDetails dependency) {
 
-        String moduleGroupAndName = dependency.getRequested().getGroup() + ':' + dependency.getRequested().getName();
+        LibraryName libraryName = new LibraryName(dependency.getRequested().getGroup(), dependency.getRequested().getName());
 
-        if (conflictModules.containsKey(moduleGroupAndName)) {
-            String errorMsg = "There is major vesion conflict for dependency=" + moduleGroupAndName + ", versions=" +
-                    conflictModules.get(moduleGroupAndName);
+        if (conflictModules.containsKey(libraryName)) {
+            String errorMsg = String.format("There is major vesion conflict for dependency=%s:%s, versions=%s",
+                    libraryName.getGroup(), libraryName.getName(), conflictModules.get(libraryName));
 
             if (project.getGradle().getStartParameter().getTaskNames().get(0).endsWith("dependencies")) {
                 log.error(errorMsg);

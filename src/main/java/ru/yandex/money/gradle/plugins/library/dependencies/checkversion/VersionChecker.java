@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.DependencyResolveDetails;
 import org.gradle.api.Project;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +21,20 @@ import java.util.Set;
  * @since 07.12.2018
  */
 public class VersionChecker {
-    private static final Map<String, Set<String>> conflictModules = new HashMap<>();
+    private static final Map<LibraryName, Set<String>> conflictModules = new HashMap<>();
 
     /**
      * Запуск проверки
      *
      * @param project проект
      */
-    public static void runCheckVersion(Project project, Set<String> excludedVersionConflict) {
+    public static void runCheckVersion(Project project,
+                                       Set<String> excludedLibraries,
+                                       Set<String> includePrefixLibraries) {
         ConfigurationContainer allConfigurations = project.getConfigurations();
 
         Action<DependencyResolveDetails> findAllVersionConflictAction =
-                new FindAllVersionConflictAction(excludedVersionConflict, conflictModules);
+                new FindAllVersionConflictAction(excludedLibraries, includePrefixLibraries, conflictModules);
 
         Action<DependencyResolveDetails> checkVersionAction =
                 new CheckVersionAction(project, conflictModules);

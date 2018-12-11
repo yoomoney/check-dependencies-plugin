@@ -172,6 +172,17 @@ checkDependencies {
 }
 ```
 
+Библиотеки, для которых будут проверяться конфликты мажорных версий можно описать с помощью префиксов, с которых начинаются 
+названия групп. 
+Например, для того, чтобы проверять конфликты только для библиотек, название группы которых начинается с
+"ru.yandex.money" или "ru.yamoney", нужно задать настройку includeMajorVersionCheckPrefixLibraries следующим образом:
+
+```groovy
+checkDependencies {
+   includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']    // default - empty
+}
+```
+
 Также можно исключить из проверки конкретные артифакты:
 ```groovy
 checkDependencies {

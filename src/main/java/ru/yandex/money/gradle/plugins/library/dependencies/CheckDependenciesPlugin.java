@@ -88,7 +88,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
                     if (extension.enableMajorVersionCheck) {
-                        VersionChecker.runCheckVersion(project, extension.excludedMajorVersionCheckLibraries);
+                        VersionChecker.runCheckVersion(project, extension.excludedMajorVersionCheckLibraries,
+                                extension.includeMajorVersionCheckPrefixLibraries);
                     }
                     createPrintInnerDependenciesVersionsTask(target);
                     createPrintOuterDependenciesVersionsTask(target);

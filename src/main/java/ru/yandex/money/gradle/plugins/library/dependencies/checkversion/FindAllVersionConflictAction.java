@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.checkversion;
 
 import org.gradle.api.Action;
 import org.gradle.api.artifacts.DependencyResolveDetails;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,14 +19,18 @@ import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.get
  * @since 09.12.2018
  */
 class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
-    private final Set<String> excludedVersionConflictLibraries;
+    private final Set<String> excludedLibraries;
+    private final Set<String> includePrefixLibraries;
 
-    private final Map<String, String> moduleVersions = new HashMap<>();
-    private final Map<String, Set<String>> conflictModules;
+    private final Map<LibraryName, String> majorModuleVersions = new HashMap<>();
+    private final Map<LibraryName, Set<String>> conflictModules;
 
-    FindAllVersionConflictAction(Set<String> excludedVersionConflictLibraries, Map<String, Set<String>> conflictModules) {
-        this.excludedVersionConflictLibraries = excludedVersionConflictLibraries;
+    FindAllVersionConflictAction(Set<String> excludedLibraries,
+                                 Set<String> includePrefixLibraries,
+                                 Map<LibraryName, Set<String>> conflictModules) {
+        this.excludedLibraries = excludedLibraries;
         this.conflictModules = conflictModules;
+        this.includePrefixLibraries = includePrefixLibraries;
     }
 
     @Override
@@ -41,20 +46,22 @@ class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
             requestedVersion = getArtifactLatestVersion(groupDependency, nameDependency);
         }
 
-        String moduleGroupAndName = groupDependency + ':' + nameDependency;
-        String savedVersion = moduleVersions.get(moduleGroupAndName);
-        if (savedVersion == null) {
-            moduleVersions.put(moduleGroupAndName, requestedVersion);
-        } else {
-            boolean isVersionConflict = !Objects.equals(getMajorVer(requestedVersion), getMajorVer(savedVersion));
+        LibraryName libraryName = new LibraryName(groupDependency, nameDependency);
+        String savedVersion = majorModuleVersions.get(libraryName);
+        String majorRequestedVersion = getMajorVer(requestedVersion);
 
-            if (isVersionConflict && isNeedCheck(moduleGroupAndName)) {
-                Set<String> versionSet = conflictModules.getOrDefault(moduleGroupAndName, new HashSet<>());
+        if (savedVersion == null) {
+            majorModuleVersions.put(libraryName, majorRequestedVersion);
+        } else {
+
+            if (isNeedCheck(libraryName) && !Objects.equals(majorRequestedVersion, savedVersion)) {
+
+                Set<String> versionSet = conflictModules.getOrDefault(libraryName, new HashSet<>());
 
                 versionSet.add(requestedVersion);
                 versionSet.add(savedVersion);
 
-                conflictModules.put(moduleGroupAndName, versionSet);
+                conflictModules.put(libraryName, versionSet);
             }
         }
 
@@ -64,8 +71,11 @@ class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
         return ver.split("\\.")[0];
     }
 
-    private boolean isNeedCheck(String moduleGroupAndName) {
-        return !excludedVersionConflictLibraries.contains(moduleGroupAndName)
-                && (moduleGroupAndName.contains("ru.yandex.money") || moduleGroupAndName.contains("ru.yamoney"));
+    private boolean isNeedCheck(LibraryName libraryName) {
+        boolean isLibraryInExcluded = excludedLibraries.contains(libraryName.toString());
+
+        return !isLibraryInExcluded
+                && (includePrefixLibraries.isEmpty() ||
+                includePrefixLibraries.stream().anyMatch(prefix -> libraryName.getGroup().startsWith(prefix)));
     }
 }

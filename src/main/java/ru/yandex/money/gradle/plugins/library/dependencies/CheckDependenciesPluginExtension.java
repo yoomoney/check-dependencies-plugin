@@ -1,6 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import groovy.lang.Closure;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,11 @@ public class CheckDependenciesPluginExtension {
      * Установка необходимости производить проверку конфликта версий библиотек
      */
     public boolean enableMajorVersionCheck = true;
+
+    /**
+     * Список префиксов библиотек, для которых требуется выполнять проверку конфликта версий библиотек (например, ru.yamoney)
+     */
+    public Set<String> includeMajorVersionCheckPrefixLibraries = new HashSet<>();
 
     /**
      * Список библиотек, для которых не требуется выполнять проверку конфликта версий библиотек

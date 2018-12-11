@@ -15,8 +15,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.getArtifactLatestVersion;
-import static ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.DependencyType.INNER;
-import static ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.DependencyType.OUTER;
 
 /**
  * Выводит новые версии подключаемых библиотек
@@ -55,8 +53,7 @@ public class PrintDependenciesAction implements Action<Project> {
                                     }
                                     checked.put(dependency, true);
 
-                                    if ((dependencyType == INNER && isInnerDependencies(dependency))
-                                            || (dependencyType == OUTER && !isInnerDependencies(dependency))) {
+                                    if (dependencyType.isCorresponds(dependency)) {
                                         printLatestDependencyVersion(dependency, resolvedVersionMap.get(dependency.getName()));
                                     }
                                 }

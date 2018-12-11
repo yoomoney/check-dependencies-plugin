@@ -133,13 +133,4 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints new available versions of outer dependencies");
     }
-
-    private static boolean isFeatureBranch(Project project) {
-        String propertyFeatureBranch = "false";
-        if (project.getExtensions().getExtraProperties().has("isFeatureBranch")) {
-            propertyFeatureBranch = project.getExtensions().getExtraProperties().get("isFeatureBranch").toString();
-        }
-
-        return Boolean.parseBoolean(propertyFeatureBranch);
-    }
 }

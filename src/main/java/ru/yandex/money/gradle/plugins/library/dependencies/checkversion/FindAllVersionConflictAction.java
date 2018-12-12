@@ -19,13 +19,13 @@ import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.get
  * @since 09.12.2018
  */
 class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
-    private final Set<String> excludedLibraries;
+    private final Set<LibraryName> excludedLibraries;
     private final Set<String> includePrefixLibraries;
 
     private final Map<LibraryName, String> majorModuleVersions = new HashMap<>();
     private final Map<LibraryName, Set<String>> conflictModules;
 
-    FindAllVersionConflictAction(Set<String> excludedLibraries,
+    FindAllVersionConflictAction(Set<LibraryName> excludedLibraries,
                                  Set<String> includePrefixLibraries,
                                  Map<LibraryName, Set<String>> conflictModules) {
         this.excludedLibraries = excludedLibraries;
@@ -72,7 +72,7 @@ class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
     }
 
     private boolean isNeedCheck(LibraryName libraryName) {
-        boolean isLibraryInExcluded = excludedLibraries.contains(libraryName.toString());
+        boolean isLibraryInExcluded = excludedLibraries.contains(libraryName);
 
         return !isLibraryInExcluded
                 && (includePrefixLibraries.isEmpty() ||

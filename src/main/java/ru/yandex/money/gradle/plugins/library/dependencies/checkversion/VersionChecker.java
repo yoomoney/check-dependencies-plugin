@@ -29,7 +29,7 @@ public class VersionChecker {
      * @param project проект
      */
     public static void runCheckVersion(Project project,
-                                       Set<String> excludedLibraries,
+                                       Set<LibraryName> excludedLibraries,
                                        Set<String> includePrefixLibraries) {
         ConfigurationContainer allConfigurations = project.getConfigurations();
 

@@ -67,14 +67,4 @@ public final class LibraryName {
     public int hashCode() {
         return 7 * group.hashCode() + name.hashCode();
     }
-
-    /**
-     * Преобразует переданный объект LibraryName в строку, представляющюю полное имя библиотеки
-     *
-     * @return строка, содержащая полное имя библиотеки в формате 'идентификатор группы':'имя библиотеки'
-     */
-    @Override
-    public String toString() {
-        return group + ':' + name;
-    }
 }

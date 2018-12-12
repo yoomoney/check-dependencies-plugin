@@ -64,16 +64,11 @@ public class PrintDependenciesAction implements Action<Project> {
         }
     }
 
-    private static boolean isInnerDependencies(Dependency dependency) {
-        return dependency.getGroup().startsWith("ru.yandex.money")
-                || dependency.getGroup().startsWith("ru.yamoney");
-    }
-
     private void printLatestDependencyVersion(Dependency dependency, String realVersion) {
         String newest = getArtifactLatestVersion(dependency.getGroup(), dependency.getName());
 
         if (!Objects.equals(realVersion, newest)) {
-            log.warn("{}:{} {} -> {}", dependency.getGroup(), dependency.getName(), realVersion, newest);
+            log.warn("New available version: {}:{} {} -> {}", dependency.getGroup(), dependency.getName(), realVersion, newest);
         }
     }
 }

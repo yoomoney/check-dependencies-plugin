@@ -167,8 +167,8 @@ checkDependencies {
 
 Проверку конфликтов можно отключить, выставив данную настройку в false:
 ```groovy
-checkDependencies {
-   enableMajorVersionCheck = true //default
+majorVersionChecker {
+   enable = true // true является значением по умолчанию
 }
 ```
 
@@ -178,16 +178,16 @@ checkDependencies {
 "ru.yandex.money" или "ru.yamoney", нужно задать настройку includeMajorVersionCheckPrefixLibraries следующим образом:
 
 ```groovy
-checkDependencies {
-   includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']    // default - empty
+majorVersionChecker {
+   includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']    // По умолчанию список пуст
 }
 ```
 
-Также можно исключить из проверки конкретные артифакты:
+Также можно исключить из проверки конкретные артефакты:
 ```groovy
-checkDependencies {
-   excludedMajorVersionCheckLibraries = ["ru.yandex.money.common:yamoney-xml-utils", 
-                                        "ru.yandex.money.common:yamoney-json-utils"]    // default - empty
+majorVersionChecker {
+   excludeDependencies = ["ru.yandex.money.common:yamoney-xml-utils", 
+                                        "ru.yandex.money.common:yamoney-json-utils"]  // По умолчанию список пуст
 }
 ```
 

@@ -15,8 +15,8 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
                     maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
                 }
                 
-                checkDependencies {
-                    enableMajorVersionCheck = false
+                majorVersionChecker {
+                    enabled = false
                 }
         """.stripIndent()
     }

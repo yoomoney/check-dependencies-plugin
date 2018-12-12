@@ -17,8 +17,8 @@ class CheckVersionSpec extends AbstractPluginSpec {
                         'ru.yandex.money.common:yamoney-json-utils:4.0.3'
                        
             } 
-            checkDependencies {
-                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
+            majorVersionChecker {
+                    includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']
             }
             
                 """.stripIndent()
@@ -41,8 +41,8 @@ class CheckVersionSpec extends AbstractPluginSpec {
                         
             }
             
-            checkDependencies {
-                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
+            majorVersionChecker {
+                    includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']
             }
              
                 """.stripIndent()
@@ -65,8 +65,8 @@ class CheckVersionSpec extends AbstractPluginSpec {
                         
                } 
                
-               checkDependencies {
-                    excludedMajorVersionCheckLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
+               majorVersionChecker {
+                    excludeDependencies = ['ru.yandex.money.common:yamoney-enum-utils']
                }
                         
                
@@ -115,9 +115,9 @@ class CheckVersionSpec extends AbstractPluginSpec {
                         
                } 
                
-               checkDependencies {
-                    includeMajorVersionCheckPrefixLibraries = ['ru.yamoney', 'ru.yandex.money']
-                    excludedMajorVersionCheckLibraries = ['ru.yandex.money.common:yamoney-enum-utils']
+               majorVersionChecker {
+                    includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']
+                    excludeDependencies = ['ru.yandex.money.common:yamoney-enum-utils']
 
                }
                         

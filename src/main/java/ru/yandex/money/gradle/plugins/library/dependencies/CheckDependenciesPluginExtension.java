@@ -1,14 +1,11 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import groovy.lang.Closure;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Класс, позволяющий настраивать CheckDependenciesPlugin.
@@ -41,23 +38,8 @@ public class CheckDependenciesPluginExtension {
      * Селектор версий представляет собой функцию, принимающую на вход версию библиотеки в виде строки,
      * и возвращающую true, если данную версию библиотеки нужно проанализировать на предмет возникновения конфликтов,
      * и возвращающую false, если данную версию бибилиотеки нужно проигнорировать
-     *
+     * <p>
      * Представляет собой отображение имени библиотеки в формате group:name на селектор версий.
      */
     public Map<String, Closure<Boolean>> versionSelectors = Collections.emptyMap();
-
-    /**
-     * Установка необходимости производить проверку конфликта версий библиотек
-     */
-    public boolean enableMajorVersionCheck = true;
-
-    /**
-     * Список префиксов библиотек, для которых требуется выполнять проверку конфликта версий библиотек (например, ru.yamoney)
-     */
-    public Set<String> includeMajorVersionCheckPrefixLibraries = new HashSet<>();
-
-    /**
-     * Список библиотек, для которых не требуется выполнять проверку конфликта версий библиотек
-     */
-    public Set<String> excludedMajorVersionCheckLibraries = new HashSet<>();
 }

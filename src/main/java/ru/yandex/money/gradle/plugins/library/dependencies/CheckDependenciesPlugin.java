@@ -4,9 +4,16 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
+import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
+import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
+import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintInnerDependenciesVersionsTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintOuterDependenciesVersionsTask;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Плагин проверяет легитимность изменения версий используемых библиотек (как прямо, так и по транзитивным зависимостям) в проекте.
@@ -49,14 +56,20 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
      * Имя таски, добавляемой плагином при подключении к проекту
      */
     public static final String CHECK_DEPENDENCIES_TASK_NAME = "checkLibraryDependencies";
+    private static final String PRINT_INNER_DEPENDENCIES_TASK_NAME = "printNewInnerDependenciesVersions";
+    private static final String PRINT_OUTER_DEPENDENCIES_TASK_NAME = "printNewOuterDependenciesVersions";
+
+    private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
     private static final String CHECK_DEPENDENCIES_TASK_GROUP = "verification";
     private static final String CHECK_DEPENDENCIES_TASK_DESCRIPTION = "Checks current used libraries versions on " +
-                                                                      "conflict with platform libraries version.";
+            "conflict with platform libraries version.";
     private static final String CHECK_DEPENDENCIES_EXTENSION_NAME = "checkDependencies";
     private static final String SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID = "io.spring.dependency-management";
     private static final String ERROR_APPLYING_PLUGIN_REQUIRED = "\"%s\" plugin is required for correct working of check " +
-                                                                  "dependencies plugin.%n Apply this plugin in build script.";
+            "dependencies plugin.%n Apply this plugin in build script.";
+
+    private static final String MAJOR_VERSION_CHECKER_EXTENSION_NAME = "majorVersionChecker";
 
     @Override
     public void apply(Project target) {
@@ -64,8 +77,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
             throw new GradleException(String.format(ERROR_APPLYING_PLUGIN_REQUIRED, SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID));
         }
 
-        CheckDependenciesPluginExtension extension = new CheckDependenciesPluginExtension();
-        target.getExtensions().add(CHECK_DEPENDENCIES_EXTENSION_NAME, extension);
+        CheckDependenciesPluginExtension checkDependenciesExtension = new CheckDependenciesPluginExtension();
+        target.getExtensions().add(CHECK_DEPENDENCIES_EXTENSION_NAME, checkDependenciesExtension);
 
         CheckDependenciesTask task = createCheckDependenciesTask(target);
         target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(task);
@@ -74,9 +87,32 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // проекта бессмысленно. Поэтому вытаскиваем имя файла исключений после того, как проект полностью сформирован.
         // Так же стоит обратить внимание, что ConventionMapping - это список значений для свойств таски и значение из него берется
         // только, если одноименное свойство в таске имеет null значение.
-        task.getConventionMapping().map("exclusionsRulesSources", () -> extension.exclusionsRulesSources);
-        task.getConventionMapping().map("excludedConfigurations", () -> extension.excludedConfigurations);
-        task.getConventionMapping().map("versionSelectors", () -> new VersionSelectors(extension.versionSelectors));
+        task.getConventionMapping().map("exclusionsRulesSources",
+                () -> checkDependenciesExtension.exclusionsRulesSources);
+        task.getConventionMapping().map("excludedConfigurations",
+                () -> checkDependenciesExtension.excludedConfigurations);
+        task.getConventionMapping().map("versionSelectors",
+                () -> new VersionSelectors(checkDependenciesExtension.versionSelectors));
+
+        MajorVersionCheckerExtension majorVersionCheckerExtension = new MajorVersionCheckerExtension();
+        target.getExtensions().add(MAJOR_VERSION_CHECKER_EXTENSION_NAME, majorVersionCheckerExtension);
+
+
+        // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
+        target.afterEvaluate(project -> {
+                    Set<LibraryName> excludeDependencies = majorVersionCheckerExtension.excludeDependencies.stream()
+                            .map(LibraryName::parse)
+                            .collect(Collectors.toSet());
+
+                    if (majorVersionCheckerExtension.enabled) {
+                        VersionChecker.runCheckVersion(project, excludeDependencies,
+                                majorVersionCheckerExtension.includeGroupIdPrefixes);
+                    }
+
+                    createPrintInnerDependenciesVersionsTask(target);
+                    createPrintOuterDependenciesVersionsTask(target);
+                }
+        );
     }
 
     /**
@@ -91,5 +127,29 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         task.setDescription(CHECK_DEPENDENCIES_TASK_DESCRIPTION);
 
         return task;
+    }
+
+    /**
+     * Создает задачу вывода новых версий внутренний (yamoney) библиотек
+     *
+     * @param project проект
+     */
+    private static void createPrintInnerDependenciesVersionsTask(@Nonnull Project project) {
+        PrintInnerDependenciesVersionsTask task = project.getTasks()
+                .create(PRINT_INNER_DEPENDENCIES_TASK_NAME, PrintInnerDependenciesVersionsTask.class);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints new available versions of inner dependencies");
+    }
+
+    /**
+     * Создает задачу вывода новых версий внешних библиотек
+     *
+     * @param project проект
+     */
+    private static void createPrintOuterDependenciesVersionsTask(@Nonnull Project project) {
+        PrintOuterDependenciesVersionsTask task = project.getTasks()
+                .create(PRINT_OUTER_DEPENDENCIES_TASK_NAME, PrintOuterDependenciesVersionsTask.class);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints new available versions of outer dependencies");
     }
 }

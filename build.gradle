@@ -6,15 +6,22 @@ buildscript {
         include 'gradle-scripts/**'
     }
 }
+
 apply from: 'tmp/gradle-scripts/_root.gradle'
 /////////////////////////////////////////////
 
-//noinspection GroovyUnusedAssignment
-groupIdSuffix = "gradle.plugins"
-//noinspection GroovyUnusedAssignment
-artifactID = "yamoney-check-dependencies-plugin"
+pluginId = 'yamoney-check-dependencies-plugin'
+gradlePlugin {
+    plugins {
+        checkDependenciesPlugin {
+            id = project.ext.pluginId
+            implementationClass = "ru.yandex.money.gradle.plugins.library.dependencies.CheckDependenciesPlugin"
+        }
+    }
+}
 
-def aetherVersion = '1.13.1'
+def aetherVersion = '1.1.0'
+def aetherConnector = '0.9.0.M2'
 
 dependencies {
     compile localGroovy(),
@@ -23,30 +30,38 @@ dependencies {
             'com.google.code.findbugs:jsr305:3.0.1',
             'com.google.code.findbugs:annotations:3.0.1'
 
-    //TODO: использовать org.eclipse.aether как только перейдем на Gradle 3.+
-    compile "org.sonatype.aether:aether-api:${aetherVersion}",
-            "org.sonatype.aether:aether-util:${aetherVersion}",
-            "org.sonatype.aether:aether-connector-wagon:${aetherVersion}",
-            "org.sonatype.aether:aether-impl:${aetherVersion}",
-            "org.sonatype.aether:aether-spi:${aetherVersion}",
-            "org.sonatype.aether:aether-connector-file:${aetherVersion}",
-            "org.sonatype.aether:aether-connector-asynchttpclient:${aetherVersion}",
-            "org.sonatype.aether:aether:${aetherVersion}",
-            "org.apache.maven:maven-aether-provider:3.0.4",
+//    compile "org.eclipse.aether:aether-api:${aetherVersion}",
+//            "org.eclipse.aether:aether-util:${aetherVersion}",
+//            "org.eclipse.aether:aether-connector-wagon:${aetherConnector}",
+//            "org.eclipse.aether:aether-impl:${aetherVersion}",
+//            "org.eclipse.aether:aether-spi:${aetherVersion}",
+//            "org.eclipse.aether:aether-connector-file:${aetherConnector}",
+//            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherConnector}",
+//            "org.eclipse.aether:aether:${aetherVersion}",
+//            "org.apache.maven:maven-aether-provider:3.3.9",
+//            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
+//            "org.codehaus.plexus:plexus-utils:2.0.7",
+//            "org.codehaus.plexus:plexus-interpolation:1.14"
+
+    compile "org.eclipse.aether:aether-api:${aetherConnector}",
+            "org.eclipse.aether:aether-util:${aetherConnector}",
+            "org.eclipse.aether:aether-connector-wagon:${aetherConnector}",
+            "org.eclipse.aether:aether-impl:${aetherConnector}",
+            "org.eclipse.aether:aether-spi:${aetherConnector}",
+            "org.eclipse.aether:aether-connector-file:${aetherConnector}",
+            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherConnector}",
+            "org.eclipse.aether:aether:${aetherVersion}",
+            "org.apache.maven:maven-aether-provider:3.3.9",
             "org.apache.maven.wagon:wagon-http-lightweight:1.0",
-            "org.codehaus.plexus:plexus-utils:2.0.7",
-            "org.codehaus.plexus:plexus-interpolation:1.14"
+            "org.codehaus.plexus:plexus-utils:3.0.22",
+            "org.codehaus.plexus:plexus-interpolation:1.21"
 
     testCompile gradleTestKit(),
-                'com.netflix.nebula:nebula-test:4.0.0',
+                'com.netflix.nebula:nebula-test:7.1.0',
                 'org.codehaus.plexus:plexus-utils:2.0.7',
                 'org.codehaus.plexus:plexus-interpolation:1.14'
 
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
-
-excludedVersionConflictLibraries = {[
-        'org.codehaus.plexus:plexus-utils'
-]}

@@ -1,10 +1,11 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.RemoteRepository;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -33,11 +34,10 @@ class AetherService {
      * @return объект сессии, используемый для работы с {@link RepositorySystem}
      */
     static RepositorySystemSession newRepositorySystemSession(RepositorySystem system) {
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        LocalRepository localRepository = new LocalRepository(generateLocalCachePath());
 
-        LocalRepository localRepo = new LocalRepository(generateLocalCachePath());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
-
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setTransferListener(new LoggedTransferListener());
         session.setRepositoryListener(new LoggedRepositoryListener());
 
@@ -53,7 +53,7 @@ class AetherService {
     static List<RemoteRepository> createRemoteRepositories(List<String> repositoryUrls) {
         final int[] id = {0};
         return repositoryUrls.stream()
-                .map(url -> new RemoteRepository(Integer.toString(id[0]++), "default", url))
+                .map(url -> new RemoteRepository.Builder(Integer.toString(id[0]++), "default", url).build())
                 .collect(Collectors.toList());
     }
 

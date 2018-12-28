@@ -1,4 +1,4 @@
-System.setProperty("platformGradleProjectVersion", "1.+")
+System.setProperty("platformGradleProjectVersion", "2.+")
 
 repositories {
     maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }

@@ -11,6 +11,6 @@ class TestRepositories {
     static String MAVEN_REPO_2 = repoUrlByName('maven-repo-2')
 
     public static String repoUrlByName(String repoName) {
-        new File("src/slowTest/resources/repositories/${repoName}").toURI().toURL().toString()
+        new File("src/test/resources/repositories/${repoName}").toURI().toURL().toString()
     }
 }

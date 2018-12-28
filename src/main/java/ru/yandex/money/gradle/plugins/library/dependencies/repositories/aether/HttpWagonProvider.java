@@ -2,7 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
-import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonProvider;
 
 /**
  * Создает {@link Wagon} для работы с удаленными репозиториями по http

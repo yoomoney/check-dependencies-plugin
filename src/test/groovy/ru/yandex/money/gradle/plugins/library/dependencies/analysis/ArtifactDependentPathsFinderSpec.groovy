@@ -1,10 +1,9 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.analysis
 
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.Artifact
+
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName
 import ru.yandex.money.gradle.plugins.library.dependencies.utils.TestArtifact
 import spock.lang.Specification
-
 /**
  * @author Konstantin Novokreshchenov (knovokresch@yamoney.ru)
  * @since 17.03.2017

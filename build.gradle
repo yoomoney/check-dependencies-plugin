@@ -20,8 +20,7 @@ gradlePlugin {
     }
 }
 
-def aetherVersion = '1.1.0'
-def aetherConnector = '0.9.0.M2'
+def aetherVersion = '0.9.0.M2'
 
 dependencies {
     compile localGroovy(),
@@ -30,26 +29,13 @@ dependencies {
             'com.google.code.findbugs:jsr305:3.0.1',
             'com.google.code.findbugs:annotations:3.0.1'
 
-//    compile "org.eclipse.aether:aether-api:${aetherVersion}",
-//            "org.eclipse.aether:aether-util:${aetherVersion}",
-//            "org.eclipse.aether:aether-connector-wagon:${aetherConnector}",
-//            "org.eclipse.aether:aether-impl:${aetherVersion}",
-//            "org.eclipse.aether:aether-spi:${aetherVersion}",
-//            "org.eclipse.aether:aether-connector-file:${aetherConnector}",
-//            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherConnector}",
-//            "org.eclipse.aether:aether:${aetherVersion}",
-//            "org.apache.maven:maven-aether-provider:3.3.9",
-//            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
-//            "org.codehaus.plexus:plexus-utils:2.0.7",
-//            "org.codehaus.plexus:plexus-interpolation:1.14"
-
-    compile "org.eclipse.aether:aether-api:${aetherConnector}",
-            "org.eclipse.aether:aether-util:${aetherConnector}",
-            "org.eclipse.aether:aether-connector-wagon:${aetherConnector}",
-            "org.eclipse.aether:aether-impl:${aetherConnector}",
-            "org.eclipse.aether:aether-spi:${aetherConnector}",
-            "org.eclipse.aether:aether-connector-file:${aetherConnector}",
-            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherConnector}",
+    compile "org.eclipse.aether:aether-api:${aetherVersion}",
+            "org.eclipse.aether:aether-util:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-wagon:${aetherVersion}",
+            "org.eclipse.aether:aether-impl:${aetherVersion}",
+            "org.eclipse.aether:aether-spi:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-file:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherVersion}",
             "org.eclipse.aether:aether:${aetherVersion}",
             "org.apache.maven:maven-aether-provider:3.3.9",
             "org.apache.maven.wagon:wagon-http-lightweight:1.0",

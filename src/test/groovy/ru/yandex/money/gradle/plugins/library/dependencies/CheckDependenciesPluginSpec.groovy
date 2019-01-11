@@ -56,6 +56,31 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
     }
 
+    def "Not found conflict for excludedVersionConflictLibraries"() {
+
+        given:
+        buildFile << """
+                dependencies {
+                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                        'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                        'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
+                        'ru.yandex.money.common:yamoney-enum-utils:4.0.3'
+               } 
+               
+               majorVersionChecker {
+                    excludeDependencies = ['ru.yandex.money.common:yamoney-enum-utils']
+               }
+                        
+               
+                """.stripIndent()
+        when:
+        def result = runTasksSuccessfully("dependencies")
+
+        then:
+        !(result.standardOutput.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardOutput.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+    }
+
     def "success check on project libraries and empty fixed versions list"() {
         given:
         buildFile << """
@@ -168,7 +193,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.failure
-        println result.standardOutput
+        println result.standardError
     }
 
     def "success check on project libraries and fixed versions and rules of changing libraries versions"() {
@@ -293,6 +318,62 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 // Указываем путь к несуществующему файлу
                 checkDependencies {
                     exclusionsRulesSources = ["ru.yandex.fakegroup:fakeartifact:"]
+                }
+                """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+
+        then:
+        !result.wasSkipped(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+        result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
+    }
+
+    def "success check on project libraries and excluded compile configuration"() {
+        given:
+        buildFile << """
+                repositories {
+                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                }
+
+                dependencyManagement {
+                    // Запрещаем переопределять версии библиотек в обычной секции Gradle dependency
+                    overriddenByDependencies = false
+
+                    // Фиксируем версии библиотек из pom.xml файла
+                    imports {
+                        mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
+                    }
+
+                    dependencies {
+                        dependency 'org.springframework:spring-core:4.2.5.RELEASE'
+                        dependency 'org.hamcrest:hamcrest-core:1.2'
+                    }
+
+                    testCompile {
+                        dependencies {
+                            dependency 'junit:junit:4.11'
+                            dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
+                        }
+                    }
+                }
+
+                // Указываем путь к несуществующему файлу
+                checkDependencies {
+                    excludedConfigurations = ["testCompile", "testRuntime", 
+                    "testCompileClasspath", "testRuntimeClasspath"]
+                }
+
+                dependencies {
+                    // Ожидается 4.2.5.RELEASE
+                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+
+                    // Ожидается 1.2
+                    compile 'org.hamcrest:hamcrest-core:1.2'
+
+                    // Ожидается 4.11
+                    // Использует org.hamcrest:hamcrest-core:1.3
+                    testCompile group: 'junit', name: 'junit', version: '4.11'
                 }
                 """.stripIndent()
 

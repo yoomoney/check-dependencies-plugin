@@ -21,6 +21,7 @@ import ru.yandex.money.gradle.plugins.library.dependencies.repositories.Reposito
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -103,13 +104,16 @@ public class AetherRepository implements Repository {
             log.debug("Failed to obtain artifact dependencies: request={}", request);
         }
 
-        return result.getDependencies()
-                .stream()
-                .map(Dependency::getArtifact)
-                .map(artifact -> new ArtifactName(artifact.getGroupId(),
-                        artifact.getArtifactId(),
-                        artifact.getVersion()))
-                .collect(Collectors.toList());
+        if (Objects.nonNull(result)) {
+            return result.getDependencies()
+                    .stream()
+                    .map(Dependency::getArtifact)
+                    .map(artifact -> new ArtifactName(artifact.getGroupId(),
+                            artifact.getArtifactId(),
+                            artifact.getVersion()))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     private ArtifactDescriptorRequest createDirectDependenciesRequest(ArtifactName artifactName) {

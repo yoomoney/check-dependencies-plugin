@@ -1,19 +1,20 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.version.Version;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactDescriptorException;
-import org.sonatype.aether.resolution.ArtifactDescriptorRequest;
-import org.sonatype.aether.resolution.ArtifactDescriptorResult;
-import org.sonatype.aether.resolution.VersionRangeRequest;
-import org.sonatype.aether.resolution.VersionRangeResolutionException;
-import org.sonatype.aether.resolution.VersionRangeResult;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.sonatype.aether.version.Version;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.repositories.Repository;
@@ -102,19 +103,16 @@ public class AetherRepository implements Repository {
             log.debug("Failed to obtain artifact dependencies: request={}", request);
         }
 
-        if (result != null) {
-          return result.getDependencies()
-                       .stream()
-                       .map(dependency -> {
-                           Artifact artifactDependency = dependency.getArtifact();
-                           return new ArtifactName(artifactDependency.getGroupId(),
-                                                   artifactDependency.getArtifactId(),
-                                                   artifactDependency.getVersion());
-                       })
-                       .collect(Collectors.toList());
+        if (result == null) {
+            return Collections.emptyList();
         }
-
-        return Collections.emptyList();
+        return result.getDependencies()
+                .stream()
+                .map(Dependency::getArtifact)
+                .map(artifact -> new ArtifactName(artifact.getGroupId(),
+                        artifact.getArtifactId(),
+                        artifact.getVersion()))
+                .collect(Collectors.toList());
     }
 
     private ArtifactDescriptorRequest createDirectDependenciesRequest(ArtifactName artifactName) {

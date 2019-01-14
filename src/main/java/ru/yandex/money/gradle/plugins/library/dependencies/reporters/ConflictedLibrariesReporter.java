@@ -1,8 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.reporters;
 
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.Versioned;
-import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.strategy.DefaultVersionComparator;
+import org.gradle.util.VersionNumber;
 import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.ConflictedLibraryInfo;
 import ru.yandex.money.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.ConflictPathResolutionResult;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
@@ -110,9 +109,14 @@ public class ConflictedLibrariesReporter {
     }
 
     private static Collection<String> getSortedVersions(Set<String> versions) {
-        TreeSet<Versioned> versioneds = new TreeSet<>(new DefaultVersionComparator());
-        versions.stream().map(version -> (Versioned)(() -> version)).forEach(versioneds::add);
-        return versioneds.stream().map(Versioned::getVersion).collect(Collectors.toList());
+        Set<VersionNumber> versionNumbers = new TreeSet<>();
+        versions.stream()
+                .map(VersionNumber::parse)
+                .forEach(versionNumbers::add);
+
+        return versionNumbers.stream()
+                .map(VersionNumber::toString)
+                .collect(Collectors.toList());
     }
 
     private String getDependencyPathString(Iterable<ArtifactDependency> dependencyPath) {

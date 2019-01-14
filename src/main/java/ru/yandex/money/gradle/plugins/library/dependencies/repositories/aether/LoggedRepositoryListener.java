@@ -1,9 +1,9 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
+import org.eclipse.aether.AbstractRepositoryListener;
+import org.eclipse.aether.RepositoryEvent;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.sonatype.aether.AbstractRepositoryListener;
-import org.sonatype.aether.RepositoryEvent;
 
 /**
  * Логирует события, возникающие при взаимодействии с репозиторий,

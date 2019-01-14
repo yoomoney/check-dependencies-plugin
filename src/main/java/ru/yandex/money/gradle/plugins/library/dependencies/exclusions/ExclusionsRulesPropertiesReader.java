@@ -36,8 +36,7 @@ abstract class ExclusionsRulesPropertiesReader {
      */
     void load(@Nonnull ExclusionsRulesStorage rulesStorage, @Nonnull InputStream exclusionRulesInputStream) {
         ExclusionRulesParser exclusionRulesParser = new ExclusionRulesParser();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionRulesInputStream, UTF_8));
-        try {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionRulesInputStream, UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.replaceAll("\\s+", "");

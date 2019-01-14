@@ -1,11 +1,12 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
-import org.apache.maven.repository.internal.DefaultServiceLocator;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
+import org.eclipse.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Создает объект {@link RepositorySystem}, используя {@link DefaultServiceLocator},
@@ -16,13 +17,15 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
  */
 class ManualRepositorySystemFactory {
 
+    private ManualRepositorySystemFactory() {}
+
     /**
      * Возвращет экземпляр класса {@link RepositorySystem}
      *
      * @return экземпляр класса {@link RepositorySystem}
      */
     static RepositorySystem newRepositorySystem() {
-        DefaultServiceLocator locator = new DefaultServiceLocator();
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
         locator.addService(RepositoryConnectorFactory.class, FileRepositoryConnectorFactory.class);
         locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);

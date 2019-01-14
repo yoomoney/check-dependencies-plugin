@@ -1,9 +1,9 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.repositories.aether;
 
+import org.eclipse.aether.transfer.AbstractTransferListener;
+import org.eclipse.aether.transfer.TransferEvent;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.sonatype.aether.transfer.AbstractTransferListener;
-import org.sonatype.aether.transfer.TransferEvent;
 
 /**
  * Логирует этапы процесса скачивания артефактв с репозитория и загрузки артефакта в репозиторий

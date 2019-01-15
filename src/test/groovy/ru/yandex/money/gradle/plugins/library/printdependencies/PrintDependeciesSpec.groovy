@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.printdependencies
 
+import org.gradle.util.VersionNumber
 import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
 
 
@@ -29,6 +30,7 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
             dependencies {
                 compile 'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'ru.yandex.money.common:yamoney-xml-utils:1.0.0',
+                        'ru.yandex.money.common:yamoney-backend-platform-config:19.0.0'
                         'com.google.guava:guava:18.0'                       
             } 
             
@@ -41,7 +43,10 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
         result.standardOutput.contains("ru.yandex.money.common:yamoney-json-utils 1.0.0 ->")
         result.standardOutput.contains("ru.yandex.money.common:yamoney-xml-utils 1.0.0 ->")
         !result.standardOutput.contains("com.google.guava:guava 22.0 ->")
-
+        result.standardOutput.contains("ru.yandex.money.common:yamoney-backend-platform-config 19.0.0 ->")
+        def update = result.standardOutput.findAll("ru\\.yandex\\.money\\.common:yamoney-backend-platform-config 19\\.0\\.0 -> (\\d+)\\.(\\d+)\\.(\\d+)")
+        def semver = update[0] =~ /(\d+)\.(\d+)\.(\d+)/
+        VersionNumber.parse(semver[1][0]) > VersionNumber.parse(semver[0][0])
     }
 
     def "Print new version for outer dependency"() {

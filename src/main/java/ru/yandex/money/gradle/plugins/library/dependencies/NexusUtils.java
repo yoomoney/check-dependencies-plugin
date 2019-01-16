@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.GradleException;
+import org.gradle.util.VersionNumber;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -54,12 +55,16 @@ public final class NexusUtils {
             return IntStream.range(0, versionsNodeList.getLength())
                     .mapToObj(index -> versionsNodeList.item(index).getFirstChild().getNodeValue())
                     .filter(NexusUtils::isValidVersion)
-                    .max(String::compareTo)
+                    .max(NexusUtils::versionCompare)
                     .<GradleException>orElseThrow(() -> {
                         throw new GradleException("Not found version: dependencyName=" + depName);
                     });
         }
         throw new GradleException("Not found version: dependencyName=" + depName);
+    }
+
+    private static int versionCompare(String o1, String o2) {
+        return VersionNumber.parse(o1).compareTo(VersionNumber.parse(o2));
     }
 
     @SuppressFBWarnings("XXE_DOCUMENT")

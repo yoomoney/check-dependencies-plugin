@@ -37,7 +37,9 @@ public enum DependencyType {
     }
 
     private static boolean isInnerDependencies(Dependency dependency) {
-        return dependency.getGroup().startsWith("ru.yandex.money")
-                || dependency.getGroup().startsWith("ru.yamoney");
+        if (dependency.getGroup() != null) {
+            return dependency.getGroup().startsWith("ru.yandex.money") || dependency.getGroup().startsWith("ru.yamoney");
+        }
+        return false;
     }
 }

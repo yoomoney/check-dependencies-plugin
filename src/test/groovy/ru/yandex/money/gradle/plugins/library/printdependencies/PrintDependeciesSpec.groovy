@@ -28,9 +28,10 @@ class PrintDependeciesSpec extends AbstractPluginSpec {
         buildFile << """
                         
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:1.0.0',
+                compile localGroovy(),
+                        'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'ru.yandex.money.common:yamoney-xml-utils:1.0.0',
-                        'ru.yandex.money.common:yamoney-backend-platform-config:19.0.0'
+                        'ru.yandex.money.common:yamoney-backend-platform-config:19.0.0',
                         'com.google.guava:guava:18.0'                       
             } 
             

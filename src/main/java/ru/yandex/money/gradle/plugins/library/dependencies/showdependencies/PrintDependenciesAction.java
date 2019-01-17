@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.getArtifactLatestVersion;
@@ -65,10 +66,14 @@ public class PrintDependenciesAction implements Action<Project> {
     }
 
     private void printLatestDependencyVersion(Dependency dependency, String realVersion) {
-        String newest = getArtifactLatestVersion(dependency.getGroup(), dependency.getName());
+        Optional.of(dependency)
+                .filter(dep -> dep.getGroup() != null)
+                .map(dep -> getArtifactLatestVersion(dependency.getGroup(), dependency.getName()))
+                .filter(newVersion -> !Objects.equals(realVersion, newVersion))
+                .ifPresent(newVersion -> printNewVersion(dependency, realVersion, newVersion));
+    }
 
-        if (!Objects.equals(realVersion, newest)) {
-            log.warn("New available version: {}:{} {} -> {}", dependency.getGroup(), dependency.getName(), realVersion, newest);
-        }
+    private void printNewVersion(Dependency dependency, String realVersion, String newVersion) {
+        log.warn("New available version: {}:{} {} -> {}", dependency.getGroup(), dependency.getName(), realVersion, newVersion);
     }
 }

@@ -8,7 +8,9 @@ import javax.annotation.Nonnull;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -29,12 +31,13 @@ public class ExclusionsRulesFileReader extends ExclusionsRulesPropertiesReader {
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @Override
     public void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage) {
-        if (!Files.isReadable(Paths.get(fileName))) {
+        Path fileNamePath = Paths.get(fileName);
+        if (!Files.isReadable(fileNamePath)) {
             log.warn("Cannot read file \"{}\" with upgrade versions rules.", fileName);
             return;
         }
 
-        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+        try (InputStream fileInputStream = java.nio.file.Files.newInputStream(fileNamePath)) {
             load(rulesStorage, fileInputStream);
         } catch (FileNotFoundException e) {
             log.warn("Cannot find file with upgrade versions rules.", e);

@@ -2,7 +2,10 @@ package ru.yandex.money.gradle.plugins.library.dependencies.showdependencies;
 
 import org.gradle.api.artifacts.Dependency;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Типы зависимостей -  или внешние
@@ -14,16 +17,19 @@ public enum DependencyType {
     /**
      * Внутренние библиотеки (пакеты ru.yamoney)
      */
-    INNER(DependencyType::isInnerDependencies),
+    INNER(DependencyType::isInnerDependencies, "inner"),
     /**
      * Внешние библиотеки
      */
-    OUTER(INNER.predicate.negate());
+    OUTER(INNER.predicate.negate(), "outer");
 
     private final Predicate<Dependency> predicate;
+    private final String code;
 
-    DependencyType(Predicate<Dependency> predicate) {
-        this.predicate = predicate;
+    DependencyType(@Nonnull Predicate<Dependency> predicate,
+                   @Nonnull String code) {
+        this.predicate = requireNonNull(predicate);
+        this.code = requireNonNull(code);
     }
 
     /**
@@ -41,5 +47,10 @@ public enum DependencyType {
             return dependency.getGroup().startsWith("ru.yandex.money") || dependency.getGroup().startsWith("ru.yamoney");
         }
         return false;
+    }
+
+    @Nonnull
+    public String getCode() {
+        return code;
     }
 }

@@ -35,16 +35,16 @@ public class ArtifactNameSet implements Iterable<ArtifactName> {
      * @return набор версий артефактов
      */
     public Set<String> getVersions(LibraryName libraryName) {
-        return Optional.ofNullable(libraryVersions.get(libraryName)).orElse(Collections.emptySet()) ;
+        return Optional.ofNullable(libraryVersions.get(libraryName)).orElseGet(Collections::emptySet);
     }
 
     @Override
     public Iterator<ArtifactName> iterator() {
         return libraryVersions.entrySet()
-                              .stream()
-                              .flatMap(entry -> entry.getValue()
-                                                     .stream()
-                                                     .map(version -> new ArtifactName(entry.getKey(), version)))
-                              .iterator();
+                .stream()
+                .flatMap(entry -> entry.getValue()
+                        .stream()
+                        .map(version -> new ArtifactName(entry.getKey(), version)))
+                .iterator();
     }
 }

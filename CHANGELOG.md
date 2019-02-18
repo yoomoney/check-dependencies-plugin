@@ -2,6 +2,9 @@
 
 ## NEXT_VERSION
 
+## [4.1.0]() (20-02-2019)
+* Вывод актуальных зависимости в тасках printActualInnerDependenciesVersions, printActualOuterDependenciesVersions в JSON формате
+
 ## [4.0.4]() (15-02-2019)
 * Исправлены даты в CHANGELOG.md
 

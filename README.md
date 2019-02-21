@@ -107,6 +107,35 @@ apply plugin: 'yamoney-library-project-plugin'
 Печатает доступные новые версии внутренних и внешних зависимостей. Вызывается только при ручном запуске тасок 
 printNewOuterDependenciesVersions и printNewInnerDependenciesVersions.
 
+### Вывод актуальных версий для внутренних библиотек
+
+Печатает актуальные версии зависимостей. Вызывается только при ручном запуске 
+printActualInnerDependenciesVersions, printActualOuterDependenciesVersions.
+
+```
+   [
+       {
+           "scope": "compile",
+           "name": "yamoney-json-utils",
+           "version": "1.0.0",
+           "group": "ru.yandex.money.common"
+       },
+       {
+           "scope": "compile",
+           "name": "yamoney-xml-utils",
+           "version": "1.0.0",
+           "group": "ru.yandex.money.common"
+       },
+       {
+           "scope": "compile",
+           "name": "yamoney-backend-platform-config",
+           "version": "19.0.0",
+           "group": "ru.yandex.money.common"
+       }
+   ]
+```
+
+Результат сохраняется в build/report/dependencies/ в actual_inner_dependencies.json & actual_outer_dependencies.json
 
 #### Настройка разрешающих правил изменения версий библиотек
 

@@ -8,6 +8,8 @@ import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVer
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
+import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualInnerDependenciesVersionsTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualOuterDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintInnerDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintOuterDependenciesVersionsTask;
 
@@ -58,6 +60,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     public static final String CHECK_DEPENDENCIES_TASK_NAME = "checkLibraryDependencies";
     private static final String PRINT_INNER_DEPENDENCIES_TASK_NAME = "printNewInnerDependenciesVersions";
     private static final String PRINT_OUTER_DEPENDENCIES_TASK_NAME = "printNewOuterDependenciesVersions";
+    private static final String PRINT_ACTUAL_INNER_DEPENDENCIES_TASK_NAME = "printActualInnerDependenciesVersions";
+    private static final String PRINT_ACTUAL_OUTER_DEPENDENCIES_TASK_NAME = "printActualOuterDependenciesVersions";
 
     private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
@@ -111,6 +115,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
                     createPrintInnerDependenciesVersionsTask(target);
                     createPrintOuterDependenciesVersionsTask(target);
+                    createPrintActualInnerDependenciesVersionsTask(target).dependsOn(task);
+                    createPrintActualOuterDependenciesVersionsTask(target).dependsOn(task);
                 }
         );
     }
@@ -139,6 +145,32 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                 .create(PRINT_INNER_DEPENDENCIES_TASK_NAME, PrintInnerDependenciesVersionsTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints new available versions of inner dependencies");
+    }
+
+    /**
+     * Создает задачу вывода актуальных версий внутренний (yamoney) библиотек
+     *
+     * @param project проект
+     */
+    private static PrintActualInnerDependenciesVersionsTask createPrintActualInnerDependenciesVersionsTask(@Nonnull Project project) {
+        PrintActualInnerDependenciesVersionsTask task = project.getTasks()
+                .create(PRINT_ACTUAL_INNER_DEPENDENCIES_TASK_NAME, PrintActualInnerDependenciesVersionsTask.class);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints actual versions of inner dependencies");
+        return task;
+    }
+
+    /**
+     * Создает задачу вывода актуальных версий внешних библиотек
+     *
+     * @param project проект
+     */
+    private static PrintActualOuterDependenciesVersionsTask createPrintActualOuterDependenciesVersionsTask(@Nonnull Project project) {
+        PrintActualOuterDependenciesVersionsTask task = project.getTasks()
+                .create(PRINT_ACTUAL_OUTER_DEPENDENCIES_TASK_NAME, PrintActualOuterDependenciesVersionsTask.class);
+        task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Prints actual versions of outer dependencies");
+        return task;
     }
 
     /**

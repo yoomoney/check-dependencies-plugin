@@ -24,7 +24,7 @@ import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.get
  * @since 10.12.2018
  */
 public class PrintDependenciesAction implements Action<Project> {
-    private final Logger log = LoggerFactory.getLogger(PrintDependenciesAction.class);
+    private static final Logger log = LoggerFactory.getLogger(PrintDependenciesAction.class);
 
     private final Map<Dependency, Boolean> checked = new HashMap<>();
 

@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,8 +33,9 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
 
     /**
      * Конструктор класса
-     * @param project текущий проект
-     * @param artifact имя артефакта, содержащего файл с правилами исключений
+     *
+     * @param project           текущий проект
+     * @param artifact          имя артефакта, содержащего файл с правилами исключений
      * @param exclusionFileName имя файл с правилами исключениями внутри артефакта
      */
     ExclusionsRulesPackageReader(@Nonnull Project project, @Nonnull String artifact, @Nonnull String exclusionFileName) {
@@ -97,7 +98,7 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
         for (Configuration configuration : project.getBuildscript().getConfigurations()) {
             File rulesFile = findFileInArtifact(configuration, artifact, exclusionFileName);
             if (rulesFile != null) {
-                try (FileInputStream fileInputStream = new FileInputStream(rulesFile)) {
+                try (InputStream fileInputStream = java.nio.file.Files.newInputStream(rulesFile.toPath())) {
                     load(rulesStorage, fileInputStream);
                 } catch (FileNotFoundException e) {
                     log.warn("Cannot find file with upgrade versions rules.", e);
@@ -106,7 +107,7 @@ public class ExclusionsRulesPackageReader extends ExclusionsRulesPropertiesReade
                 }
             } else {
                 log.warn("Cannot find rules file \"{}\" with upgrade versions rules in specified artifact \"{}\" for configuration \"{}\".",
-                         exclusionFileName, artifact, configuration.getName());
+                        exclusionFileName, artifact, configuration.getName());
             }
         }
     }

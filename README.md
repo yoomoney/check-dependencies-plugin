@@ -137,6 +137,11 @@ printActualInnerDependenciesVersions, printActualOuterDependenciesVersions.
 
 Результат сохраняется в build/report/dependencies/ в actual_inner_dependencies.json & actual_outer_dependencies.json
 
+### Проверка наличия snapshot-версий подключаемых библиотек
+
+Проверяет наличие snapshot-версий подключаемых зависимостей. Вызывается только при ручном запуске таски checkSnapshot. Выбрасывает
+ исключение при наличии зависимостей с версией, содержащей "-snapshot".
+
 #### Настройка разрешающих правил изменения версий библиотек
 
 Правила исключения описываются в property файле. По умолчанию используется файл с названием <b>libraries-versions-exclusions.properties</b>

@@ -2,6 +2,10 @@
 %% NEXT_VERSION_DESCRIPTION_BEGIN
 * Переход на platformGradleProjectVersion 4 версии
 %% NEXT_VERSION_DESCRIPTION_END
+
+## [4.2.0]() (25-02-2019)
+* Переход на platformGradleProjectVersion 4 версии
+
 ## [4.1.0]() (20-02-2019)
 * Вывод актуальных зависимости в тасках printActualInnerDependenciesVersions, printActualOuterDependenciesVersions в JSON формате
 

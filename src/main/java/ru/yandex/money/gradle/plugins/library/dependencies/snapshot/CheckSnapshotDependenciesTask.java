@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @author horyukova
  * @since 27.02.2019
  */
-public class CheckSnapshotTask extends DefaultTask {
+public class CheckSnapshotDependenciesTask extends DefaultTask {
     private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("^.+(\\d{8}\\.\\d{6}-\\d+)$");
     private static final String FORCE_FLAG = "forceRelease";
 
@@ -23,7 +23,7 @@ public class CheckSnapshotTask extends DefaultTask {
      * Проверка snapshot-зависимостей
      */
     @TaskAction
-    public void checkSnapshot() {
+    public void checkSnapshotDependencies() {
         boolean isForceRelease = getProject().hasProperty(FORCE_FLAG)
                 && Boolean.parseBoolean(getProject().findProperty(FORCE_FLAG).toString());
 
@@ -40,7 +40,8 @@ public class CheckSnapshotTask extends DefaultTask {
                 .collect(Collectors.toSet());
 
         if (!snapshotPackages.isEmpty()) {
-            throw new IllegalStateException("You have the following SNAPSHOT dependencies:\n" + snapshotPackages);
+            throw new IllegalStateException("You have the following SNAPSHOT dependencies:" + System.lineSeparator()
+                    + snapshotPackages);
         }
     }
 
@@ -50,8 +51,11 @@ public class CheckSnapshotTask extends DefaultTask {
             return false;
         }
 
-        return (version.toUpperCase().contains("-SNAPSHOT") ||
-                SNAPSHOT_PATTERN.matcher(version).matches())
-                && !(dependency instanceof ProjectDependencyInternal);
+        if (dependency instanceof ProjectDependencyInternal) {
+            return false;
+        }
+
+        return version.toUpperCase().contains("-SNAPSHOT") ||
+                SNAPSHOT_PATTERN.matcher(version).matches();
     }
 }

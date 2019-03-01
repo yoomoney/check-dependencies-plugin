@@ -1,6 +1,9 @@
-%% NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+%% NEXT_VERSION_TYPE=MINOR
 %% NEXT_VERSION_DESCRIPTION_BEGIN
+## [4.4.0]() (01-03-2019)
+* Добавлен функционал проверки snapshot-зависимостей
 %% NEXT_VERSION_DESCRIPTION_END
+
 ## [4.3.0]() (01-03-2019)
 
 * Переход на platformGradleProjectVersion 4 версии

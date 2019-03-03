@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class CheckSnapshotDependenciesTask extends DefaultTask {
     private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("^.+(\\d{8}\\.\\d{6}-\\d+)$");
-    private static final String FORCE_FLAG = "forceRelease";
+    private static final String FORCE_FLAG = "allowSnapshot";
 
     /**
      * Проверка snapshot-зависимостей
@@ -28,7 +28,7 @@ public class CheckSnapshotDependenciesTask extends DefaultTask {
                 && Boolean.parseBoolean(getProject().findProperty(FORCE_FLAG).toString());
 
         if (isForceRelease) {
-            getProject().getLogger().lifecycle("Force release action. SKIPPED");
+            getProject().getLogger().lifecycle("Snapshot dependencies are allowed. SKIPPED");
             return;
         }
 

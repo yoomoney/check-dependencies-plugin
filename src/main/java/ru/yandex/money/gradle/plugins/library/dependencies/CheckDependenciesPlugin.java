@@ -64,7 +64,6 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String PRINT_ACTUAL_INNER_DEPENDENCIES_TASK_NAME = "printActualInnerDependenciesVersions";
     private static final String PRINT_ACTUAL_OUTER_DEPENDENCIES_TASK_NAME = "printActualOuterDependenciesVersions";
     private static final String SNAPSHOT_CHECK_TASK_NAME = "checkSnapshotDependencies";
-    private static final String SNAPSHOT_CHECK_TASK_GROUP = "checkSnapshotDependencies";
 
     private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
@@ -199,7 +198,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         CheckSnapshotDependenciesTask task = project.getTasks()
                 .create(SNAPSHOT_CHECK_TASK_NAME, CheckSnapshotDependenciesTask.class);
 
-        task.setGroup(SNAPSHOT_CHECK_TASK_GROUP);
-        task.setDescription("Check snapshot-dependecies");
+        task.setGroup(CHECK_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Check snapshot dependecies");
     }
 }

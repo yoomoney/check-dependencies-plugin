@@ -121,10 +121,10 @@ class CheckSnapshotSpec {
     }
 
     @Test
-    fun `should checkSnapshotDependencies successfully when there is 'forceRelease' flag`() {
+    fun `should checkSnapshotDependencies successfully when there is 'allowSnapshot' flag`() {
 
         buildFile.writeText(setupBuildFile + """
-                ext.forceRelease = "true"
+                ext.allowSnapshot = "true"
 
                 dependencies {
                     compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2-feature-SNAPSHOT',
@@ -141,7 +141,7 @@ class CheckSnapshotSpec {
                 .withDebug(true)
                 .build()
 
-        assertThat("checkSnapshotDependencies failed when there is 'forceRelease' flag",
-                result.output, containsString("Force release action. SKIPPED"))
+        assertThat("checkSnapshotDependencies failed when there is 'allowSnapshot' flag",
+                result.output, containsString("Snapshot dependencies are allowed. SKIPPED"))
     }
 }

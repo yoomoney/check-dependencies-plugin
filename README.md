@@ -137,6 +137,17 @@ printActualInnerDependenciesVersions, printActualOuterDependenciesVersions.
 
 Результат сохраняется в build/report/dependencies/ в actual_inner_dependencies.json & actual_outer_dependencies.json
 
+### Проверка наличия snapshot-версий подключаемых библиотек
+
+   Проверяет наличие snapshot-версий подключаемых зависимостей. Вызывается только при ручном запуске таски 
+checkSnapshotDependencies. Выбрасывает исключение при наличии зависимостей с версией, содержащей "-snapshot".
+    Для того, чтобы разрешить наличие snapshot-зависимостей необходимо указать в build.gradle такое свойство:
+```
+    ext.allowSnapshot = "true"
+```
+
+   В этом случае проверка snapshot-зависимостей производиться не будет.
+
 #### Настройка разрешающих правил изменения версий библиотек
 
 Правила исключения описываются в property файле. По умолчанию используется файл с названием <b>libraries-versions-exclusions.properties</b>

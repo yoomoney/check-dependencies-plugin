@@ -1,7 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.checkversion;
 
 import org.gradle.api.Action;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.DependencyResolveDetails;

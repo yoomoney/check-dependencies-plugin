@@ -12,6 +12,7 @@ import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.Prin
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualOuterDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintInnerDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintOuterDependenciesVersionsTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.snapshot.CheckSnapshotDependenciesTask;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -62,6 +63,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String PRINT_OUTER_DEPENDENCIES_TASK_NAME = "printNewOuterDependenciesVersions";
     private static final String PRINT_ACTUAL_INNER_DEPENDENCIES_TASK_NAME = "printActualInnerDependenciesVersions";
     private static final String PRINT_ACTUAL_OUTER_DEPENDENCIES_TASK_NAME = "printActualOuterDependenciesVersions";
+    private static final String SNAPSHOT_CHECK_TASK_NAME = "checkSnapshotDependencies";
 
     private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
@@ -117,6 +119,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                     createPrintOuterDependenciesVersionsTask(target);
                     createPrintActualInnerDependenciesVersionsTask(target).dependsOn(task);
                     createPrintActualOuterDependenciesVersionsTask(target).dependsOn(task);
+                    createCheckSnapshotTask(target);
                 }
         );
     }
@@ -183,5 +186,19 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                 .create(PRINT_OUTER_DEPENDENCIES_TASK_NAME, PrintOuterDependenciesVersionsTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints new available versions of outer dependencies");
+    }
+
+
+    /**
+     * Создает задачу по проверке snapshot-зависимостей
+     *
+     * @param project проект
+     */
+    private static void createCheckSnapshotTask(@Nonnull Project project) {
+        CheckSnapshotDependenciesTask task = project.getTasks()
+                .create(SNAPSHOT_CHECK_TASK_NAME, CheckSnapshotDependenciesTask.class);
+
+        task.setGroup(CHECK_DEPENDENCIES_TASK_GROUP);
+        task.setDescription("Check snapshot dependecies");
     }
 }

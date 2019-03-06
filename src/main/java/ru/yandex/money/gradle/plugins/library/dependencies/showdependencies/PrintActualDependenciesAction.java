@@ -7,6 +7,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +49,17 @@ public class PrintActualDependenciesAction implements Action<Project> {
         for (Configuration configuration : configurationContainer) {
 
             try {
-                Map<String, String> resolvedVersionMap = configuration
+
+                Set<ResolvedArtifact> resolvedArtifacts = configuration
                         .getResolvedConfiguration()
-                        .getResolvedArtifacts().stream()
-                        .collect(Collectors.toMap(ResolvedArtifact::getName,
-                                resolvedArtifact -> resolvedArtifact.getModuleVersion().getId().getVersion()));
+                        .getResolvedArtifacts();
+
+                List<ModuleVersionIdentifier> moduleVersionIdentifiers = resolvedArtifacts.stream().map(ra -> ra.getModuleVersion().getId())
+                        .collect(Collectors.toList());
+
+                Map<String, String> resolvedVersionMap = moduleVersionIdentifiers.stream()
+                        .collect(Collectors.toMap(mvId -> mvId.getGroup() + ":" + mvId.getName(),
+                                ModuleVersionIdentifier::getVersion));
 
                 configuration.getAllDependencies()
                         .forEach(dependency -> {
@@ -68,7 +75,7 @@ public class PrintActualDependenciesAction implements Action<Project> {
                                         dep.put("scope", configuration.getName());
                                         dep.put("group", dependency.getGroup());
                                         dep.put("name", dependency.getName());
-                                        dep.put("version", resolvedVersionMap.get(dependency.getName()));
+                                        dep.put("version", resolvedVersionMap.get(dependency.getGroup() + ":" + dependency.getName()));
                                     }
                                 }
                         );

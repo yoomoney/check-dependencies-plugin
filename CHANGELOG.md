@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Исправление java.lang.IllegalStateException: Duplicate key 3.0.1 при выводе списка новых зависимостей
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.2]() (07-03-2019)
 

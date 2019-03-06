@@ -5,14 +5,17 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.getArtifactLatestVersion;
@@ -41,11 +44,17 @@ public class PrintDependenciesAction implements Action<Project> {
         for (Configuration configuration : configurationContainer) {
 
             try {
-                Map<String, String> resolvedVersionMap = configuration
+
+                Set<ResolvedArtifact> resolvedArtifacts = configuration
                         .getResolvedConfiguration()
-                        .getResolvedArtifacts().stream()
-                        .collect(Collectors.toMap(ResolvedArtifact::getName,
-                                resolvedArtifact -> resolvedArtifact.getModuleVersion().getId().getVersion()));
+                        .getResolvedArtifacts();
+
+                List<ModuleVersionIdentifier> moduleVersionIdentifiers = resolvedArtifacts.stream().map(ra -> ra.getModuleVersion().getId())
+                        .collect(Collectors.toList());
+
+                Map<String, String> resolvedVersionMap = moduleVersionIdentifiers.stream()
+                        .collect(Collectors.toMap(mvId -> mvId.getGroup() + ":" + mvId.getName(),
+                                ModuleVersionIdentifier::getVersion));
 
                 configuration.getAllDependencies()
                         .forEach(dependency -> {
@@ -55,7 +64,8 @@ public class PrintDependenciesAction implements Action<Project> {
                                     checked.put(dependency, true);
 
                                     if (dependencyType.isCorresponds(dependency)) {
-                                        printLatestDependencyVersion(dependency, resolvedVersionMap.get(dependency.getName()));
+                                        printLatestDependencyVersion(dependency,
+                                                resolvedVersionMap.get(dependency.getGroup() + ":" + dependency.getName()));
                                     }
                                 }
                         );

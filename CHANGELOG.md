@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Изменила имя таски с "checkSnapshotDependencies" на "checkSnapshotsDependencies" 
-### NEXT_VERSION_DESCRIPTION_END
+## [4.4.2]() (07-03-2019)
+
+* Изменила имя таски с "checkSnapshotDependencies" на "checkSnapshotsDependencies"
+
 ## [4.4.1]() (06-03-2019)
 
 * Правка формата CHANGELOG.md

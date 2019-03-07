@@ -10,7 +10,7 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Тесты CheckSnapshotDependenciesTask
+ * Тесты CheckSnapshotsDependenciesTask
  *
  * @author horyukova
  * @since 01.03.2019
@@ -64,7 +64,7 @@ class CheckSnapshotSpec {
 
         val result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments("checkSnapshotDependencies")
+                .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
                 .buildAndFail()
@@ -88,7 +88,7 @@ class CheckSnapshotSpec {
 
         val result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments("checkSnapshotDependencies")
+                .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
                 .build()
@@ -121,7 +121,7 @@ class CheckSnapshotSpec {
     }
 
     @Test
-    fun `should checkSnapshotDependencies successfully when there is 'allowSnapshot' flag`() {
+    fun `should checkSnapshotsDependencies successfully when there is 'allowSnapshot' flag`() {
 
         buildFile.writeText(setupBuildFile + """
                 ext.allowSnapshot = "true"
@@ -136,12 +136,12 @@ class CheckSnapshotSpec {
 
         val result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments("checkSnapshotDependencies")
+                .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
                 .build()
 
-        assertThat("checkSnapshotDependencies failed when there is 'allowSnapshot' flag",
+        assertThat("checkSnapshotsDependencies failed when there is 'allowSnapshot' flag",
                 result.output, containsString("Snapshot dependencies are allowed. SKIPPED"))
     }
 }

@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.2]() (07-03-2019)
 
 * Изменила имя таски с "checkSnapshotDependencies" на "checkSnapshotsDependencies"

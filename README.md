@@ -140,7 +140,7 @@ printActualInnerDependenciesVersions, printActualOuterDependenciesVersions.
 ### Проверка наличия snapshot-версий подключаемых библиотек
 
    Проверяет наличие snapshot-версий подключаемых зависимостей. Вызывается только при ручном запуске таски 
-checkSnapshotDependencies. Выбрасывает исключение при наличии зависимостей с версией, содержащей "-snapshot".
+checkSnapshotsDependencies. Выбрасывает исключение при наличии зависимостей с версией, содержащей "-snapshot".
     Для того, чтобы разрешить наличие snapshot-зависимостей необходимо указать в build.gradle такое свойство:
 ```
     ext.allowSnapshot = "true"

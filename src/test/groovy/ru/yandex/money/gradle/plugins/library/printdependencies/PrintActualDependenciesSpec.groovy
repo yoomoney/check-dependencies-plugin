@@ -3,7 +3,7 @@ package ru.yandex.money.gradle.plugins.library.printdependencies
 import org.apache.commons.io.IOUtils
 import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
 
-class PrintActualDependeciesSpec extends AbstractPluginSpec {
+class PrintActualDependenciesSpec extends AbstractPluginSpec {
 
     def setup() {
         buildFile << """
@@ -49,7 +49,7 @@ class PrintActualDependeciesSpec extends AbstractPluginSpec {
         foundjson.contains(resourceString)
 
         def reportString = IOUtils.toString(new FileInputStream(new File("build/nebulatest/" +
-                "ru.yandex.money.gradle.plugins.library.printdependencies.PrintActualDependeciesSpec/" +
+                "ru.yandex.money.gradle.plugins.library.printdependencies.PrintActualDependenciesSpec/" +
                 "Print-actual-versions-for-inner-dependency/build/report/dependencies/actual_inner_dependencies.json")))
         reportString.contains(resourceString)
 
@@ -81,7 +81,7 @@ class PrintActualDependeciesSpec extends AbstractPluginSpec {
         foundjson.contains(resourceString)
 
         def reportString = IOUtils.toString(new FileInputStream(new File("build/nebulatest/" +
-                "ru.yandex.money.gradle.plugins.library.printdependencies.PrintActualDependeciesSpec/" +
+                "ru.yandex.money.gradle.plugins.library.printdependencies.PrintActualDependenciesSpec/" +
                 "Print-actual-versions-for-outer-dependency/build/report/dependencies/actual_outer_dependencies.json")))
         reportString.contains(resourceString)
 

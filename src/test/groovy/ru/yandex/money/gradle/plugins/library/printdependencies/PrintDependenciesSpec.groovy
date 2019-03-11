@@ -4,7 +4,7 @@ import org.gradle.util.VersionNumber
 import ru.yandex.money.gradle.plugins.library.AbstractPluginSpec
 
 
-class PrintDependeciesSpec extends AbstractPluginSpec {
+class PrintDependenciesSpec extends AbstractPluginSpec {
 
     def setup() {
         buildFile << """

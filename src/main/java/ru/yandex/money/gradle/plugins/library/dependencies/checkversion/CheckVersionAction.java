@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +40,8 @@ class CheckVersionAction implements Action<DependencyResolveDetails> {
             String errorMsg = String.format("There is major vesion conflict for dependency=%s:%s, versions=%s",
                     libraryName.getGroup(), libraryName.getName(), conflictModules.get(libraryName));
 
-            if (project.getGradle().getStartParameter().getTaskNames().get(0).endsWith("dependencies")) {
+            List<String> taskNames = project.getGradle().getStartParameter().getTaskNames();
+            if (!taskNames.isEmpty() && taskNames.get(0).endsWith("dependencies")) {
                 log.error(errorMsg);
             } else {
                 throw new GradleException(errorMsg);

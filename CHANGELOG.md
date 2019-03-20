@@ -1,8 +1,8 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Исправлен `IndexOutOfBoundException` при синхронизации проекта IDEA.  
+## [4.4.4]() (20-03-2019)
+
+* Исправлен `IndexOutOfBoundException` при синхронизации проекта IDEA.
 В `CheckVersionAction` добавлена проверка, что список задач для запуска сборки был непуст.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.4.3]() (11-03-2019)
 
 * Исправление java.lang.IllegalStateException: Duplicate key 3.0.1 при выводе списка новых зависимостей

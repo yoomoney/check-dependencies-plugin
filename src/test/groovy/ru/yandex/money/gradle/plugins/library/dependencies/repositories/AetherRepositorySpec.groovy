@@ -44,7 +44,6 @@ class AetherRepositorySpec extends Specification {
             ])
     }
 
-    @Ignore
     def 'check that library versions are found on remote repository'() {
         given: 'remote repositories'
         def urls = ['https://nexus.yamoney.ru/content/repositories/central']
@@ -58,7 +57,6 @@ class AetherRepositorySpec extends Specification {
             versions.containsAll(['4.9', '4.10', '4.11', '4.12'])
     }
 
-    @Ignore
     def 'check that library versions are found on multiple repositories'() {
         given: 'local and remote repositories'
         def urls = [TestRepositories.MAVEN_REPO_2, 'https://nexus.yamoney.ru/content/repositories/central/']

@@ -31,10 +31,12 @@ import java.util.stream.Collectors;
  * @since 16.03.2017
  */
 public class AetherRepository implements Repository {
+
     private static final String ALL_LIBRARY_VERSIONS_REQUEST_FORMAT = "%s:%s:[0,)";
     private static final String ARTIFACT_DIRECT_DEPENDENCIES_REQUEST_FORMAT = "%s:%s:%s";
 
-    private final Logger log = Logging.getLogger(AetherRepository.class);
+    private static final Logger log = Logging.getLogger(AetherRepository.class);
+
     private final RepositorySystem repositorySystem;
     private final RepositorySystemSession session;
     private final List<RemoteRepository> repositories;

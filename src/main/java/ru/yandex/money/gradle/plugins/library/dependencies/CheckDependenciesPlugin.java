@@ -199,6 +199,6 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                 .create(SNAPSHOT_CHECK_TASK_NAME, CheckSnapshotsDependenciesTask.class);
 
         task.setGroup(CHECK_DEPENDENCIES_TASK_GROUP);
-        task.setDescription("Check snapshot dependecies");
+        task.setDescription("Check snapshot dependencies");
     }
 }

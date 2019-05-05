@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.5]() (05-05-2019)
 
 * Восстановил работу расширения `versionSelectors` для подбора подходящих версий библиотек,

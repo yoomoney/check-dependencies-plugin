@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [4.4.6]() (14-05-2019)
+
 * Добавлен репозиторий с Gradle плагинами
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.4.5]() (05-05-2019)
 
 * Восстановил работу расширения `versionSelectors` для подбора подходящих версий библиотек,

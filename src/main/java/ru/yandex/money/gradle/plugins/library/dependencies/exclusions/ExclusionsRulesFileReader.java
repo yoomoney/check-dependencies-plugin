@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,18 +21,18 @@ import java.nio.file.Paths;
 public class ExclusionsRulesFileReader extends ExclusionsRulesPropertiesReader {
 
     private final Logger log = LoggerFactory.getLogger(ExclusionsRulesFileReader.class);
-    private final String fileName;
+    private final String absoluteFilePath;
 
-    ExclusionsRulesFileReader(@Nonnull String fileName) {
-        this.fileName = fileName;
+    ExclusionsRulesFileReader(@Nonnull String absoluteFilePath) {
+        this.absoluteFilePath = absoluteFilePath;
     }
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @Override
     public void loadTo(@Nonnull ExclusionsRulesStorage rulesStorage) {
-        Path fileNamePath = Paths.get(fileName);
+        Path fileNamePath = Paths.get(absoluteFilePath);
         if (!Files.isReadable(fileNamePath)) {
-            log.warn("Cannot read file \"{}\" with upgrade versions rules.", fileName);
+            log.warn("Cannot read file \"{}\" with upgrade versions rules.", fileNamePath.toAbsolutePath());
             return;
         }
 

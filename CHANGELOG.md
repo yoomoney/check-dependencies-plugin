@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.7]() (16-05-2019)
 
 * Исправленл определение локального файла и maven-артефакта с исключениями (libraries-versions-exclusions.properties) в windows

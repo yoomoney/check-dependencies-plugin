@@ -37,11 +37,11 @@ public class ExclusionRulesLoader {
     /**
      * Загружает набор исключений из переданных путей до источников исключений
      *
-     * @param project текущий проект
+     * @param project           текущий проект
      * @param exclusionsSources источники исключений: локальные файлы и maven-артефакта
      */
     public void load(final Project project, final List<String> exclusionsSources) {
-        for (String exclusionSource: exclusionsSources) {
+        for (String exclusionSource : exclusionsSources) {
             load(project, exclusionSource);
         }
     }
@@ -49,16 +49,16 @@ public class ExclusionRulesLoader {
     /**
      * Загружает набор правил исключений из данного источника: локального файла или maven-артефакта
      *
-     * @param project текущий проект
+     * @param project         текущий проект
      * @param exclusionSource источник исключений
      */
     private void load(final Project project, final String exclusionSource) {
-        if (isMavenArtifact(exclusionSource)) {
+        if (isMavenArtifact(exclusionSource, project)) {
             ExclusionsRulesPropertiesReader reader = new ExclusionsRulesPackageReader(project, exclusionSource,
-                                                                                      "libraries-versions-exclusions.properties");
+                    "libraries-versions-exclusions.properties");
             reader.loadTo(totalExclusionRules);
         } else {
-            ExclusionsRulesPropertiesReader reader = new ExclusionsRulesFileReader(exclusionSource);
+            ExclusionsRulesPropertiesReader reader = new ExclusionsRulesFileReader(project.file(exclusionSource).getAbsolutePath());
             reader.loadTo(localExclusionRules);
             reader.loadTo(totalExclusionRules);
         }
@@ -71,7 +71,11 @@ public class ExclusionRulesLoader {
      * @param name имя файла
      * @return true, если файл является артефактом, false - иначе
      */
-    private static boolean isMavenArtifact(@Nonnull String name) {
-        return name.contains(":");
+    private static boolean isMavenArtifact(@Nonnull String name, Project project) {
+        try {
+            return !project.file(name).exists();
+        } catch (Exception e) {
+            return true;
+        }
     }
 }

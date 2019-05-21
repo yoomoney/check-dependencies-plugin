@@ -77,8 +77,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        !(result.standardOutput.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
-        result.standardOutput.contains("There is major vesion conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+        !(result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
     }
 
     def "success check on project libraries and empty fixed versions list"() {

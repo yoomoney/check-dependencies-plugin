@@ -37,7 +37,7 @@ class CheckVersionAction implements Action<DependencyResolveDetails> {
         LibraryName libraryName = new LibraryName(dependency.getRequested().getGroup(), dependency.getRequested().getName());
 
         if (conflictModules.containsKey(libraryName)) {
-            String errorMsg = String.format("There is major vesion conflict for dependency=%s:%s, versions=%s",
+            String errorMsg = String.format("There is major version conflict for dependency=%s:%s, versions=%s",
                     libraryName.getGroup(), libraryName.getName(), conflictModules.get(libraryName));
 
             List<String> taskNames = project.getGradle().getStartParameter().getTaskNames();

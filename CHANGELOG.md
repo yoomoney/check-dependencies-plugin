@@ -1,5 +1,7 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Поправлена бага в `majorVersionChecker` из-за которой, если в `excludeDependencies` было несколько записей, то эти исключения не работали
+* Так-же это проявлялось если в проекте есть модули, и в одном из них эти исключения переопределены
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.7]() (16-05-2019)
 

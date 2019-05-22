@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [4.4.9]() (22-05-2019)
+
 * Сборка переведена на yamoney-gradle-project-plugin=5.+
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.4.8]() (22-05-2019)
 
 * Поправлена бага в `majorVersionChecker` из-за которой, если в `excludeDependencies` было несколько записей, то эти исключения не работали

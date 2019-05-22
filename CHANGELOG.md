@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.8]() (22-05-2019)
 
 * Поправлена бага в `majorVersionChecker` из-за которой, если в `excludeDependencies` было несколько записей, то эти исключения не работали

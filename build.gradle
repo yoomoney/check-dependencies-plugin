@@ -2,13 +2,12 @@ buildscript {
     apply from: 'project.gradle', to: buildscript
 }
 apply plugin: 'yamoney-gradle-project-plugin'
-/////////////////////////////////////////////
 
 pluginId = 'yamoney-check-dependencies-plugin'
 gradlePlugin {
     plugins {
         checkDependenciesPlugin {
-            id = project.ext.pluginId
+            id = pluginId
             implementationClass = "ru.yandex.money.gradle.plugins.library.dependencies.CheckDependenciesPlugin"
         }
     }

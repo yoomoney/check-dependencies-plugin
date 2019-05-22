@@ -1,5 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
+import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -79,9 +80,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project target) {
-        if (!target.getPluginManager().hasPlugin(SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID)) {
-            throw new GradleException(String.format(ERROR_APPLYING_PLUGIN_REQUIRED, SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID));
-        }
+        target.getPluginManager().apply(DependencyManagementPlugin.class);
 
         CheckDependenciesPluginExtension checkDependenciesExtension = new CheckDependenciesPluginExtension();
         target.getExtensions().add(CHECK_DEPENDENCIES_EXTENSION_NAME, checkDependenciesExtension);

@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Сборка переведена на yamoney-gradle-project-plugin=5.+
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.7]() (16-05-2019)
 

@@ -1,5 +1,7 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Добавлена таска checkForbiddenDependencies. Принимает в настройках список запрещенных для использования 
+зависимостей, проверяет их наличие в текущих зависимостях.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.4.9]() (22-05-2019)
 

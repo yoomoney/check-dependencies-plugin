@@ -1,14 +1,16 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin;
-import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
+import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
+import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.CheckForbiddenDependenciesTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualInnerDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualOuterDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintInnerDependenciesVersionsTask;
@@ -65,10 +67,11 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String PRINT_ACTUAL_INNER_DEPENDENCIES_TASK_NAME = "printActualInnerDependenciesVersions";
     private static final String PRINT_ACTUAL_OUTER_DEPENDENCIES_TASK_NAME = "printActualOuterDependenciesVersions";
     private static final String SNAPSHOT_CHECK_TASK_NAME = "checkSnapshotsDependencies";
+    private static final String FORBIDDEN_DEPENDENCIES_CHECK_TASK_NAME = "checkForbiddenDependencies";
 
     private static final String PRINT_DEPENDENCIES_TASK_GROUP = "printDependenciesVersions";
 
-    private static final String CHECK_DEPENDENCIES_TASK_GROUP = "verification";
+    private static final String VERIFICATION_TASK_GROUP = "verification";
     private static final String CHECK_DEPENDENCIES_TASK_DESCRIPTION = "Checks current used libraries versions on " +
             "conflict with platform libraries version.";
     private static final String CHECK_DEPENDENCIES_EXTENSION_NAME = "checkDependencies";
@@ -77,6 +80,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
             "dependencies plugin.%n Apply this plugin in build script.";
 
     private static final String MAJOR_VERSION_CHECKER_EXTENSION_NAME = "majorVersionChecker";
+    private static final String FORBIDDEN_DEPENDENCIES_EXTENSION_NAME = "forbiddenDependenciesChecker";
 
     @Override
     public void apply(Project target) {
@@ -102,6 +106,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         MajorVersionCheckerExtension majorVersionCheckerExtension = new MajorVersionCheckerExtension();
         target.getExtensions().add(MAJOR_VERSION_CHECKER_EXTENSION_NAME, majorVersionCheckerExtension);
 
+        ForbiddenDependenciesExtension forbiddenDependenciesExtension = new ForbiddenDependenciesExtension();
+        target.getExtensions().add(FORBIDDEN_DEPENDENCIES_EXTENSION_NAME, forbiddenDependenciesExtension);
 
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
@@ -119,6 +125,15 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                     createPrintActualInnerDependenciesVersionsTask(target).dependsOn(task);
                     createPrintActualOuterDependenciesVersionsTask(target).dependsOn(task);
                     createCheckSnapshotTask(target);
+
+                    Set<ArtifactName> forbiddenArtifacts = forbiddenDependenciesExtension
+                            .forbiddenArtifacts.stream()
+                            .map(ArtifactName::parse)
+                            .collect(Collectors.toSet());
+                    CheckForbiddenDependenciesTask checkForbiddenDependenciesTask = createCheckForbiddenDependenciesTask(target);
+                    checkForbiddenDependenciesTask.dependsOn(task);
+                    checkForbiddenDependenciesTask.setForbiddenArtifacts(forbiddenArtifacts);
+
                 }
         );
     }
@@ -131,7 +146,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
      */
     private static CheckDependenciesTask createCheckDependenciesTask(@Nonnull Project project) {
         CheckDependenciesTask task = project.getTasks().create(CHECK_DEPENDENCIES_TASK_NAME, CheckDependenciesTask.class);
-        task.setGroup(CHECK_DEPENDENCIES_TASK_GROUP);
+        task.setGroup(VERIFICATION_TASK_GROUP);
         task.setDescription(CHECK_DEPENDENCIES_TASK_DESCRIPTION);
 
         return task;
@@ -197,7 +212,21 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         CheckSnapshotsDependenciesTask task = project.getTasks()
                 .create(SNAPSHOT_CHECK_TASK_NAME, CheckSnapshotsDependenciesTask.class);
 
-        task.setGroup(CHECK_DEPENDENCIES_TASK_GROUP);
+        task.setGroup(VERIFICATION_TASK_GROUP);
         task.setDescription("Check snapshot dependencies");
+    }
+
+    /**
+     * Создает задачу по проверке наличия запрещенных зависимостей
+     *
+     * @param project проект
+     */
+    private static CheckForbiddenDependenciesTask createCheckForbiddenDependenciesTask(@Nonnull Project project) {
+        CheckForbiddenDependenciesTask task = project.getTasks()
+                .create(FORBIDDEN_DEPENDENCIES_CHECK_TASK_NAME, CheckForbiddenDependenciesTask.class);
+
+        task.setGroup(VERIFICATION_TASK_GROUP);
+        task.setDescription("Check forbidden dependencies");
+        return task;
     }
 }

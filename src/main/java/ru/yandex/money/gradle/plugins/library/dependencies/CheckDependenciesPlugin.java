@@ -6,7 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
+import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ForbiddenArtifactInfo;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
@@ -109,6 +109,9 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         ForbiddenDependenciesExtension forbiddenDependenciesExtension = new ForbiddenDependenciesExtension();
         target.getExtensions().add(FORBIDDEN_DEPENDENCIES_EXTENSION_NAME, forbiddenDependenciesExtension);
 
+        CheckForbiddenDependenciesTask checkForbiddenDependenciesTask = createCheckForbiddenDependenciesTask(target);
+        checkForbiddenDependenciesTask.dependsOn(task);
+
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
                     Set<LibraryName> excludeDependencies = majorVersionCheckerExtension.excludeDependencies.stream()
@@ -126,14 +129,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                     createPrintActualOuterDependenciesVersionsTask(target).dependsOn(task);
                     createCheckSnapshotTask(target);
 
-                    Set<ArtifactName> forbiddenArtifacts = forbiddenDependenciesExtension
-                            .forbiddenArtifacts.stream()
-                            .map(ArtifactName::parse)
-                            .collect(Collectors.toSet());
-                    CheckForbiddenDependenciesTask checkForbiddenDependenciesTask = createCheckForbiddenDependenciesTask(target);
-                    checkForbiddenDependenciesTask.dependsOn(task);
-                    checkForbiddenDependenciesTask.setForbiddenArtifacts(forbiddenArtifacts);
-
+                    checkForbiddenDependenciesTask
+                            .setForbiddenArtifacts(forbiddenDependenciesExtension.forbiddenArtifacts);
                 }
         );
     }

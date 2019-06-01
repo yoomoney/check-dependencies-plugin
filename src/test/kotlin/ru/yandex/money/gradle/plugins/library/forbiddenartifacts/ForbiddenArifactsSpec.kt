@@ -61,7 +61,11 @@ class ForbiddenArifactsSpec {
 
                 }
                 forbiddenDependenciesChecker {
-                    forbiddenArtifacts = ['ru.yandex.money.common:yamoney-xml-utils:4.0.1']
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.1'
+                        recommended '4.+'
+                        comment 'bla bla'
+                    }
                }
             """.trimIndent())
 
@@ -92,9 +96,16 @@ class ForbiddenArifactsSpec {
 
                 }
                 forbiddenDependenciesChecker {
-                    forbiddenArtifacts = ['ru.yandex.money.common:yamoney-json-utils:4.0.3',
-                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1']
-
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+                        recommended '4.0.+'
+                        comment 'bla bla'
+                    }
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.1'
+                        recommended '4.0.0'
+                        comment 'bla bla'
+                    }
                }
             """.trimIndent())
 
@@ -130,7 +141,11 @@ class ForbiddenArifactsSpec {
 
                 }
                 forbiddenDependenciesChecker {
-                    forbiddenArtifacts = ['ru.yandex.money.common:yamoney-enum-utils:4.0.2']
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-enum-utils:4.0.2'
+                        recommended '4.0.0'
+                        comment 'bla bla'
+                    }
                 }
             """.trimIndent())
 
@@ -180,9 +195,23 @@ class ForbiddenArifactsSpec {
                     'ru.yandex.money.common:yamoney-json-utils:4.2.3'
                 }
                 forbiddenDependenciesChecker {
-                    forbiddenArtifacts = ['ru.yandex.money.common:yamoney-xml-utils:<4.0.0',
-                    'ru.yandex.money.common:yamoney-json-utils:<4.2.0',
-                    'ru.yandex.money.common:yamoney-enum-utils:<2.1.4']
+                    before {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.0'
+                        recommended '4.0.1'
+                        comment 'bla bla'
+                    }
+
+                    before {
+                        forbidden 'ru.yandex.money.common:yamoney-json-utils:4.2.0'
+                        recommended '4.2.2'
+                        comment 'bla bla'
+                    }
+
+                    before {
+                        forbidden 'ru.yandex.money.common:yamoney-enum-utils:2.1.4'
+                        recommended '2.2.0'
+                        comment 'bla bla'
+                    }
                 }
             """.trimIndent())
 
@@ -224,9 +253,21 @@ class ForbiddenArifactsSpec {
                     'ru.yandex.money.common:yamoney-json-utils:4.2.3'
                 }
                 forbiddenDependenciesChecker {
-                    forbiddenArtifacts = ['ru.yandex.money.common:yamoney-xml-utils:>4.0.0',
-                    'ru.yandex.money.common:yamoney-json-utils:>4.2.0',
-                    'ru.yandex.money.common:yamoney-enum-utils:>2.1.4']
+                    after {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.0'
+                        recommended '4.0.8'
+                        comment 'bla bla'
+                    }
+                    after {
+                        forbidden 'ru.yandex.money.common:yamoney-json-utils:4.2.0'
+                        recommended '4.2.8'
+                        comment 'bla bla'
+                    }
+                    after {
+                        forbidden 'ru.yandex.money.common:yamoney-enum-utils:2.1.4'
+                        recommended '2.1.9'
+                        comment 'bla bla'
+                    }
                 }
             """.trimIndent())
 
@@ -253,5 +294,101 @@ class ForbiddenArifactsSpec {
                 not(containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.0.2")))
         assertThat(result.output,
                 containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.1.5"))
+    }
+
+    @Test
+    fun `should found forbidden dependencies before and after version`() {
+
+        buildFile.writeText(setupBuildFile + """
+                dependencies {
+                    compile 'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
+                    'ru.yandex.money.common:yamoney-enum-utils:2.1.4',
+                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                    'ru.yandex.money.common:yamoney-json-utils:4.0.3',
+                    'ru.yandex.money.common:yamoney-json-utils:4.2.3'
+                }
+                forbiddenDependenciesChecker {
+                    after {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.0'
+                        recommended '4.0.7'
+                        comment 'bla bla'
+                    }
+                    before {
+                        forbidden 'ru.yandex.money.common:yamoney-json-utils:4.2.0'
+                        recommended '4.2.7'
+                        comment 'bla bla'
+                    }
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-enum-utils:2.1.4'
+                        recommended '2.1.7'
+                        comment 'bla bla'
+                    }
+                }
+            """.trimIndent())
+
+        val result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments("checkForbiddenDependencies")
+                .withPluginClasspath()
+                .withDebug(true)
+                .buildAndFail()
+
+        assertThat(result.output, containsString("There is forbidden dependencies"))
+
+        assertThat(result.output,
+                not(containsString("Forbidden dependency: ru.yandex.money.common:yamoney-xml-utils:3.0.1")))
+        assertThat(result.output,
+                containsString("Forbidden dependency: ru.yandex.money.common:yamoney-xml-utils:4.0.1"))
+
+        assertThat(result.output,
+                containsString("Forbidden dependency: ru.yandex.money.common:yamoney-json-utils:4.0.3"))
+        assertThat(result.output,
+                not(containsString("Forbidden dependency: ru.yandex.money.common:yamoney-json-utils:4.2.3")))
+
+        assertThat(result.output,
+                not(containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.0.2")))
+        assertThat(result.output,
+                containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.1.4"))
+    }
+
+    @Test
+    fun `should fai `() {
+
+        buildFile.writeText(setupBuildFile + """
+                dependencies {
+                    compile 'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
+                    'ru.yandex.money.common:yamoney-enum-utils:2.1.4',
+                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                    'ru.yandex.money.common:yamoney-json-utils:4.0.3',
+                    'ru.yandex.money.common:yamoney-json-utils:4.2.3'
+                }
+                forbiddenDependenciesChecker {
+                    after {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:1.1.1'
+                        recommended '4.0.7'
+                        comment 'bla bla'
+                    }
+                    range {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils'
+                        startVersion '4.0.0'
+                        endVersion '4.0.2'
+                        recommended '4.0.7'
+                        comment 'bla bla'
+                    }
+                }
+            """.trimIndent())
+
+        val result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments("checkForbiddenDependencies")
+                .withPluginClasspath()
+                .withDebug(true)
+                .buildAndFail()
+
+        assertThat(result.output, not(containsString("There is forbidden dependencies")))
+
+        assertThat(result.output, containsString("Rules for forbidden artifact already added"))
     }
 }

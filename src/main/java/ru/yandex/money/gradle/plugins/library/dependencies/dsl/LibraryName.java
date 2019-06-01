@@ -67,4 +67,9 @@ public final class LibraryName {
     public int hashCode() {
         return 7 * group.hashCode() + name.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return group + ":" + name;
+    }
 }

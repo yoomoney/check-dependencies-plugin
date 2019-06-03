@@ -2,7 +2,6 @@ buildscript {
     apply from: 'project.gradle', to: buildscript
 }
 apply plugin: 'yamoney-gradle-project-plugin'
-apply plugin: 'yamoney-kotlin-module-plugin'
 
 pluginId = 'yamoney-check-dependencies-plugin'
 gradlePlugin {

@@ -351,44 +351,4 @@ class ForbiddenArifactsSpec {
         assertThat(result.output,
                 containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.1.4"))
     }
-
-    @Test
-    fun `should fai `() {
-
-        buildFile.writeText(setupBuildFile + """
-                dependencies {
-                    compile 'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
-                    'ru.yandex.money.common:yamoney-enum-utils:2.1.4',
-                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
-                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
-                    'ru.yandex.money.common:yamoney-json-utils:4.0.3',
-                    'ru.yandex.money.common:yamoney-json-utils:4.2.3'
-                }
-                forbiddenDependenciesChecker {
-                    after {
-                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:1.1.1'
-                        recommended '4.0.7'
-                        comment 'bla bla'
-                    }
-                    range {
-                        forbidden 'ru.yandex.money.common:yamoney-xml-utils'
-                        startVersion '4.0.0'
-                        endVersion '4.0.2'
-                        recommended '4.0.7'
-                        comment 'bla bla'
-                    }
-                }
-            """.trimIndent())
-
-        val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments("checkForbiddenDependencies")
-                .withPluginClasspath()
-                .withDebug(true)
-                .buildAndFail()
-
-        assertThat(result.output, not(containsString("There is forbidden dependencies")))
-
-        assertThat(result.output, containsString("Rules for forbidden artifact already added"))
-    }
 }

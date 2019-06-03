@@ -80,8 +80,8 @@ public class ArtifactWithVersionRange {
         String[] versionAsArray2 = version2.split("\\.");
 
         for (int i = 0; i < Math.min(versionAsArray1.length, versionAsArray2.length); i++) {
-            Integer num1 = Integer.parseInt(versionAsArray1[i]);
-            Integer num2 = Integer.parseInt(versionAsArray2[i]);
+            Integer num1 = Integer.valueOf(versionAsArray1[i]);
+            Integer num2 = Integer.valueOf(versionAsArray2[i]);
 
             if (!num1.equals(num2)) {
                 return num1.compareTo(num2);

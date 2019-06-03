@@ -2,7 +2,6 @@ package ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts;
 
 import groovy.lang.Closure;
 import org.gradle.api.Action;
-import org.gradle.api.GradleException;
 import org.gradle.util.ConfigureUtil;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ArtifactWithVersionRange;
@@ -25,11 +24,6 @@ public class ForbiddenDependenciesExtension {
     public Set<ForbiddenArtifactInfo> forbiddenArtifacts = new HashSet<>();
 
     /**
-     * Сет запрещенных артефактов
-     */
-    private Set<LibraryName> forbiddenLibrary = new HashSet<>();
-
-    /**
      * Проверка содержания в подключенных зависимостях данного артефакта, с конкретной версией
      */
     public void eq(Closure closure) {
@@ -37,7 +31,6 @@ public class ForbiddenDependenciesExtension {
         ArtifactName forbiddenArtifact = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
         LibraryName libraryName = forbiddenArtifact.getLibraryName();
 
-        checkDoubleAddRule(libraryName);
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
                 new ArtifactWithVersionRange(libraryName, forbiddenArtifact.getVersion())));
     }
@@ -49,7 +42,6 @@ public class ForbiddenDependenciesExtension {
         ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
 
         LibraryName forbiddenLibraryName = LibraryName.parse(forbiddenArtifactParameter.forbidden);
-        checkDoubleAddRule(forbiddenLibraryName);
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
                 new ArtifactWithVersionRange(forbiddenLibraryName,
@@ -63,7 +55,6 @@ public class ForbiddenDependenciesExtension {
         ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
 
         ArtifactName forbiddenArtifactName = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
-        checkDoubleAddRule(forbiddenArtifactName.getLibraryName());
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
                 new ArtifactWithVersionRange(forbiddenArtifactName.getLibraryName(),
@@ -76,8 +67,6 @@ public class ForbiddenDependenciesExtension {
     public void after(Closure closure) {
         ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
         ArtifactName forbiddenArtifactName = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
-
-        checkDoubleAddRule(forbiddenArtifactName.getLibraryName());
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
                 new ArtifactWithVersionRange(forbiddenArtifactName.getLibraryName(),
@@ -96,14 +85,6 @@ public class ForbiddenDependenciesExtension {
                         forbiddenArtifactParameter.recommended))
                 .withComment(forbiddenArtifactParameter.comment)
                 .build();
-    }
-
-    private void checkDoubleAddRule(LibraryName forbiddenLibraryName) {
-        if (!forbiddenLibrary.add(forbiddenLibraryName)) {
-            throw new GradleException(String.format("Rules for forbidden artifact already added: %s. " +
-                            "May be you need range() method instead?",
-                    forbiddenLibraryName));
-        }
     }
 
     private ForbiddenArtifactParameter createForbiddenArtifactInfo(Closure closure) {

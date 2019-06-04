@@ -1,8 +1,8 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Добавлена таска checkForbiddenDependencies. Принимает в настройках список запрещенных для использования 
+## [4.5.0]() (04-06-2019)
+
+* Добавлена таска checkForbiddenDependencies. Принимает в настройках список запрещенных для использования
 зависимостей, проверяет их наличие в текущих зависимостях.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.4.9]() (22-05-2019)
 
 * Сборка переведена на yamoney-gradle-project-plugin=5.+

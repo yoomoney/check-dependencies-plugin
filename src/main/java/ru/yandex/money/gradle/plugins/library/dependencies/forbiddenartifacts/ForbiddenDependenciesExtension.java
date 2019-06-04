@@ -27,7 +27,13 @@ public class ForbiddenDependenciesExtension {
      * Проверка содержания в подключенных зависимостях данного артефакта, с конкретной версией
      */
     public void eq(Closure closure) {
-        ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
+        eq(createForbiddenArtifactInfo(closure));
+    }
+
+    /**
+     * Проверка содержания в подключенных зависимостях данного артефакта, с конкретной версией
+     */
+    public void eq(ForbiddenArtifactParameter forbiddenArtifactParameter) {
         ArtifactName forbiddenArtifact = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
         LibraryName libraryName = forbiddenArtifact.getLibraryName();
 
@@ -39,21 +45,31 @@ public class ForbiddenDependenciesExtension {
      * Проверка содержания в подключенных зависимостях данного артефакта, с заданием диапазона запрещенных версий
      */
     public void range(Closure closure) {
-        ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
+        range(createForbiddenArtifactInfo(closure));
+    }
 
+    /**
+     * Проверка содержания в подключенных зависимостях данного артефакта, с заданием диапазона запрещенных версий
+     */
+    public void range(ForbiddenArtifactParameter forbiddenArtifactParameter) {
         LibraryName forbiddenLibraryName = LibraryName.parse(forbiddenArtifactParameter.forbidden);
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
                 new ArtifactWithVersionRange(forbiddenLibraryName,
-                forbiddenArtifactParameter.startVersion, forbiddenArtifactParameter.endVersion)));
+                        forbiddenArtifactParameter.startVersion, forbiddenArtifactParameter.endVersion)));
     }
 
     /**
      * Проверка содержания в подключенных зависимостях данного артефакта, с версиями меньше указанной
      */
     public void before(Closure closure) {
-        ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
+        before(createForbiddenArtifactInfo(closure));
+    }
 
+    /**
+     * Проверка содержания в подключенных зависимостях данного артефакта, с версиями меньше указанной
+     */
+    public void before(ForbiddenArtifactParameter forbiddenArtifactParameter) {
         ArtifactName forbiddenArtifactName = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
@@ -65,7 +81,13 @@ public class ForbiddenDependenciesExtension {
      * Проверка содержания в подключенных зависимостях данного артефакта, с версиями больше указанной
      */
     public void after(Closure closure) {
-        ForbiddenArtifactParameter forbiddenArtifactParameter = createForbiddenArtifactInfo(closure);
+        after(createForbiddenArtifactInfo(closure));
+    }
+
+    /**
+     * Проверка содержания в подключенных зависимостях данного артефакта, с версиями больше указанной
+     */
+    public void after(ForbiddenArtifactParameter forbiddenArtifactParameter) {
         ArtifactName forbiddenArtifactName = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
 
         forbiddenArtifacts.add(createForbiddenArtifact(forbiddenArtifactParameter,
@@ -97,31 +119,36 @@ public class ForbiddenDependenciesExtension {
     /**
      * Для удобной передачи параметров из gradle
      */
-    private static class ForbiddenArtifactParameter {
+    public static class ForbiddenArtifactParameter {
         private String forbidden;
         private String recommended;
         private String comment;
         private String startVersion;
         private String endVersion;
 
-        public void recommended(String recommended) {
+        public ForbiddenArtifactParameter recommended(String recommended) {
             this.recommended = recommended;
+            return this;
         }
 
-        public void forbidden(String forbidden) {
+        public ForbiddenArtifactParameter forbidden(String forbidden) {
             this.forbidden = forbidden;
+            return this;
         }
 
-        public void comment(String comment) {
+        public ForbiddenArtifactParameter comment(String comment) {
             this.comment = comment;
+            return this;
         }
 
-        public void startVersion(String startVersion) {
+        public ForbiddenArtifactParameter startVersion(String startVersion) {
             this.startVersion = startVersion;
+            return this;
         }
 
-        public void endVersion(String endVersion) {
+        public ForbiddenArtifactParameter endVersion(String endVersion) {
             this.endVersion = endVersion;
+            return this;
         }
     }
 }

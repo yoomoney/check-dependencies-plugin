@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [4.5.0]() (04-06-2019)
 
 * Добавлена таска checkForbiddenDependencies. Принимает в настройках список запрещенных для использования

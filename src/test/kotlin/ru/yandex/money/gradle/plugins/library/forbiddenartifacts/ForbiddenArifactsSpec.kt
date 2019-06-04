@@ -130,6 +130,41 @@ class ForbiddenArifactsSpec {
     }
 
     @Test
+    fun `should found forbidden dependencies when checkLibraryDependencies`() {
+
+        buildFile.writeText(setupBuildFile + """
+                dependencies {
+                    compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                    'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+
+                }
+                forbiddenDependenciesChecker {
+                    eq {
+                        forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.1'
+                        recommended '4.0.0'
+                        comment 'bla bla'
+                    }
+               }
+            """.trimIndent())
+
+        val result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments("checkLibraryDependencies")
+                .withPluginClasspath()
+                .withDebug(true)
+                .buildAndFail()
+
+        assertThat(result.output, containsString("There is forbidden dependencies"))
+
+        assertThat(result.output,
+                containsString("Forbidden dependency: ru.yandex.money.common:yamoney-xml-utils:4.0.1"))
+        assertThat(result.output,
+                containsString("Recommended version: ru.yandex.money.common:yamoney-xml-utils 4.0.1 -> "))
+    }
+
+    @Test
     fun `should not found forbidden dependencies`() {
 
         buildFile.writeText(setupBuildFile + """

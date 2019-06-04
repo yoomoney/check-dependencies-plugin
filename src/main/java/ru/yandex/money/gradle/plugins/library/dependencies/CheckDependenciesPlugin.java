@@ -110,7 +110,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         target.getExtensions().add(FORBIDDEN_DEPENDENCIES_EXTENSION_NAME, forbiddenDependenciesExtension);
 
         CheckForbiddenDependenciesTask checkForbiddenDependenciesTask = createCheckForbiddenDependenciesTask(target);
-        checkForbiddenDependenciesTask.dependsOn(task);
+        task.dependsOn(checkForbiddenDependenciesTask);
 
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {

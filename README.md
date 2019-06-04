@@ -122,22 +122,22 @@ checkSnapshotsDependencies. Выбрасывает исключение при �
    Список запрещенных артефактов может задаваться такими способами:
 ```groovy
      forbiddenDependenciesChecker {
-            after {                       //запрещены все версии yamoney-xml-utils выше 4.0.0
+            after {             //запрещены все версии yamoney-xml-utils выше 4.0.0 (включая все более поздние мажорные)
                  forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.0'
                  recommended '4.0.7'
                  comment 'bla bla'
             }
-            before {                      //запрещены все версии yamoney-json-utils ниже 4.0.0
+            before {           //запрещены все версии yamoney-json-utils ниже 4.0.0
                  forbidden 'ru.yandex.money.common:yamoney-json-utils:4.2.0'
                  recommended '4.2.7'
                  comment 'bla bla'
             }
-            eq {                          //запрещена yamoney-enum-utils версии 2.1.4
+            eq {               //запрещена yamoney-enum-utils версии 2.1.4
                  forbidden 'ru.yandex.money.common:yamoney-enum-utils:2.1.4'
                  recommended '2.1.7'
                  comment 'bla bla'
             }
-            range {                       //запрещены версии yamoney-common-utils от 4.0.0 до 4.0.2 включительно
+            range {            //запрещены версии yamoney-common-utils от 4.0.0 до 4.0.2 включительно
                  forbidden 'ru.yandex.money.common:yamoney-common-utils'
                  startVersion '4.0.0'
                  endVersion '4.0.2'

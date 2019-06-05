@@ -386,4 +386,38 @@ class ForbiddenArifactsSpec {
         assertThat(result.output,
                 containsString("Forbidden dependency: ru.yandex.money.common:yamoney-enum-utils:2.1.4"))
     }
+
+    @Test
+    fun `should found forbidden dependencies range versions`() {
+
+        buildFile.writeText(setupBuildFile + """
+                dependencies {
+                    compile 'ru.yandex.money.common:yamoney-http-client:3.0.1',
+                            'ru.yandex.money.common:yamoney-http-client:5.0.1'
+                }
+                forbiddenDependenciesChecker {
+                    range {
+                        forbidden 'ru.yandex.money.common:yamoney-http-client'
+                        startVersion '5.0.0'
+                        endVersion '5.0.1'
+                        recommended '5.1.+'
+                        comment 'В версии есть ошибка конфигурирования socketTimeout и connectionTimeout'
+                    }
+                }
+            """.trimIndent())
+
+        val result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments("checkForbiddenDependencies")
+                .withPluginClasspath()
+                .withDebug(true)
+                .buildAndFail()
+
+        assertThat(result.output, containsString("There is forbidden dependencies"))
+
+        assertThat(result.output,
+                not(containsString("Forbidden dependency: ru.yandex.money.common:yamoney-http-client:3.0.1")))
+        assertThat(result.output,
+                containsString("Forbidden dependency: ru.yandex.money.common:yamoney-http-client:5.0.1"))
+    }
 }

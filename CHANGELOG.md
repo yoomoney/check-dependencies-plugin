@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Поправила баг с объявлением range в checkForbiddenDependencies
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.5.0]() (04-06-2019)
 

@@ -97,13 +97,10 @@ public class ForbiddenDependenciesExtension {
 
     private ForbiddenArtifactInfo createForbiddenArtifact(ForbiddenArtifactParameter forbiddenArtifactParameter,
                                                           ArtifactWithVersionRange artifactWithVersionRange) {
-        ArtifactName forbiddenArtifact = ArtifactName.parse(forbiddenArtifactParameter.forbidden);
-
-        LibraryName libraryName = forbiddenArtifact.getLibraryName();
 
         return ForbiddenArtifactInfo.builder()
                 .withForbiddenArtifact(artifactWithVersionRange)
-                .withRecommendedArtifact(new ArtifactName(libraryName,
+                .withRecommendedArtifact(new ArtifactName(artifactWithVersionRange.getLibraryName(),
                         forbiddenArtifactParameter.recommended))
                 .withComment(forbiddenArtifactParameter.comment)
                 .build();

@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [4.5.1]() (05-06-2019)
+
 * Поправила баг с объявлением range в checkForbiddenDependencies
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.5.0]() (04-06-2019)
 
 * Добавлена таска checkForbiddenDependencies. Принимает в настройках список запрещенных для использования

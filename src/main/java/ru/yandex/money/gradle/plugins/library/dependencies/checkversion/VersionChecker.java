@@ -30,19 +30,16 @@ public class VersionChecker {
                                        Set<LibraryName> excludedLibraries,
                                        Set<String> includePrefixLibraries) {
         ConfigurationContainer allConfigurations = project.getConfigurations();
-        Map<LibraryName, Set<String>> conflictModules = new HashMap<>();
-
-        Action<DependencyResolveDetails> findAllVersionConflictAction =
-                new FindAllVersionConflictAction(excludedLibraries, includePrefixLibraries, conflictModules);
-
-        Action<DependencyResolveDetails> checkVersionAction =
-                new CheckVersionAction(project, conflictModules);
 
         allConfigurations.stream()
                 .filter(VersionChecker::isValidConfiguration)
-                .forEach(conf -> conf.getResolutionStrategy()
-                        .eachDependency(findAllVersionConflictAction)
-                        .eachDependency(checkVersionAction));
+                .forEach(conf -> {
+                    Map<LibraryName, Set<String>> conflictModules = new HashMap<>();
+
+                    conf.getResolutionStrategy()
+                            .eachDependency(new FindAllVersionConflictAction(excludedLibraries, includePrefixLibraries, conflictModules))
+                            .eachDependency(new CheckVersionAction(project, conflictModules));
+                });
     }
 
     private static boolean isValidConfiguration(Configuration configuration) {

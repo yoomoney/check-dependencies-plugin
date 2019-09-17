@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Поправила баг в VersionChecker, теперь возможно подключить разные мажорные версии в разные конфигурации.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.5.1]() (05-06-2019)
 

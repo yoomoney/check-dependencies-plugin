@@ -31,6 +31,33 @@ class CheckVersionSpec extends AbstractPluginSpec {
         result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
     }
 
+    def "Not found conflict for different configuration"() {
+
+        given:
+        buildFile << """
+                   
+            dependencies {
+                compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                        'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
+                       
+                archives 'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
+                        'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+                       
+            } 
+            majorVersionChecker {
+                    includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']
+            }
+            
+                """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully("dependencies")
+
+        then:
+        !result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+        !result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
+    }
+
     def "Not found conflict for outer libraries"() {
 
         given:

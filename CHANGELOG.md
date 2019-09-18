@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [4.5.2]() (18-09-2019)
+
 * Поправила баг в VersionChecker, теперь возможно подключить разные мажорные версии в разные конфигурации.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.5.1]() (05-06-2019)
 
 * Поправила баг с объявлением range в checkForbiddenDependencies

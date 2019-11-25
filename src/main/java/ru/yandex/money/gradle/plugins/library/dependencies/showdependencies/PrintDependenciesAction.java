@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 import static ru.yandex.money.gradle.plugins.library.dependencies.NexusUtils.getArtifactLatestVersion;
 
 /**
@@ -64,8 +65,15 @@ public class PrintDependenciesAction implements Action<Project> {
                                     checked.put(dependency, true);
 
                                     if (dependencyType.isCorresponds(dependency)) {
-                                        printLatestDependencyVersion(dependency,
-                                                resolvedVersionMap.get(dependency.getGroup() + ":" + dependency.getName()));
+                                        String realVersion = resolvedVersionMap.get(dependency.getGroup() + ":" + dependency.getName());
+                                        try {
+                                            printLatestDependencyVersion(dependency, realVersion);
+                                        } catch (Exception e) {
+                                            log.warn("Can't get latest dependency version: {}:{} {}",
+                                                    dependency.getGroup(),
+                                                    dependency.getName(),
+                                                    realVersion);
+                                        }
                                     }
                                 }
                         );

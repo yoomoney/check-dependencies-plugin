@@ -1,5 +1,7 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Задачи ```printNewInnerDependenciesVersions``` и ```printNewOuterDependenciesVersions``` больше не падают если произошли проблемы 
+с определением новых версий
 ### NEXT_VERSION_DESCRIPTION_END
 ## [4.5.2]() (18-09-2019)
 

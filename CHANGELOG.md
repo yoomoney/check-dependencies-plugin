@@ -1,8 +1,8 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Задачи ```printNewInnerDependenciesVersions``` и ```printNewOuterDependenciesVersions``` больше не падают если произошли проблемы 
+## [4.5.3]() (26-11-2019)
+
+* Задачи ```printNewInnerDependenciesVersions``` и ```printNewOuterDependenciesVersions``` больше не падают если произошли проблемы
 с определением новых версий
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [4.5.2]() (18-09-2019)
 
 * Поправила баг в VersionChecker, теперь возможно подключить разные мажорные версии в разные конфигурации.

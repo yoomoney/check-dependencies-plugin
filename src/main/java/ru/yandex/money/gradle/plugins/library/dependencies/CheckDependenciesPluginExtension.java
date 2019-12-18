@@ -1,6 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
 import groovy.lang.Closure;
+import org.gradle.api.tasks.Input;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +26,13 @@ public class CheckDependenciesPluginExtension {
      * <b>"libraries-versions-exclusions.properties"</b></li>
      * </ul>
      */
+    @Input
     public List<String> exclusionsRulesSources = Collections.singletonList("libraries-versions-exclusions.properties");
 
     /**
      * Список конфигурация для которых не требуется выполнять проверку версий библиотек.
      */
+    @Input
     public List<String> excludedConfigurations = new ArrayList<>();
 
     /**
@@ -41,5 +44,6 @@ public class CheckDependenciesPluginExtension {
      * <p>
      * Представляет собой отображение имени библиотеки в формате group:name на селектор версий.
      */
+    @Input
     public Map<String, Closure<Boolean>> versionSelectors = Collections.emptyMap();
 }

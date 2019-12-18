@@ -11,7 +11,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         buildFile << """
                    
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'ru.yandex.money.common:yamoney-json-utils:4.0.3'
@@ -37,7 +37,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         buildFile << """
                    
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
                        
                 archives 'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
@@ -63,7 +63,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
             dependencies {
-                compile 'com.google.guava:guava:22.0',
+                implementation 'com.google.guava:guava:22.0',
                         'com.google.guava:guava:23.0'
                         
             }
@@ -85,7 +85,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'ru.yandex.money.common:yamoney-json-utils:4.0.3'
@@ -111,7 +111,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 dependencies {
-                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                implementation 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'com.google.guava:guava:22.0',
                         'com.google.guava:guava:23.0'
@@ -134,7 +134,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 dependencies {
-                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                implementation 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-enum-utils:4.0.3'
@@ -162,7 +162,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:1.0.2',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:1.0.2',
                         'ru.yandex.money.common:yamoney-json-utils:+'
                         
                } 
@@ -180,7 +180,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:1.+',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:1.+',
                         'ru.yandex.money.common:yamoney-json-utils:2.+'
                         
                } 

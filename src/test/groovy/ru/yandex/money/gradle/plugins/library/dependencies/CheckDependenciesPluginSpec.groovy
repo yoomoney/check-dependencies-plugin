@@ -77,8 +77,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        !(result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
-        result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+        !(result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
     }
 
     def "success check on project libraries and empty fixed versions list"() {
@@ -422,7 +422,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.failure
-        result.standardOutput.contains('stale exclusions')
+        result.standardError.contains('stale exclusions')
     }
 
     def 'success check on project with stale imported exclusion rules'() {
@@ -620,7 +620,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("NO SOLUTIONS FOUND")
+        result.standardError.contains("NO SOLUTIONS FOUND")
     }
 
     def 'check that conflicts for given dependency are resolved when version selector is specified'() {
@@ -656,8 +656,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("[6.2.0]")
-        !result.standardOutput.contains("[5.1.0]")
+        result.standardError.contains("[6.2.0]")
+        !result.standardError.contains("[5.1.0]")
     }
 
     def 'check that conflicts for given dependency are resolved when version selector for given dependency is not specified'() {
@@ -689,6 +689,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("NO SOLUTIONS FOUND")
+        result.standardError.contains("NO SOLUTIONS FOUND")
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.dependencies;
 
-import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.GradleException;
@@ -13,6 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -25,8 +26,8 @@ import java.util.stream.IntStream;
  */
 public final class NexusUtils {
     private static final Set<String> ILLEGAL_VERSION_PATTERNS =
-            ImmutableSet.of(".*alpha.*", ".*beta.*", ".*rc.*", ".*r\\d.*", ".*-b\\d.*", ".*sec.*");
-
+            new HashSet<>(Arrays.asList(".*alpha.*", ".*beta.*", ".*rc.*", ".*r\\d.*", ".*-b\\d.*", ".*sec.*"));
+    
     private NexusUtils() {
     }
 

@@ -14,16 +14,14 @@ gradlePlugin {
 }
 
 def aetherVersion = '0.9.0.M2'
-System.setProperty("ignoreDeprecations", "true")
 
 dependencies {
-    implementation localGroovy(),
+    api localGroovy(),
             'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE',
-            'com.google.guava:guava:18.0',
             'com.google.code.findbugs:jsr305:3.0.1',
             'com.google.code.findbugs:annotations:3.0.1'
 
-    implementation "org.eclipse.aether:aether-api:${aetherVersion}",
+    api "org.eclipse.aether:aether-api:${aetherVersion}",
             "org.eclipse.aether:aether-util:${aetherVersion}",
             "org.eclipse.aether:aether-connector-wagon:${aetherVersion}",
             "org.eclipse.aether:aether-impl:${aetherVersion}",
@@ -37,9 +35,9 @@ dependencies {
             "org.codehaus.plexus:plexus-interpolation:1.21"
 
     testImplementation gradleTestKit(),
-                'com.netflix.nebula:nebula-test:7.4.0',
-                'org.codehaus.plexus:plexus-utils:2.0.7',
-                'org.codehaus.plexus:plexus-interpolation:1.14'
+            'com.netflix.nebula:nebula-test:7.4.0',
+            'org.codehaus.plexus:plexus-utils:2.0.7',
+            'org.codehaus.plexus:plexus-interpolation:1.14'
 
     testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
         exclude module: 'groovy-all'

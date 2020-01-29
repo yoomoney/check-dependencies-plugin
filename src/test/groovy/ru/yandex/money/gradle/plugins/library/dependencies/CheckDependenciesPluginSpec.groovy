@@ -37,7 +37,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 dependencyManagement {
@@ -61,7 +61,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 dependencies {
-                compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
+                implementation 'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'ru.yandex.money.common:yamoney-enum-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-enum-utils:4.0.3'
@@ -77,15 +77,15 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("dependencies")
 
         then:
-        !(result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
-        result.standardOutput.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
+        !(result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
+        result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
     }
 
     def "success check on project libraries and empty fixed versions list"() {
         given:
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 dependencyManagement {
@@ -94,10 +94,10 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 }
 
                 dependencies {
-                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
-                    compile 'org.hamcrest:hamcrest-core:1.2'
+                    implementation 'org.springframework:spring-core:4.2.5.RELEASE'
+                    implementation 'org.hamcrest:hamcrest-core:1.2'
 
-                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                    testImplementation group: 'junit', name: 'junit', version: '4.11'
                 }
                 """.stripIndent()
 
@@ -113,7 +113,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 dependencyManagement {
@@ -129,13 +129,13 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                 // Специально определяем версии библиотек, которые конфликтуют с зафиксированными
                 dependencies {
                     // Ожидается 4.2.7.RELEASE
-                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+                    implementation 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.3
-                    compile 'org.hamcrest:hamcrest-core:1.2'
+                    implementation 'org.hamcrest:hamcrest-core:1.2'
 
                     // Ожидается 4.12
                     // Использует org.hamcrest:hamcrest-core:1.3
-                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                    testImplementation group: 'junit', name: 'junit', version: '4.11'
                 }
                 """.stripIndent()
 
@@ -150,7 +150,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 dependencyManagement {
@@ -167,7 +167,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                         dependency 'org.hamcrest:hamcrest-core:1.2'
                     }
 
-                    testCompile {
+                    testImplementation {
                         dependencies {
                             dependency 'junit:junit:4.11'
                             dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
@@ -177,15 +177,15 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
-                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+                    implementation 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.2
-                    compile 'org.hamcrest:hamcrest-core:1.2'
+                    implementation 'org.hamcrest:hamcrest-core:1.2'
                     //Использует slf4j-api:1.20, ожидается slf4j-api:1.21
-                    compile 'ch.qos.logback:logback-classic:1.1.7'
+                    implementation 'ch.qos.logback:logback-classic:1.1.7'
 
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
-                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                    testImplementation group: 'junit', name: 'junit', version: '4.11'
                 }
             """.stripIndent()
         when:
@@ -205,7 +205,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 buildscript {
@@ -228,7 +228,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                         dependency 'org.hamcrest:hamcrest-core:1.2'
                     }
 
-                    testCompile {
+                    testImplementation {
                         dependencies {
                             dependency 'junit:junit:4.11'
                             dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
@@ -244,13 +244,13 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
-                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+                    implementation 'org.springframework:spring-core:4.2.5.RELEASE'
                     // Ожидается 1.2
-                    compile 'org.hamcrest:hamcrest-core:1.2'
+                    implementation 'org.hamcrest:hamcrest-core:1.2'
 
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
-                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                    testImplementation group: 'junit', name: 'junit', version: '4.11'
                 }
             """.stripIndent()
         when:
@@ -333,7 +333,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                 }
 
                 dependencyManagement {
@@ -350,7 +350,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                         dependency 'org.hamcrest:hamcrest-core:1.2'
                     }
 
-                    testCompile {
+                    testImplementation {
                         dependencies {
                             dependency 'junit:junit:4.11'
                             dependency 'org.hamcrest:hamcrest-core:1.3' // platform fixed 1.2
@@ -360,20 +360,20 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
                 // Указываем путь к несуществующему файлу
                 checkDependencies {
-                    excludedConfigurations = ["testCompile", "testRuntime", 
+                    excludedConfigurations = ["testImplementation", "testRuntime", 
                     "testCompileClasspath", "testRuntimeClasspath"]
                 }
 
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
-                    compile 'org.springframework:spring-core:4.2.5.RELEASE'
+                    implementation 'org.springframework:spring-core:4.2.5.RELEASE'
 
                     // Ожидается 1.2
-                    compile 'org.hamcrest:hamcrest-core:1.2'
+                    implementation 'org.hamcrest:hamcrest-core:1.2'
 
                     // Ожидается 4.11
                     // Использует org.hamcrest:hamcrest-core:1.3
-                    testCompile group: 'junit', name: 'junit', version: '4.11'
+                    testImplementation group: 'junit', name: 'junit', version: '4.11'
                 }
                 """.stripIndent()
 
@@ -394,7 +394,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
             }
 
             // ожидается org.hamcrest:hamcrest-core:1.3
@@ -411,7 +411,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
             // используется только правило org.hamcrest.hamcrest-core:1.2 -> 1.3
             // правило org.hamcrest.hamcrest-core:1.0 -> 1.3 'просрочено'
             dependencies {
-                compile 'org.hamcrest:hamcrest-core:1.2'
+                implementation 'org.hamcrest:hamcrest-core:1.2'
             }
 
             checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
@@ -422,15 +422,15 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.failure
-        result.standardOutput.contains('stale exclusions')
+        result.standardError.contains('stale exclusions')
     }
 
     def 'success check on project with stale imported exclusion rules'() {
         given:
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
-                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
             }
 
             dependencyManagement {
@@ -443,7 +443,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             // нет конфликтов версий с требуемыми в dependencyManagement секции
             dependencies {
-                compile 'junit:junit:4.12'
+                implementation 'junit:junit:4.12'
             }
 
             // загружаем правила исключений из yamoney-libraries-dependencies
@@ -462,8 +462,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
-                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
             }
 
             dependencyManagement {
@@ -476,7 +476,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             // нет конфликтов версий с требуемыми в dependencyManagement секции
             dependencies {
-                compile 'unresolved:dependency'
+                implementation 'unresolved:dependency'
             }
         """.stripIndent()
 
@@ -501,7 +501,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
             }
 
             dependencyManagement {
@@ -515,8 +515,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
             }
 
             dependencies {
-                compile 'org.hamcrest:hamcrest-core:1.0'
-                compile 'junit:junit:4.11'
+                implementation 'org.hamcrest:hamcrest-core:1.0'
+                implementation 'junit:junit:4.11'
             }
 
             checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
@@ -539,7 +539,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
             }
 
             dependencyManagement {
@@ -548,7 +548,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
                 dependencies {
                     dependency 'junit:junit:4.12'
-                                    compile 'junit:junit:4.11'
+                                    implementation 'junit:junit:4.11'
             }
 
             checkDependencies.exclusionsRulesSources = ['$exclusionFile.absolutePath']
@@ -565,8 +565,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         given:
         buildFile << """
             repositories {
-                maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
-                maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
+                maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
             }
 
             dependencyManagement {
@@ -583,7 +583,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             // нет конфликтов версий с требуемыми в dependencyManagement секции
             dependencies {
-                compile 'unresolved:dependency:2.0.0'
+                implementation 'unresolved:dependency:2.0.0'
             }
         """.stripIndent()
 
@@ -611,7 +611,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
             }
 
             dependencies {
-                compile 'test:beta:4.1.0'
+                implementation 'test:beta:4.1.0'
             }
         """
 
@@ -620,7 +620,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("NO SOLUTIONS FOUND")
+        result.standardError.contains("NO SOLUTIONS FOUND")
     }
 
     def 'check that conflicts for given dependency are resolved when version selector is specified'() {
@@ -641,9 +641,9 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
             dependencies {
                 // depends on test:alpha:4.1.0
-                compile 'test:beta:4.1.0'
+                implementation 'test:beta:4.1.0'
 
-                compile 'test:zeta:5.2.0'
+                implementation 'test:zeta:5.2.0'
             }
 
             checkDependencies.versionSelectors = [
@@ -656,8 +656,8 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("[6.2.0]")
-        !result.standardOutput.contains("[5.1.0]")
+        result.standardError.contains("[6.2.0]")
+        !result.standardError.contains("[5.1.0]")
     }
 
     def 'check that conflicts for given dependency are resolved when version selector for given dependency is not specified'() {
@@ -676,7 +676,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
             }
 
             dependencies {
-                compile 'test:beta:4.1.0'
+                implementation 'test:beta:4.1.0'
             }
 
             checkDependencies.versionSelectors = [
@@ -689,6 +689,6 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
 
         then:
         result.wasExecuted(CheckDependenciesPlugin.CHECK_DEPENDENCIES_TASK_NAME)
-        result.standardOutput.contains("NO SOLUTIONS FOUND")
+        result.standardError.contains("NO SOLUTIONS FOUND")
     }
 }

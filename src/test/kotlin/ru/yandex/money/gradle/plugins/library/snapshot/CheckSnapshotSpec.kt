@@ -31,10 +31,10 @@ class CheckSnapshotSpec {
 
                 buildscript {
                     repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/thirdparty/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
                     }
                     dependencies {
                         classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'

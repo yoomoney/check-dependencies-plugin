@@ -5,10 +5,10 @@
 ```groovy
 buildscript {
     repositories {
-        maven { url 'http://nexus.yamoney.ru/repository/thirdparty/' }
-        maven { url 'http://nexus.yamoney.ru/repository/central/' }
-        maven { url 'http://nexus.yamoney.ru/repository/releases/' }
-        maven { url 'http://nexus.yamoney.ru/repository/jcenter.bintray.com/' }
+        maven { url 'https://nexus.yamoney.ru/repository/thirdparty/' }
+        maven { url 'https://nexus.yamoney.ru/repository/central/' }
+        maven { url 'https://nexus.yamoney.ru/repository/releases/' }
+        maven { url 'https://nexus.yamoney.ru/repository/jcenter.bintray.com/' }
         maven { url 'https://nexus.yamoney.ru/repository/gradle-plugins/' }
     }
     dependencies {
@@ -196,7 +196,7 @@ org.slf4j.slf4j-api = 1.6.3, 1.6.4, 1.7.0, 1.7.6, 1.7.7, 1.7.10, 1.7.12, 1.7.13 
 
 ```groovy
 checkDependencies {
-    excludedConfigurations = ["testCompile", "testRuntime"]
+    excludedConfigurations = ["testImplementation", "testRuntime"]
 }
 ```
 

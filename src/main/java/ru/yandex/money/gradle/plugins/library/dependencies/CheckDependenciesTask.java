@@ -4,6 +4,8 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.ConventionTask;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,12 @@ public class CheckDependenciesTask extends ConventionTask {
     private FixedDependencies fixedDependencies;
     private VersionConflictResolver conflictResolver;
 
+    @Input
+    @Optional
     private List<String> exclusionsRulesSources;
+    @Input
     private List<String> excludedConfigurations;
+    @Input
     private VersionSelectors versionSelectors;
 
     /**

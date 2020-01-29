@@ -1,6 +1,5 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.exclusions;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ abstract class ExclusionsRulesPropertiesReader {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.replaceAll("\\s+", "");
-                if (!Strings.isNullOrEmpty(line) && !isComment(line)) {
+                if (!isNullOrEmpty(line) && !isComment(line)) {
                     Set<ExclusionRule> rules = exclusionRulesParser.parseFrom(line);
                     rulesStorage.registerExclusionRules(rules);
                 }
@@ -52,5 +51,9 @@ abstract class ExclusionsRulesPropertiesReader {
 
     private static boolean isComment(String line) {
         return line.startsWith("#");
+    }
+
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.isEmpty();
     }
 }

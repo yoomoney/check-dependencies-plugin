@@ -1,6 +1,6 @@
 [
     {
-        "scope": "compile",
+        "scope": "compileClasspath",
         "name": "guava",
         "version": "22.0",
         "group": "com.google.guava"

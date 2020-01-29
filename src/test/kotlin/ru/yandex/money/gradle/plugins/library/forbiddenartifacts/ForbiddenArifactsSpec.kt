@@ -1,7 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.forbiddenartifacts
 
-import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.not
 import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.containsString
+import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.not
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
@@ -31,10 +31,10 @@ class ForbiddenArifactsSpec {
 
                 buildscript {
                     repositories {
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/thirdparty/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                        maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
                     }
                     dependencies {
                         classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'

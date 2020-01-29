@@ -9,10 +9,10 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
 
                 repositories {
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/thirdparty/' }
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/central/' }
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/releases/' }
-                    maven { url 'http://nexus.yamoney.ru/content/repositories/public/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
+                    maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
                 }
                 
                 majorVersionChecker {
@@ -27,7 +27,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
                         
             dependencies {
-                compile localGroovy(),
+                implementation localGroovy(),
                         'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'ru.yandex.money.common:yamoney-xml-utils:1.0.0',
                         'ru.yandex.money.common:yamoney-backend-platform-config:19.0.0',
@@ -61,7 +61,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
             
             dependencies {
-                compile localGroovy(),
+                implementation localGroovy(),
                         'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'com.google.guava:guava:22.0'
                        
@@ -94,7 +94,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
             
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:1.0.0',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:1.0.0',
                         'com.google.guava:guava:22.0'
                        
             } 

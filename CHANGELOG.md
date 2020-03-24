@@ -1,5 +1,9 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Проверка конфликтов мажорных версий вынесена в отдельную таску "majorVersionCheckerTask" (раннее осуществлялась на этапе конфигурации).
+* Добавлена настройка includedConfigurations. Теперь проверка конфликтов осуществляется только для конфигураций, объявленных в 
+данной настройке.
+Изменения внесены для ускорения прохождения тасок.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [5.1.0]() (05-02-2020)
 

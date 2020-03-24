@@ -24,6 +24,7 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'yamoney-check-dependencies-plugin'
+    System.setProperty("ignoreDeprecations", "true")
     """.stripIndent()
 
 

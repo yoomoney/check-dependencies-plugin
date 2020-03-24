@@ -74,7 +74,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                
                 """.stripIndent()
         when:
-        def result = runTasksSuccessfully("dependencies")
+        def result = runTasksWithFailure("majorVersionCheckerTask")
 
         then:
         !(result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
@@ -358,12 +358,9 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                     }
                 }
 
-                // Указываем путь к несуществующему файлу
                 checkDependencies {
-                    excludedConfigurations = ["testImplementation", "testRuntime", 
-                    "testCompileClasspath", "testRuntimeClasspath"]
+                    includedConfigurations = ["compileClasspath", "default"]
                 }
-
                 dependencies {
                     // Ожидается 4.2.5.RELEASE
                     implementation 'org.springframework:spring-core:4.2.5.RELEASE'

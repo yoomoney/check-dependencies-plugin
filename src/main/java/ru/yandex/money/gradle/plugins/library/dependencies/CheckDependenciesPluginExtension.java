@@ -4,6 +4,7 @@ import groovy.lang.Closure;
 import org.gradle.api.tasks.Input;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,18 @@ public class CheckDependenciesPluginExtension {
      * Список конфигурация для которых не требуется выполнять проверку версий библиотек.
      */
     @Input
+    @Deprecated
     public List<String> excludedConfigurations = new ArrayList<>();
+
+    /**
+     * Список конфигурация для которых требуется выполнять проверку версий библиотек.
+     * Включенные по умолчанию конфигурацию являются наследниками, т.е. включают в себя все нужные для проверок конфигураций -
+     * compile, implementation, testCompile, testImplementation, runtime
+     */
+    @Input
+    public List<String> includedConfigurations = Arrays.asList("componentTestCompileClasspath", "slowTestCompileClasspath",
+            "testCompileClasspath", "default");
+
 
     /**
      * Зарегистрированные селекторы версий для библиотек, для которых требуется разрешить конфликты.

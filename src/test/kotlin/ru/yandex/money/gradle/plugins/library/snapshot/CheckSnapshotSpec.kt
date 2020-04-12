@@ -55,9 +55,7 @@ class CheckSnapshotSpec {
         buildFile.writeText(setupBuildFile + """
                 dependencies {
                     compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2-feature-SNAPSHOT',
-                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
-                    'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
-                    'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+                    'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
 
                 }
             """.trimIndent())
@@ -79,10 +77,7 @@ class CheckSnapshotSpec {
         buildFile.writeText(setupBuildFile + """
                 dependencies {
                 compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
-                        'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
-                        'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
-                        'ru.yandex.money.common:yamoney-json-utils:4.0.3'
-
+                        'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
                 }
             """.trimIndent())
 
@@ -104,9 +99,7 @@ class CheckSnapshotSpec {
         buildFile.writeText(setupBuildFile + """
                 dependencies {
                     compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2-feature-SNAPSHOT',
-                            'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
-                            'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
-                            'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+                            'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
                 }
             """.trimIndent())
 
@@ -128,9 +121,7 @@ class CheckSnapshotSpec {
 
                 dependencies {
                     compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2-feature-SNAPSHOT',
-                            'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
-                            'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
-                            'ru.yandex.money.common:yamoney-json-utils:4.0.3'
+                            'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
                 }
             """.trimIndent())
 

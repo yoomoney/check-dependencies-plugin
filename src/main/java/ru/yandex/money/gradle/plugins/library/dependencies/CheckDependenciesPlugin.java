@@ -5,12 +5,11 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
-import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
-import ru.yandex.money.gradle.plugins.library.dependencies.dsl.ForbiddenArtifactInfo;
+import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
-import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
 import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.CheckForbiddenDependenciesTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualInnerDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintActualOuterDependenciesVersionsTask;
 import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.PrintInnerDependenciesVersionsTask;
@@ -18,8 +17,11 @@ import ru.yandex.money.gradle.plugins.library.dependencies.showdependencies.Prin
 import ru.yandex.money.gradle.plugins.library.dependencies.snapshot.CheckSnapshotsDependenciesTask;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Плагин проверяет легитимность изменения версий используемых библиотек (как прямо, так и по транзитивным зависимостям) в проекте.
@@ -75,9 +77,6 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     private static final String CHECK_DEPENDENCIES_TASK_DESCRIPTION = "Checks current used libraries versions on " +
             "conflict with platform libraries version.";
     private static final String CHECK_DEPENDENCIES_EXTENSION_NAME = "checkDependencies";
-    private static final String SPRING_DEPENDENCY_MANAGEMENT_PLUGIN_ID = "io.spring.dependency-management";
-    private static final String ERROR_APPLYING_PLUGIN_REQUIRED = "\"%s\" plugin is required for correct working of check " +
-            "dependencies plugin.%n Apply this plugin in build script.";
 
     private static final String MAJOR_VERSION_CHECKER_EXTENSION_NAME = "majorVersionChecker";
     private static final String FORBIDDEN_DEPENDENCIES_EXTENSION_NAME = "forbiddenDependenciesChecker";
@@ -98,8 +97,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // только, если одноименное свойство в таске имеет null значение.
         task.getConventionMapping().map("exclusionsRulesSources",
                 () -> checkDependenciesExtension.exclusionsRulesSources);
-        task.getConventionMapping().map("excludedConfigurations",
-                () -> checkDependenciesExtension.excludedConfigurations);
+        task.getConventionMapping().map("includedConfigurations",
+                () -> checkDependenciesExtension.includedConfigurations);
         task.getConventionMapping().map("versionSelectors",
                 () -> new VersionSelectors(checkDependenciesExtension.versionSelectors));
 
@@ -114,15 +113,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
-                    Set<LibraryName> excludeDependencies = majorVersionCheckerExtension.excludeDependencies.stream()
-                            .map(LibraryName::parse)
-                            .collect(Collectors.toSet());
-
-                    if (majorVersionCheckerExtension.enabled) {
-                        VersionChecker.runCheckVersion(project, excludeDependencies,
-                                majorVersionCheckerExtension.includeGroupIdPrefixes);
-                    }
-
+                    createMajorVersionCheckerTask(target, majorVersionCheckerExtension);
                     createPrintInnerDependenciesVersionsTask(target);
                     createPrintOuterDependenciesVersionsTask(target);
                     createPrintActualInnerDependenciesVersionsTask(target).dependsOn(task);
@@ -159,6 +150,34 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                 .create(PRINT_INNER_DEPENDENCIES_TASK_NAME, PrintInnerDependenciesVersionsTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints new available versions of inner dependencies");
+    }
+
+    /**
+     * Создает задачу поиска мажорных конфликтов версий
+     *
+     * @param project проект
+     * @param extension параметры задачи
+     */
+    private static void createMajorVersionCheckerTask(@Nonnull Project project,
+                                                      @Nonnull MajorVersionCheckerExtension extension) {
+        requireNonNull(project, "project");
+        requireNonNull(extension, "extension");
+
+        if (!extension.enabled) {
+            return;
+        }
+
+        Set<LibraryName> excludeDependencies = extension.excludeDependencies.stream()
+                .map(LibraryName::parse)
+                .collect(Collectors.toSet());
+
+        MajorVersionCheckerTask task = project.getTasks()
+                .create("majorVersionCheckerTask", MajorVersionCheckerTask.class);
+        task.setGroup(VERIFICATION_TASK_GROUP);
+        task.setDescription("Check major version conflict of dependencies");
+        task.setExcludedLibraries(excludeDependencies);
+        task.setIncludePrefixLibraries(extension.includeGroupIdPrefixes);
+        project.getTasks().getByName(CHECK_DEPENDENCIES_TASK_NAME).dependsOn(task);
     }
 
     /**

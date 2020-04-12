@@ -189,20 +189,20 @@ org.slf4j.jcl-over-slf4j = 1.7.7, 1.7.15 -> 1.7.16
 org.slf4j.slf4j-api = 1.6.3, 1.6.4, 1.7.0, 1.7.6, 1.7.7, 1.7.10, 1.7.12, 1.7.13 -> 1.7.16
 ```
 
-#### Отключение конфигураций из проверки
+#### Включение конфигураций в проверку
 
-Помимо этой настройки плагин позволяет исключить из проверки конфигурации. Для этого используется список исключения 
-<b>excludedConfigurations</b>:
+Для того, чтобы конфигурации начали проверяться на наличие конфликтов, необходимо внести их в настройку 
+<b>includedConfigurations</b>:
 
 ```groovy
 checkDependencies {
-    excludedConfigurations = ["testImplementation", "testRuntime"]
+    includedConfigurations = ["testImplementation", "testRuntime"]
 }
 ```
 
-Все перечисленные конфигурации будут исключены из проверки.
-
-Подробнее о настройки IO Spring Dependency Management plugin описано на [официальной странице проекта](https://github.com/spring-gradle-plugins/dependency-management-plugin)
+По умолчанию проверка осуществляется в конфигурациях componentTestCompileClasspath и slowTestCompileClasspath, 
+которые включают в себя зависимости из всех нужных для проверок конфигураций - compile, implementation, testCompile, 
+testImplementation, runtime.
 
 #### Настройки проверки конфликтов мажорных версий 
 

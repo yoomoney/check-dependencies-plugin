@@ -50,7 +50,7 @@ public class CheckDependenciesTask extends ConventionTask {
     @Optional
     private List<String> exclusionsRulesSources;
     @Input
-    private List<String> excludedConfigurations;
+    private List<String> includedConfigurations;
     @Input
     private VersionSelectors versionSelectors;
 
@@ -116,10 +116,10 @@ public class CheckDependenciesTask extends ConventionTask {
      * @return Набор проверяемых конфигураций
      */
     private Iterable<Configuration> getCheckedConfigurations() {
-        List<String> excludedConfigurations = getExcludedConfigurations();
+        List<String> included = getIncludedConfigurations();
+
         return getProject().getConfigurations().matching(configuration ->
-                excludedConfigurations == null || !excludedConfigurations.contains(configuration.getName())
-        );
+                included != null && included.contains(configuration.getName()));
     }
 
     private ExclusionRulesLoader loadExclusionsRules() {
@@ -167,25 +167,22 @@ public class CheckDependenciesTask extends ConventionTask {
     }
 
     /**
-     * Возвращает список конфигураций, которые не должны проверяться плагином.
-     * <p>
-     * ВАЖНО: Не смотря на тривиальный код геттера, Gradle перехватывает вызов этого геттера и анализирует возвращаемое значение.
-     * Если оно null, то gradle попытается взять значение для свойства "excludedConfigurations" из getConventionMapping().
+     * Возвращает список конфигураций, которые должны проверяться плагином.
      *
-     * @return список исключенных из проверки конфигураций
+     * @return список конфигураций
      */
     @Nullable
-    List<String> getExcludedConfigurations() {
-        return excludedConfigurations;
+    List<String> getIncludedConfigurations() {
+        return includedConfigurations;
     }
 
     /**
-     * Задает список конфигураций, которые не должны проверяться плагином.
+     * Задает список конфигураций, которые должны проверяться плагином.
      *
-     * @param excludedConfigurations список исключаемых конфигураций
+     * @param includedConfigurations список конфигураций
      */
-    void setExcludedConfigurations(List<String> excludedConfigurations) {
-        this.excludedConfigurations = new ArrayList<>(excludedConfigurations);
+    void setIncludedConfigurations(List<String> includedConfigurations) {
+        this.includedConfigurations = new ArrayList<>(includedConfigurations);
     }
 
     VersionSelectors getVersionSelectors() {

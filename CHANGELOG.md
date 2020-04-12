@@ -1,10 +1,10 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [5.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/1) (12-04-2020)
+
 * Проверка конфликтов мажорных версий вынесена в отдельную таску "majorVersionCheckerTask" (раннее осуществлялась на этапе конфигурации).
-* Добавлена настройка includedConfigurations. Теперь проверка конфликтов осуществляется только для конфигураций, объявленных в 
+* Добавлена настройка includedConfigurations. Теперь проверка конфликтов осуществляется только для конфигураций, объявленных в
 данной настройке.
 Изменения внесены для ускорения прохождения тасок.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [5.1.0]() (05-02-2020)
 
 * Сборка на java 11

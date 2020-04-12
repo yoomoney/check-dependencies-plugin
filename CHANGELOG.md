@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [5.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/1) (12-04-2020)
 
 * Проверка конфликтов мажорных версий вынесена в отдельную таску "majorVersionCheckerTask" (раннее осуществлялась на этапе конфигурации).

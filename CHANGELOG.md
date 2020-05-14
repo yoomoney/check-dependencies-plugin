@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MAJOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Проверка конфликтов мажорных версий перенесена обратно на этап конфигурации. Таска majorVersionCheckerTask удалена.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [5.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/1) (12-04-2020)
 

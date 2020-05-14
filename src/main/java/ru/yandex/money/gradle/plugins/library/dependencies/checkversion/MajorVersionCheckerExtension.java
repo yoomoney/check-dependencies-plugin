@@ -1,8 +1,6 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.checkversion;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,6 +15,16 @@ public class MajorVersionCheckerExtension {
      * Установка необходимости производить проверку конфликта версий библиотек
      */
     public boolean enabled = true;
+
+    /**
+     * Флаг, означающий, что нужно отправлять метрики при обнаружении конфликта
+     */
+    public boolean pushMetrics = true;
+
+    /**
+     * Флаг, означающий, что билд нужно фейлить при обнаружении конфликта
+     */
+    public boolean failBuild = true;
 
     /**
      * Список префиксов groupId библиотек, для которых требуется выполнять проверку конфликта версий библиотек (например, ru.yamoney)

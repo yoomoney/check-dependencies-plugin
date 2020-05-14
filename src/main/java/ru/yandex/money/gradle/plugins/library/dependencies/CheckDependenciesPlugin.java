@@ -5,7 +5,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
-import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerTask;
+import ru.yandex.money.gradle.plugins.library.dependencies.checkversion.VersionChecker;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 import ru.yandex.money.gradle.plugins.library.dependencies.forbiddenartifacts.CheckForbiddenDependenciesTask;
@@ -113,7 +113,10 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
 
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
-                    createMajorVersionCheckerTask(target, majorVersionCheckerExtension);
+                    if (majorVersionCheckerExtension.enabled) {
+                        VersionChecker.runCheckVersion(project, majorVersionCheckerExtension);
+                    }
+
                     createPrintInnerDependenciesVersionsTask(target);
                     createPrintOuterDependenciesVersionsTask(target);
                     createPrintActualInnerDependenciesVersionsTask(target).dependsOn(task);
@@ -150,34 +153,6 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                 .create(PRINT_INNER_DEPENDENCIES_TASK_NAME, PrintInnerDependenciesVersionsTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints new available versions of inner dependencies");
-    }
-
-    /**
-     * Создает задачу поиска мажорных конфликтов версий
-     *
-     * @param project проект
-     * @param extension параметры задачи
-     */
-    private static void createMajorVersionCheckerTask(@Nonnull Project project,
-                                                      @Nonnull MajorVersionCheckerExtension extension) {
-        requireNonNull(project, "project");
-        requireNonNull(extension, "extension");
-
-        if (!extension.enabled) {
-            return;
-        }
-
-        Set<LibraryName> excludeDependencies = extension.excludeDependencies.stream()
-                .map(LibraryName::parse)
-                .collect(Collectors.toSet());
-
-        MajorVersionCheckerTask task = project.getTasks()
-                .create("majorVersionCheckerTask", MajorVersionCheckerTask.class);
-        task.setGroup(VERIFICATION_TASK_GROUP);
-        task.setDescription("Check major version conflict of dependencies");
-        task.setExcludedLibraries(excludeDependencies);
-        task.setIncludePrefixLibraries(extension.includeGroupIdPrefixes);
-        project.getTasks().getByName(CHECK_DEPENDENCIES_TASK_NAME).dependsOn(task);
     }
 
     /**

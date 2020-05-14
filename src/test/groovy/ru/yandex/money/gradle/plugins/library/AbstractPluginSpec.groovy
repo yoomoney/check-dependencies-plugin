@@ -12,15 +12,21 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
     protected static final String COMMON_BUILD_FILE_CONTENTS = """
     buildscript {
         repositories {
-            maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
-            maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
-            maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
-            maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
-        }
+                    maven { url 'http://nexus.yamoney.ru/repository/thirdparty/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/central/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/releases/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/snapshots/' }
+            }
         dependencies {
             classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'
         }
     }
+    repositories {
+                    maven { url 'http://nexus.yamoney.ru/repository/thirdparty/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/central/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/releases/' }
+                    maven { url 'http://nexus.yamoney.ru/repository/snapshots/' }
+            }
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'yamoney-check-dependencies-plugin'

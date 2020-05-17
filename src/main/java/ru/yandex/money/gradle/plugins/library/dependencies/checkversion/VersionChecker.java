@@ -3,8 +3,10 @@ package ru.yandex.money.gradle.plugins.library.dependencies.checkversion;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import ru.yandex.money.gradle.plugins.library.dependencies.GitManager;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class VersionChecker {
                 .map(LibraryName::parse)
                 .collect(Collectors.toSet());
 
-        MetricsSender metricsSender = new MetricsSender(project);
+        MetricsSender metricsSender = new MetricsSender(project, extractRepoPath(project));
 
         allConfigurations.stream()
                 .filter(VersionChecker::isValidConfiguration)
@@ -53,6 +55,28 @@ public class VersionChecker {
         return configurationLowerName.endsWith("compile")
                 || configurationLowerName.endsWith("runtime")
                 || Objects.equals(configurationLowerName, "compileclasspath");
+    }
+
+    private static String extractRepoPath(Project project) {
+        String[] path;
+        try (GitManager gitManager = new GitManager(project.getRootDir())) {
+            path = gitManager.getOriginUrl()
+                    .toLowerCase()
+                    .replace(".git", "")
+                    .replace("ssh://git@", "")
+                    .replace(".yamoney.ru", "")
+                    .split("/");
+        }
+        return Arrays.stream(path)
+                .map(VersionChecker::sanitizePushEventKey)
+                .collect(Collectors.joining("."));
+    }
+
+    private static String sanitizePushEventKey(String key) {
+        return key.trim().toLowerCase()
+                .replace('.', '_')
+                .replace('/', '_')
+                .replace(' ', '_');
     }
 }
 

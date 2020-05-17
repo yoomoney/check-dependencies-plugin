@@ -1,5 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.snapshot
 
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.transport.URIish
 import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.containsString
 import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.not
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
@@ -18,14 +20,19 @@ import java.io.File
 
 class CheckSnapshotSpec {
 
-    private val testProjectDir = TemporaryFolder()
+    private val projectDir = TemporaryFolder()
+    var originRepoFolder = TemporaryFolder()
+
     private lateinit var setupBuildFile: String
-    private lateinit var buildFile: File
+    lateinit var buildFile: File
+    lateinit var git: Git
+    lateinit var gitOrigin: Git
+    lateinit var gradleProperties: File
 
     @Before
     fun setup() {
-        testProjectDir.create()
-        buildFile = testProjectDir.newFile("build.gradle")
+        projectDir.create()
+        buildFile = projectDir.newFile("build.gradle")
 
         setupBuildFile = """
 
@@ -47,6 +54,31 @@ class CheckSnapshotSpec {
                 }
 
         """
+
+        originRepoFolder.create()
+
+        git = Git.init().setDirectory(File(projectDir.root.absolutePath))
+                .setBare(false)
+                .call()
+
+        gradleProperties = projectDir.newFile("gradle.properties")
+        gradleProperties.writeText("version=1.0.1-SNAPSHOT")
+        git.add().addFilepattern("gradle.properties")
+                .addFilepattern("build.gradle")
+                .call()
+        git.commit().setMessage("build.gradle commit").call()
+        git.tag().setName("1.0.0").call()
+        gitOrigin = Git.init().setDirectory(originRepoFolder.root)
+                .setBare(true)
+                .call()
+        val remoteSetUrl = git.remoteSetUrl()
+        remoteSetUrl.setRemoteUri(URIish("file://${originRepoFolder.root.absolutePath}/"))
+        remoteSetUrl.setRemoteName("origin")
+        remoteSetUrl.call()
+        git.push()
+                .setPushAll()
+                .setPushTags()
+                .call()
     }
 
     @Test
@@ -61,7 +93,7 @@ class CheckSnapshotSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -82,7 +114,7 @@ class CheckSnapshotSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -104,7 +136,7 @@ class CheckSnapshotSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("build")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -126,7 +158,7 @@ class CheckSnapshotSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkSnapshotsDependencies")
                 .withPluginClasspath()
                 .withDebug(true)

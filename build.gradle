@@ -33,7 +33,8 @@ dependencies {
             "org.apache.maven.wagon:wagon-http-lightweight:1.0",
             "org.codehaus.plexus:plexus-utils:3.0.22",
             "org.codehaus.plexus:plexus-interpolation:1.21",
-            'ru.yandex.money.common:yamoney-monitoring:3.2.3'
+            'ru.yandex.money.common:yamoney-monitoring:3.2.3',
+            'ru.yandex.money.tools:yamoney-git-client:2.1.0'
 
     testImplementation gradleTestKit(),
             'com.netflix.nebula:nebula-test:7.4.0',

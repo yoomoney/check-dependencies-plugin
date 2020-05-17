@@ -1,6 +1,14 @@
 package ru.yandex.money.gradle.plugins.library
 
 import nebula.test.IntegrationSpec
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.GitAPIException
+import org.eclipse.jgit.transport.URIish
+
+import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  *
@@ -33,8 +41,36 @@ abstract class AbstractPluginSpec extends IntegrationSpec {
     System.setProperty("ignoreDeprecations", "true")
     """.stripIndent()
 
+    private Git git
 
     def setup() {
         buildFile << COMMON_BUILD_FILE_CONTENTS
+        initProjectRepoWithMasterBranch();
     }
+
+    private initProjectRepoWithMasterBranch() throws GitAPIException, IOException, URISyntaxException {
+        File projectDir = projectDir;
+        git = Git.init().setDirectory(projectDir).call();
+
+        git.add().addFilepattern("build.gradle")
+                .call();
+
+        git.commit().setMessage("build.gradle commit").call();
+
+        Path originRepoFolder = Files.createTempDirectory("origin");
+        Git.init().setDirectory(originRepoFolder.toFile())
+                .setBare(true)
+                .call();
+
+        git.remoteAdd().setUri(new URIish("file://" + originRepoFolder.toAbsolutePath() + "/"))
+                .setName("origin")
+                .call();
+        git.push()
+                .setPushAll()
+                .setRemote("origin")
+                .setPushTags()
+                .call();
+        return git;
+    }
+
 }

@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -20,21 +21,23 @@ import static java.util.Objects.requireNonNull;
  * @since 15.05.2020
  */
 public class MetricsSender {
-    private final PushEventQueue pushEventQueue = new PushEventQueue(100);
-    private final PushEventSender pushEventSender = new PushEventSender(pushEventQueue,
-            1, "localhost", 8126);
-    private final StatsdPushEventProducerImpl pushEventProducer = new StatsdPushEventProducerImpl(pushEventQueue,
-            "yamoney-check-dependencies-plugin");
+    private final PushEventQueue pushEventQueue;
+    private final StatsdPushEventProducerImpl pushEventProducer;
 
     private final Project project;
 
-    public MetricsSender(@Nonnull Project project) {
+    public MetricsSender(@Nonnull Project project, @Nonnull String originUrl) {
+        this.project = requireNonNull(project, "project");
+        this.pushEventQueue = new PushEventQueue(100);
+        this.pushEventProducer = new StatsdPushEventProducerImpl(pushEventQueue,
+                format("yamoney_check_dependencies_plugin.%s", originUrl));
+        PushEventSender pushEventSender = new PushEventSender(pushEventQueue,
+                1, "localhost", 8126);
         try {
             pushEventSender.startupAllSenders();
         } catch (IOException e) {
             throw new RuntimeException("cannot start push event sender", e);
         }
-        this.project = requireNonNull(project, "project");
     }
 
     /**
@@ -46,6 +49,7 @@ public class MetricsSender {
         if (isMonitoringEnabled()) {
             pushEventProducer.increment(new DefaultPushEventKeyCreator().customKey(getAppName(),
                     "major_conflict", libraryName.toString(), "failed"));
+            waitForPushEventsToComplete();
         }
     }
 
@@ -58,5 +62,27 @@ public class MetricsSender {
     private String getAppName() {
         String appName = (String) project.getExtensions().getExtraProperties().get("appName");
         return appName == null ? "unknown" : appName;
+    }
+
+    private void waitForPushEventsToComplete() {
+        int sleepCount = 5;
+        while (sleepCount > 0) {
+            int queueSize = pushEventQueue.size();
+            if (queueSize != 0) {
+                project.getLogger().lifecycle("PushEventQueue not empty, sleep for 1 sec: queueSize={}", queueSize);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    project.getLogger().error("Can't sleep: exp={}", e.getMessage());
+                }
+                sleepCount--;
+            } else {
+                break;
+            }
+        }
+        int queueSize = pushEventQueue.size();
+        if (queueSize != 0) {
+            project.getLogger().error("PushEventQueue not empty: queueSize={}", queueSize);
+        }
     }
 }

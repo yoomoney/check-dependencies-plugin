@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [6.0.1](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/4) (19-05-2020)
 
 * Убрано определение названия репозитория по appName

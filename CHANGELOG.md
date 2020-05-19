@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [6.0.1](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/4) (19-05-2020)
+
 * Убрано определение названия репозитория по appName
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [6.0.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/3) (19-05-2020)
 
 * Проверка конфликтов мажорных версий перенесена обратно на этап конфигурации. Таска majorVersionCheckerTask удалена.

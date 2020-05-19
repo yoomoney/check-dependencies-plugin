@@ -48,8 +48,8 @@ public class MetricsSender {
      */
     public void sendMajorConflict(LibraryName libraryName) {
         if (isMonitoringEnabled()) {
-            PushEventKey pushEventKey = new DefaultPushEventKeyCreator().customKey(getAppName(),
-                    "major_conflict", sanitizePushEventKey(libraryName.toString()), "failed");
+            PushEventKey pushEventKey = new DefaultPushEventKeyCreator().customKey("major_conflict",
+                    sanitizePushEventKey(libraryName.toString()), "failed");
             pushEventProducer.increment(pushEventKey);
             waitForPushEventsToComplete();
             project.getLogger().lifecycle("Send major conflic metric: {}", pushEventKey);
@@ -60,11 +60,6 @@ public class MetricsSender {
         return Optional.ofNullable(project.getProperties().get("ci"))
                 .map(it -> Boolean.valueOf((String) it))
                 .orElse(false);
-    }
-
-    private String getAppName() {
-        String appName = (String) project.getExtensions().getExtraProperties().get("appName");
-        return appName == null ? "unknown" : appName;
     }
 
     private void waitForPushEventsToComplete() {

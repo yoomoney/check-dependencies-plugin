@@ -3,6 +3,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.checkversion;
 import org.gradle.api.Project;
 import ru.yandex.money.gradle.plugins.library.dependencies.dsl.LibraryName;
 import ru.yandex.money.monitoring.push.DefaultPushEventKeyCreator;
+import ru.yandex.money.monitoring.push.PushEventKey;
 import ru.yandex.money.monitoring.push.producer.impl.PushEventQueue;
 import ru.yandex.money.monitoring.push.producer.impl.PushEventSender;
 import ru.yandex.money.monitoring.push.producer.impl.statsd.StatsdPushEventProducerImpl;
@@ -47,9 +48,11 @@ public class MetricsSender {
      */
     public void sendMajorConflict(LibraryName libraryName) {
         if (isMonitoringEnabled()) {
-            pushEventProducer.increment(new DefaultPushEventKeyCreator().customKey(getAppName(),
-                    "major_conflict", libraryName.toString(), "failed"));
+            PushEventKey pushEventKey = new DefaultPushEventKeyCreator().customKey(getAppName(),
+                    "major_conflict", sanitizePushEventKey(libraryName.toString()), "failed");
+            pushEventProducer.increment(pushEventKey);
             waitForPushEventsToComplete();
+            project.getLogger().lifecycle("Send major conflic metric: {}", pushEventKey);
         }
     }
 
@@ -84,5 +87,12 @@ public class MetricsSender {
         if (queueSize != 0) {
             project.getLogger().error("PushEventQueue not empty: queueSize={}", queueSize);
         }
+    }
+
+    private static String sanitizePushEventKey(String key) {
+        return key.trim().toLowerCase()
+                .replace('.', '_')
+                .replace('/', '_')
+                .replace(' ', '_');
     }
 }

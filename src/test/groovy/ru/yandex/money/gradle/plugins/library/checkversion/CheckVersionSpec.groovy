@@ -11,7 +11,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
         buildFile << """
                    
             dependencies {
-                compile 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
+                implementation 'ru.yandex.money.common:yamoney-json-utils:2.0.2',
                         'ru.yandex.money.common:yamoney-xml-utils:3.0.1',
                         'ru.yandex.money.common:yamoney-xml-utils:4.0.1',
                         'ru.yandex.money.common:yamoney-json-utils:4.0.3'
@@ -24,11 +24,34 @@ class CheckVersionSpec extends AbstractPluginSpec {
                 """.stripIndent()
 
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
         result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
+    }
+
+    def "Found conflict for transitive yamoney libraries"() {
+
+        given:
+        buildFile << """
+                   
+            dependencies {
+                implementation 'ru.yandex.money.common:yamoney-backend-platform-web:49.4.0',
+                        'ru.yandex.money.common:yamoney-db-utils:6.0.0'
+                       
+            } 
+            majorVersionChecker {
+                    includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']
+            }
+            
+                """.stripIndent()
+
+        when:
+        def result = runTasksSuccessfully("dependencies")
+
+        then:
+        result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-db-utils")
     }
 
     def "Not found conflict for different configuration"() {
@@ -51,7 +74,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
                 """.stripIndent()
 
         when:
-        def result = runTasksSuccessfully("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         !result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
@@ -74,7 +97,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
              
                 """.stripIndent()
         when:
-        def result = runTasksSuccessfully("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         result.standardError.empty
@@ -99,7 +122,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
              
                 """.stripIndent()
         when:
-        def result = runTasksSuccessfully("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         !result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-xml-utils")
@@ -121,7 +144,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
                
                 """.stripIndent()
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         result.standardError.contains("There is major version conflict for dependency=com.google.guava:guava")
@@ -150,7 +173,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
                
                 """.stripIndent()
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         !(result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))
@@ -169,7 +192,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
               
                 """.stripIndent()
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-json-utils")
@@ -187,7 +210,7 @@ class CheckVersionSpec extends AbstractPluginSpec {
               
                 """.stripIndent()
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-json-utils")

@@ -74,7 +74,7 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
                
                 """.stripIndent()
         when:
-        def result = runTasksWithFailure("majorVersionCheckerTask")
+        def result = runTasksSuccessfully("dependencies")
 
         then:
         !(result.standardError.contains("There is major version conflict for dependency=ru.yandex.money.common:yamoney-enum-utils"))

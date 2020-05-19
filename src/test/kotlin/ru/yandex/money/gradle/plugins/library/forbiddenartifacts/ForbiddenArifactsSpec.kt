@@ -1,5 +1,7 @@
 package ru.yandex.money.gradle.plugins.library.forbiddenartifacts
 
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.transport.URIish
 import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.containsString
 import org.gradle.internal.impldep.org.hamcrest.CoreMatchers.not
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
@@ -18,14 +20,19 @@ import java.io.File
 
 class ForbiddenArifactsSpec {
 
-    private val testProjectDir = TemporaryFolder()
+    private val projectDir = TemporaryFolder()
     private lateinit var setupBuildFile: String
-    private lateinit var buildFile: File
+    var originRepoFolder = TemporaryFolder()
 
+    lateinit var buildFile: File
+
+    lateinit var git: Git
+    lateinit var gitOrigin: Git
+    lateinit var gradleProperties: File
     @Before
     fun setup() {
-        testProjectDir.create()
-        buildFile = testProjectDir.newFile("build.gradle")
+        projectDir.create()
+        buildFile = projectDir.newFile("build.gradle")
 
         setupBuildFile = """
 
@@ -47,6 +54,31 @@ class ForbiddenArifactsSpec {
                 }
 
         """
+
+        originRepoFolder.create()
+
+        git = Git.init().setDirectory(File(projectDir.root.absolutePath))
+                .setBare(false)
+                .call()
+
+        gradleProperties = projectDir.newFile("gradle.properties")
+        gradleProperties.writeText("version=1.0.1-SNAPSHOT")
+        git.add().addFilepattern("gradle.properties")
+                .addFilepattern("build.gradle")
+                .call()
+        git.commit().setMessage("build.gradle commit").call()
+        git.tag().setName("1.0.0").call()
+        gitOrigin = Git.init().setDirectory(originRepoFolder.root)
+                .setBare(true)
+                .call()
+        val remoteSetUrl = git.remoteSetUrl()
+        remoteSetUrl.setRemoteUri(URIish("file://${originRepoFolder.root.absolutePath}/"))
+        remoteSetUrl.setRemoteName("origin")
+        remoteSetUrl.call()
+        git.push()
+                .setPushAll()
+                .setPushTags()
+                .call()
     }
 
     @Test
@@ -70,7 +102,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -110,7 +142,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -150,7 +182,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkLibraryDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -185,7 +217,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -208,7 +240,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -251,7 +283,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -307,7 +339,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -363,7 +395,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)
@@ -407,7 +439,7 @@ class ForbiddenArifactsSpec {
             """.trimIndent())
 
         val result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
+                .withProjectDir(projectDir.root)
                 .withArguments("checkForbiddenDependencies")
                 .withPluginClasspath()
                 .withDebug(true)

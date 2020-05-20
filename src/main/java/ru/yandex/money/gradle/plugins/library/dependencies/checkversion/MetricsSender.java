@@ -88,6 +88,8 @@ public class MetricsSender {
         return key.trim().toLowerCase()
                 .replace('.', '_')
                 .replace('/', '_')
-                .replace(' ', '_');
+                .replace(' ', '_')
+                .replace(':', '_')
+                .replace('-', '_');
     }
 }

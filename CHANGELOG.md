@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [6.0.2](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/5) (20-05-2020)
+
 * Замена символов в отправляемой метрике
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [6.0.1](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/4) (19-05-2020)
 
 * Убрано определение названия репозитория по appName

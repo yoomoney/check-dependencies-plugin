@@ -2,6 +2,7 @@ package ru.yandex.money.gradle.plugins.library.dependencies.snapshot;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.artifacts.dependencies.ProjectDependencyInternal;
 import org.gradle.api.tasks.TaskAction;
 
@@ -33,6 +34,12 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
             return;
         }
 
+        Set<String> snapshotRepositories = getProject().getBuildscript().getRepositories().stream()
+                .filter(repository -> repository instanceof MavenArtifactRepository)
+                .map(r -> ((MavenArtifactRepository) r).getUrl().toString())
+                .filter(this::isSnapshotRepository)
+                .collect(Collectors.toSet());
+
         Set<String> snapshotPackages = Stream.concat(getProject().getConfigurations().stream(),
                 getProject().getBuildscript().getConfigurations().stream())
                 .flatMap(configuration -> configuration.getAllDependencies().stream())
@@ -41,10 +48,19 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
                         dependency.getGroup(), dependency.getName(), dependency.getVersion()))
                 .collect(Collectors.toSet());
 
+        if (!snapshotRepositories.isEmpty()) {
+            throw new IllegalStateException("You have the following SNAPSHOT repositories:" + System.lineSeparator()
+                    + snapshotRepositories);
+        }
+
         if (!snapshotPackages.isEmpty()) {
             throw new IllegalStateException("You have the following SNAPSHOT dependencies:" + System.lineSeparator()
                     + snapshotPackages);
         }
+    }
+
+    private boolean isSnapshotRepository(String repository) {
+        return repository.endsWith("snapshots/");
     }
 
     private boolean isSnapshotDependencies(Dependency dependency) {

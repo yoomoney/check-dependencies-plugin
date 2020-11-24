@@ -1,15 +1,17 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.snapshot;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.initialization.dsl.ScriptHandler;
 import org.gradle.api.internal.artifacts.dependencies.ProjectDependencyInternal;
 import org.gradle.api.tasks.TaskAction;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Проверяет наличие snapshot-зависимостей
@@ -34,24 +36,34 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
             return;
         }
 
-        Set<String> snapshotRepositories = getProject().getBuildscript().getRepositories().stream()
+        checkBuildscript();
+        checkDependencies(getProject().getConfigurations());
+    }
+
+    private void checkBuildscript() {
+        ScriptHandler buildscript = getProject().getBuildscript();
+
+        Set<String> snapshotRepositories = buildscript.getRepositories().stream()
                 .filter(repository -> repository instanceof MavenArtifactRepository)
                 .map(r -> ((MavenArtifactRepository) r).getUrl().toString())
                 .filter(this::isSnapshotRepository)
-                .collect(Collectors.toSet());
-
-        Set<String> snapshotPackages = Stream.concat(getProject().getConfigurations().stream(),
-                getProject().getBuildscript().getConfigurations().stream())
-                .flatMap(configuration -> configuration.getAllDependencies().stream())
-                .filter(this::isSnapshotDependencies)
-                .map(dependency -> String.format("%s:%s:%s",
-                        dependency.getGroup(), dependency.getName(), dependency.getVersion()))
                 .collect(Collectors.toSet());
 
         if (!snapshotRepositories.isEmpty()) {
             throw new IllegalStateException("You have the following SNAPSHOT repositories:" + System.lineSeparator()
                     + snapshotRepositories);
         }
+
+        checkDependencies(buildscript.getConfigurations());
+    }
+
+    private void checkDependencies(Collection<Configuration> configurationContainer) {
+        Set<String> snapshotPackages = configurationContainer.stream()
+                .flatMap(configuration -> configuration.getAllDependencies().stream())
+                .filter(this::isSnapshotDependencies)
+                .map(dependency -> String.format("%s:%s:%s",
+                        dependency.getGroup(), dependency.getName(), dependency.getVersion()))
+                .collect(Collectors.toSet());
 
         if (!snapshotPackages.isEmpty()) {
             throw new IllegalStateException("You have the following SNAPSHOT dependencies:" + System.lineSeparator()

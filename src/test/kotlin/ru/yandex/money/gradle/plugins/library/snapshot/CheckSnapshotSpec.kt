@@ -104,6 +104,45 @@ class CheckSnapshotSpec {
     }
 
     @Test
+    fun `should found SNAPSHOT dependencies in buildscript`() {
+
+        buildFile.writeText("""
+                buildscript {
+                    repositories {
+                        maven { url '${File("src/test/resources/repositories/maven-repo-snapshots").toURI().toURL()}' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }
+                        maven { url 'https://nexus.yamoney.ru/content/repositories/public/' }
+                    }
+                    dependencies {
+                        classpath 'io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE'
+                        classpath 'test:alpha:1.1-SNAPSHOT'
+                    }
+                }
+                plugins {
+                    id 'java'
+                    id 'io.spring.dependency-management'
+                    id 'yamoney-check-dependencies-plugin'
+                }
+            
+                dependencies {
+                    compile 'ru.yandex.money.common:yamoney-xml-utils:3.0.1'
+                }
+            """.trimIndent())
+
+        val result = GradleRunner.create()
+                .withProjectDir(projectDir.root)
+                .withArguments("checkSnapshotsDependencies")
+                .withPluginClasspath()
+                .withDebug(true)
+                .buildAndFail()
+
+        assertThat(result.output, containsString("You have the following SNAPSHOT dependencies:"))
+        assertThat(result.output, containsString("[test:alpha:1.1-SNAPSHOT]"))
+    }
+
+    @Test
     fun `should not found SNAPSHOT dependencies`() {
 
         buildFile.writeText(setupBuildFile + """

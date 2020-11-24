@@ -8,6 +8,7 @@ import org.gradle.api.tasks.TaskAction;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Проверяет наличие snapshot-зависимостей
@@ -32,7 +33,8 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
             return;
         }
 
-        Set<String> snapshotPackages = getProject().getConfigurations().stream()
+        Set<String> snapshotPackages = Stream.concat(getProject().getConfigurations().stream(),
+                getProject().getBuildscript().getConfigurations().stream())
                 .flatMap(configuration -> configuration.getAllDependencies().stream())
                 .filter(this::isSnapshotDependencies)
                 .map(dependency -> String.format("%s:%s:%s",

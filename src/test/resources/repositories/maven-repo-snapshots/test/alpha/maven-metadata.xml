@@ -1,0 +1,15 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <groupId>test.bom</groupId>
+    <artifactId>phi</artifactId>
+    <versioning>
+        <versions>
+        
+            <version>1.1-SNAPSHOT</version>
+
+        </versions>
+        <lastUpdated>20201124153709</lastUpdated>
+    </versioning>
+</metadata>       
+        

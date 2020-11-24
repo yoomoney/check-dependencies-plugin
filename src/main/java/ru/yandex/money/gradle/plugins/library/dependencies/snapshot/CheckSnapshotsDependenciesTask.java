@@ -43,15 +43,15 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
     private void checkBuildscript() {
         ScriptHandler buildscript = getProject().getBuildscript();
 
-        Set<String> snapshotRepositories = buildscript.getRepositories().stream()
+        Set<String> buildScriptSnapshotRepositories = buildscript.getRepositories().stream()
                 .filter(repository -> repository instanceof MavenArtifactRepository)
                 .map(r -> ((MavenArtifactRepository) r).getUrl().toString())
                 .filter(this::isSnapshotRepository)
                 .collect(Collectors.toSet());
 
-        if (!snapshotRepositories.isEmpty()) {
+        if (!buildScriptSnapshotRepositories.isEmpty()) {
             throw new IllegalStateException("You have the following SNAPSHOT repositories:" + System.lineSeparator()
-                    + snapshotRepositories);
+                    + buildScriptSnapshotRepositories);
         }
 
         checkDependencies(buildscript.getConfigurations());

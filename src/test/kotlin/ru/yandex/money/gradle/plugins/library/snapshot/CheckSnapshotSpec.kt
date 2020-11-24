@@ -109,7 +109,7 @@ class CheckSnapshotSpec {
         buildFile.writeText("""
                 buildscript {
                     repositories {
-                        maven { url '${File("src/test/resources/repositories/maven-repo-snapshots").toURI().toURL()}' }
+                        maven { url '${File("src/test/resources/repositories/maven-snapshots-repo").toURI().toURL()}' }
                         maven { url 'https://nexus.yamoney.ru/content/repositories/thirdparty/' }
                         maven { url 'https://nexus.yamoney.ru/content/repositories/central/' }
                         maven { url 'https://nexus.yamoney.ru/content/repositories/releases/' }

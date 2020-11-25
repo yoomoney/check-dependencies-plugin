@@ -1,10 +1,14 @@
 package ru.yandex.money.gradle.plugins.library.dependencies.snapshot;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.initialization.dsl.ScriptHandler;
 import org.gradle.api.internal.artifacts.dependencies.ProjectDependencyInternal;
 import org.gradle.api.tasks.TaskAction;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class CheckSnapshotsDependenciesTask extends DefaultTask {
     private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("^.+(\\d{8}\\.\\d{6}-\\d+)$");
+    private static final Pattern SNAPSHOT_REPOSITORY_PATTERN = Pattern.compile("^.+snapshots/?$");
     private static final String FORCE_FLAG = "allowSnapshot";
 
     /**
@@ -32,7 +37,29 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
             return;
         }
 
-        Set<String> snapshotPackages = getProject().getConfigurations().stream()
+        checkBuildscript();
+        checkDependencies(getProject().getConfigurations());
+    }
+
+    private void checkBuildscript() {
+        ScriptHandler buildscript = getProject().getBuildscript();
+
+        Set<String> buildScriptSnapshotRepositories = buildscript.getRepositories().stream()
+                .filter(repository -> repository instanceof MavenArtifactRepository)
+                .map(r -> ((MavenArtifactRepository) r).getUrl().toString())
+                .filter(this::isSnapshotRepository)
+                .collect(Collectors.toSet());
+
+        if (!buildScriptSnapshotRepositories.isEmpty()) {
+            throw new IllegalStateException("You have the following SNAPSHOT repositories:" + System.lineSeparator()
+                    + buildScriptSnapshotRepositories);
+        }
+
+        checkDependencies(buildscript.getConfigurations());
+    }
+
+    private void checkDependencies(Collection<Configuration> configurationContainer) {
+        Set<String> snapshotPackages = configurationContainer.stream()
                 .flatMap(configuration -> configuration.getAllDependencies().stream())
                 .filter(this::isSnapshotDependencies)
                 .map(dependency -> String.format("%s:%s:%s",
@@ -43,6 +70,10 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
             throw new IllegalStateException("You have the following SNAPSHOT dependencies:" + System.lineSeparator()
                     + snapshotPackages);
         }
+    }
+
+    private boolean isSnapshotRepository(String repository) {
+        return SNAPSHOT_REPOSITORY_PATTERN.matcher(repository).matches();
     }
 
     private boolean isSnapshotDependencies(Dependency dependency) {

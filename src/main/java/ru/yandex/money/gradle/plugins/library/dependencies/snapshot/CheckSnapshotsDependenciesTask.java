@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class CheckSnapshotsDependenciesTask extends DefaultTask {
     private static final Pattern SNAPSHOT_PATTERN = Pattern.compile("^.+(\\d{8}\\.\\d{6}-\\d+)$");
+    private static final Pattern SNAPSHOT_REPOSITORY_PATTERN = Pattern.compile("^.+snapshots/?$");
     private static final String FORCE_FLAG = "allowSnapshot";
 
     /**
@@ -72,7 +73,7 @@ public class CheckSnapshotsDependenciesTask extends DefaultTask {
     }
 
     private boolean isSnapshotRepository(String repository) {
-        return repository.endsWith("snapshots/");
+        return SNAPSHOT_REPOSITORY_PATTERN.matcher(repository).matches();
     }
 
     private boolean isSnapshotDependencies(Dependency dependency) {

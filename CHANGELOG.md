@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [6.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/7) (25-11-2020)
+
 * Добавлена проверка Snapshot зависимостей и репозитория в секции buildScript
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [6.1.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/6) (03-07-2020)
 
 * Поднята версия gradle: 6.0.1 -> 6.4.1.

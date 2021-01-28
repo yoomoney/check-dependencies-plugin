@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
  * @author horyukova
  * @since 10.12.2018
  */
-public class PrintDependenciesByInclusionTask extends DefaultTask {
+public class PrintDependenciesByGroupTask extends DefaultTask {
     private Set<String> includeGroupIdPrefixes;
     private ArtifactVersionResolver artifactVersionResolver;
 
@@ -26,7 +26,7 @@ public class PrintDependenciesByInclusionTask extends DefaultTask {
      */
     @TaskAction
     public void printInnerVersion() {
-        getProject().getLogger().lifecycle("===============New dependencies by inclusion===============");
+        getProject().getLogger().lifecycle("===============New dependencies by group===============");
 
         Action<Project> printDependenciesAction = new PrintNewDependenciesAction(includeGroupIdPrefixes, artifactVersionResolver);
         getProject().allprojects(printDependenciesAction);

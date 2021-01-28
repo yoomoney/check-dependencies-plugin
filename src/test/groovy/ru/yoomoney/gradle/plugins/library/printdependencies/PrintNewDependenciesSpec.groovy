@@ -14,12 +14,12 @@ class PrintNewDependenciesSpec extends AbstractPluginSpec {
         """.stripIndent()
     }
 
-    def "Print new version for dependency by inclusion"() {
+    def "Print new version for dependency by group"() {
 
         given:
         buildFile << """
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {
@@ -31,7 +31,7 @@ class PrintNewDependenciesSpec extends AbstractPluginSpec {
         """.stripIndent()
 
         when:
-        def result = runTasksSuccessfully("printNewDependenciesByInclusion")
+        def result = runTasksSuccessfully("printNewDependenciesByGroup")
 
         then:
         result.standardOutput.contains("org.apache.tomcat.embed:tomcat-embed-core 9.0.10 ->")
@@ -48,7 +48,7 @@ class PrintNewDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
             
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {
@@ -72,7 +72,7 @@ class PrintNewDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
             
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {

@@ -10,9 +10,9 @@ import ru.yoomoney.gradle.plugins.library.dependencies.checkversion.VersionCheck
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 import ru.yoomoney.gradle.plugins.library.dependencies.forbiddenartifacts.CheckForbiddenDependenciesTask;
 import ru.yoomoney.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
-import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintActualDependenciesByInclusionTask;
+import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintActualDependenciesByGroupTask;
 import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintAllActualDependenciesTask;
-import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintDependenciesByInclusionTask;
+import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintDependenciesByGroupTask;
 import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintNewDependenciesVersionsTask;
 import ru.yoomoney.gradle.plugins.library.dependencies.snapshot.CheckSnapshotsDependenciesTask;
 
@@ -64,9 +64,9 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
      * Имя таски, добавляемой плагином при подключении к проекту
      */
     public static final String CHECK_DEPENDENCIES_TASK_NAME = "checkLibraryDependencies";
-    private static final String PRINT_NEW_DEPENDENCIES_TASK_NAME_BY_INCLUSION = "printNewDependenciesByInclusion";
+    private static final String PRINT_NEW_DEPENDENCIES_TASK_NAME_BY_GROUP = "printNewDependenciesByGroup";
     private static final String PRINT_NEW_DEPENDENCIES_TASK_NAME = "printNewDependencies";
-    private static final String PRINT_ACTUAL_DEPENDENCIES_TASK_NAME_BY_INCLUSION = "printActualDependenciesByInclusion";
+    private static final String PRINT_ACTUAL_DEPENDENCIES_TASK_NAME_BY_GROUP = "printActualDependenciesByGroup";
     private static final String PRINT_ACTUAL_DEPENDENCIES_TASK_NAME = "printActualDependencies";
     private static final String SNAPSHOT_CHECK_TASK_NAME = "checkSnapshotsDependencies";
     private static final String FORBIDDEN_DEPENDENCIES_CHECK_TASK_NAME = "checkForbiddenDependencies";
@@ -123,11 +123,11 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
                         VersionChecker.runCheckVersion(project, majorVersionCheckerExtension, artifactVersionResolver);
                     }
 
-                    createPrintNewDependenciesByInclusionTask(target, checkDependenciesExtension.inclusionPrefixesForPrintDependencies,
+                    createPrintNewDependenciesGroupTask(target, checkDependenciesExtension.includeGroupIdForPrintDependencies,
                                                               artifactVersionResolver);
                     createPrintNewDependenciesTask(target, artifactVersionResolver);
 
-                    createPrintActualDependenciesByInclusionTask(target, checkDependenciesExtension.inclusionPrefixesForPrintDependencies)
+                    createPrintActualDependenciesByGroupTask(target, checkDependenciesExtension.includeGroupIdForPrintDependencies)
                             .dependsOn(task);
                     createPrintActualDependenciesTask(target)
                             .dependsOn(task);
@@ -159,27 +159,27 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
      *
      * @param project проект
      */
-    private static void createPrintNewDependenciesByInclusionTask(@Nonnull Project project,
-                                                                  @Nonnull Set<String> includeGroupIdPrefixes,
-                                                                  @Nonnull ArtifactVersionResolver artifactVersionResolver) {
-        PrintDependenciesByInclusionTask task = project.getTasks()
-                .create(PRINT_NEW_DEPENDENCIES_TASK_NAME_BY_INCLUSION, PrintDependenciesByInclusionTask.class);
+    private static void createPrintNewDependenciesGroupTask(@Nonnull Project project,
+                                                            @Nonnull Set<String> includeGroupIdPrefixes,
+                                                            @Nonnull ArtifactVersionResolver artifactVersionResolver) {
+        PrintDependenciesByGroupTask task = project.getTasks()
+                .create(PRINT_NEW_DEPENDENCIES_TASK_NAME_BY_GROUP, PrintDependenciesByGroupTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
-        task.setDescription("Prints new available versions of dependencies by inclusion list");
+        task.setDescription("Prints new available versions of dependencies by group list");
         task.setIncludeGroupIdPrefixes(includeGroupIdPrefixes);
         task.setArtifactVersionResolver(artifactVersionResolver);
     }
 
     /**
      * Создает задачу вывода актуальных версий библиотек по переданному списку необходмых префиксов
-     * CheckDependenciesPluginExtension.inclusionPrefixesForPrintDependencies
+     * CheckDependenciesPluginExtension.includeGroupIdForPrintDependencies
      *
      * @param project проект
      */
-    private static PrintActualDependenciesByInclusionTask createPrintActualDependenciesByInclusionTask(@Nonnull Project project,
-                                                                                                       @Nonnull Set<String> includeGroupIdPrefixes) {
-        PrintActualDependenciesByInclusionTask task = project.getTasks()
-                .create(PRINT_ACTUAL_DEPENDENCIES_TASK_NAME_BY_INCLUSION, PrintActualDependenciesByInclusionTask.class);
+    private static PrintActualDependenciesByGroupTask createPrintActualDependenciesByGroupTask(@Nonnull Project project,
+                                                                                               @Nonnull Set<String> includeGroupIdPrefixes) {
+        PrintActualDependenciesByGroupTask task = project.getTasks()
+                .create(PRINT_ACTUAL_DEPENDENCIES_TASK_NAME_BY_GROUP, PrintActualDependenciesByGroupTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);
         task.setDescription("Prints actual versions of dependencies by list");
         task.setIncludeGroupIdPrefixes(includeGroupIdPrefixes);
@@ -187,7 +187,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     }
 
     /**
-     * Создает задачу вывода актуальных версий внешних библиотек
+     * Создает задачу вывода актуальных версий всех библиотек
      *
      * @param project проект
      */
@@ -200,7 +200,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
     }
 
     /**
-     * Создает задачу вывода новых версий внешних библиотек
+     * Создает задачу вывода новых версий всех библиотек
      *
      * @param project проект
      */

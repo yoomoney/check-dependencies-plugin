@@ -16,11 +16,22 @@ apply plugin: 'ru.yoomoney.gradle.plugins.check-dependencies-plugin'
 
 ```
 
-## Функционал
+## Функциональность
 
-Плагин включает в себя несколько функциональностей:
+Список тасок, предоставляемых плагином:  
+* ```checkLibraryDependencies```: Проверка легитимность изменения версий библиотек и конфликтов мажорных версий подключаемых библиотек  
+* ```checkSnapshotsDependencies```: Проверка наличия snapshot-версий подключаемых библиотек  
+* ```checkForbiddenDependencies```: Проверка наличия запрещенных артефактов в подключаемых библиотеках  
+  
 
-### Проверка легитимность изменения версий используемых библиотек в проекте.
+* ```printNewDependenciesByGroup```: Вывод новых доступных версий для библиотек для groupId из списка  
+* ```printNewDependencies```: Вывод новых доступных версий для библиотек  
+* ```printActualDependenciesByGroup```: Вывод актуальных версий для библиотек для groupId из списка  
+* ```printActualDependencies```: Вывод актуальных версий для библиотек  
+
+Подробности по работе тасок можно найти в одноименных разделах.
+
+### Проверка легитимности изменения версий используемых библиотек в проекте.
 
 Проверяются как прямые, так и транзитивные зависимости.
 
@@ -67,17 +78,17 @@ apply plugin: 'ru.yoomoney.gradle.plugins.check-dependencies-plugin'
 Есть два режима:
 1) Вывод новых версий для всех имеющихся в проекте зависимостей.  
    Для запуска этого режима необходимо вызвать вручную таску printNewDependencies.  
-2) Вывод новых версий для зависимостей из списка. Список определяется с помощью настройки:
+2) Вывод новых версий для groupId из списка. Список определяется с помощью настройки:
 ```
 checkDependencies {
-    inclusionPrefixesForPrintDependencies = ['ru.yoomoney']
+    includeGroupIdForPrintDependencies = ['ru.yoomoney']
 }
 ```
 
    В настройку передаются префиксы groupId артефактов.  
    Функицональность может быть полезна для вывода новых зависимостей, относящихся к внутренним для компании, 
    тогда в настройку нужно передать префикс компании, как в примере выше.  
-   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByInclusion.
+   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByGroup.
 
 ### Вывод актуальных версий для библиотек
 
@@ -86,15 +97,15 @@ checkDependencies {
 1) Вывод версий для всех имеющихся в проекте зависимостей.  
    Для запуска этого режима необходимо вызвать вручную таску printActualDependencies.  
    
-2) Вывод версий для зависимостей из списка. Список определяется с помощью настройки:  
+2) Вывод версий для groupId из списка. Список определяется с помощью настройки:  
 ```
 checkDependencies {
-    inclusionPrefixesForPrintDependencies = ['org.apache']
+    includeGroupIdForPrintDependencies = ['org.apache']
 }
 ``` 
    В настройку передаются префиксы groupId артефактов.  
    
-   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByInclusion.   
+   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByGroup.   
 
 Пример вывода:
 
@@ -115,7 +126,7 @@ checkDependencies {
    ]
 ```
 
-Результат сохраняется в build/report/dependencies/ в actual_dependencies_by_inclusion.json & actual_all_dependencies.json
+Результат сохраняется в build/report/dependencies/ в actual_dependencies_by_group.json & actual_all_dependencies.json
 
 ### Проверка наличия snapshot-версий подключаемых библиотек
 

@@ -6,12 +6,12 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 /**
- * Выводит актуальные версии внешних зависимостей
+ * Выводит актуальные версии всех зависимостей
  */
 public class PrintAllActualDependenciesTask extends DefaultTask {
 
     /**
-     * Выводит актуальные версии внешних библиотек
+     * Выводит актуальные версии всех библиотек
      */
     @TaskAction
     public void printActualOuterVersion() {

@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Выводит актуальные версии зависимостей по списку префиксов
  */
-public class PrintActualDependenciesByInclusionTask extends DefaultTask {
+public class PrintActualDependenciesByGroupTask extends DefaultTask {
     private Set<String> includeGroupIdPrefixes;
 
     /**
@@ -21,7 +21,7 @@ public class PrintActualDependenciesByInclusionTask extends DefaultTask {
      */
     @TaskAction
     public void printActualInnerVersion() {
-        getProject().getLogger().lifecycle("===============Actual dependencies by inclusion===============");
+        getProject().getLogger().lifecycle("===============Actual dependencies by group===============");
 
         Action<Project> printDependenciesAction = new PrintActualDependenciesAction(includeGroupIdPrefixes);
         getProject().allprojects(printDependenciesAction);

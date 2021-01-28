@@ -7,7 +7,7 @@ import org.gradle.api.tasks.TaskAction;
 import ru.yoomoney.gradle.plugins.library.dependencies.ArtifactVersionResolver;
 
 /**
- * Выводит версии внешних зависимостей
+ * Выводит версии всех зависимостей
  *
  * @author horyukova
  * @since 10.12.2018
@@ -16,7 +16,7 @@ public class PrintNewDependenciesVersionsTask extends DefaultTask {
     private ArtifactVersionResolver artifactVersionResolver;
 
     /**
-     * Выводит новые версии внешних библиотек
+     * Выводит новые версии всех библиотек
      */
     @TaskAction
     public void printNewVersion() {

@@ -6,13 +6,14 @@
     * Подключен artifact-release-plugin для автоматического выпуска релиза.
     * Сборка переведена на travis (ранее использовался jenkins)
     * ***breaking_changes*** Переименованы таски:
-        * printNewInnerDependenciesVersions -> printNewDependenciesByInclusion
+        * printNewInnerDependenciesVersions -> printNewDependenciesByGroup
         * printNewOuterDependenciesVersions -> printNewDependencies
-        * printActualInnerDependenciesVersions -> printActualDependenciesByInclusion
+        * printActualInnerDependenciesVersions -> printActualDependenciesByGroup
         * printActualOuterDependenciesVersions -> printActualDependencies
-    * Таски printNewDependencies и printActualDependencies теперь выводят информацию по всем зависимостям проекта.
+    * Таски printNewDependencies и printActualDependencies теперь выводят информацию по всем зависимостям проекта 
+      (раньше только для внешних)
     * Регулирование префиксов пакетов, по которым нужно выводить информацию в тасках printNewInnerDependenciesVersions и 
-      printActualInnerDependenciesVersions вынесено в настройку inclusionPrefixesForPrintDependencies.
+      printActualInnerDependenciesVersions вынесено в настройку includeGroupIdForPrintDependencies.
     * Удалена настройка pushMetrics и отправка метрик.
 
 ### NEXT_VERSION_DESCRIPTION_END

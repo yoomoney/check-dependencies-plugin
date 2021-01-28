@@ -100,7 +100,7 @@ public class PrintActualDependenciesAction implements Action<Project> {
 
         String fileName = includeGroupIdPrefixes.isEmpty()
                 ? "actual_all_dependencies.json"
-                : "actual_dependencies_by_inclusion.json";
+                : "actual_dependencies_by_group.json";
 
         File reportFile = new File(
                 project.getBuildDir(),

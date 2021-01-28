@@ -66,5 +66,5 @@ public class CheckDependenciesPluginExtension {
      * в таске printNewDependenciesVersionsByIncludeList
      */
     @Input
-    public Set<String> inclusionPrefixesForPrintDependencies = new HashSet<>();
+    public Set<String> includeGroupIdForPrintDependencies = new HashSet<>();
 }

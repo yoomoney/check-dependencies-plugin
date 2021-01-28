@@ -13,12 +13,12 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         """.stripIndent()
     }
 
-    def "Print actual versions for dependency by inclusion"() {
+    def "Print actual versions for dependency by group"() {
 
         given:
         buildFile << """     
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {
@@ -30,21 +30,21 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         """.stripIndent()
 
         when:
-        def result = runTasksSuccessfully("printActualDependenciesByInclusion")
+        def result = runTasksSuccessfully("printActualDependenciesByGroup")
 
         then:
-        result.standardOutput.contains("===============Actual dependencies by inclusion===============")
+        result.standardOutput.contains("===============Actual dependencies by group===============")
         def update = result.standardOutput.findAll("\\n\\[((.|\\n)*)\\n\\]")
         update.size() == 1
         def foundjson = update.get(0)
-        def resourceString = IOUtils.toString(getClass().getResourceAsStream("/actual_dependencies_by_inclusion.json"))
+        def resourceString = IOUtils.toString(getClass().getResourceAsStream("/actual_dependencies_by_group.json"))
 
         foundjson.replace(" ", "")
                 .contains(resourceString.replace(" ", ""))
 
         def reportString = IOUtils.toString(new FileInputStream(new File("build/nebulatest/" +
                 "ru.yoomoney.gradle.plugins.library.printdependencies.PrintActualDependenciesSpec/" +
-                "Print-actual-versions-for-dependency-by-inclusion/build/report/dependencies/actual_dependencies_by_inclusion.json")))
+                "Print-actual-versions-for-dependency-by-group/build/report/dependencies/actual_dependencies_by_group.json")))
         reportString.replace(" ", "")
                 .contains(resourceString.replace(" ", ""))
 
@@ -55,7 +55,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         given:
         buildFile << """
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {
@@ -92,7 +92,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         buildFile << """
             
             checkDependencies {
-                    inclusionPrefixesForPrintDependencies = ['org.apache']
+                    includeGroupIdForPrintDependencies = ['org.apache']
             }
                 
             dependencies {
@@ -106,7 +106,7 @@ class PrintActualDependenciesSpec extends AbstractPluginSpec {
         def result = runTasksSuccessfully("build")
 
         then:
-        !result.standardOutput.contains("===============Actual dependencies by inclusion===============")
+        !result.standardOutput.contains("===============Actual dependencies by group===============")
         !result.standardOutput.contains("===============Actual dependencies===============")
     }
 

@@ -1,31 +1,47 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MAJOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Внесены изменения в связи с переходом в GitHub:
+    * Переименованы пакеты
+    * Плагин собирается без использования project-plugin, сборка полностью описывается в build.gradle
+    * Подключен artifact-release-plugin для автоматического выпуска релиза.
+    * Сборка переведена на travis (ранее использовался jenkins)
+    * ***breaking_changes*** Переименованы таски:
+        * printNewInnerDependenciesVersions -> printNewDependenciesByGroup
+        * printNewOuterDependenciesVersions -> printNewDependencies
+        * printActualInnerDependenciesVersions -> printActualDependenciesByGroup
+        * printActualOuterDependenciesVersions -> printActualDependencies
+    * Таски printNewDependencies и printActualDependencies теперь выводят информацию по всем зависимостям проекта 
+      (раньше только для внешних)
+    * Регулирование префиксов пакетов, по которым нужно выводить информацию в тасках printNewInnerDependenciesVersions и 
+      printActualInnerDependenciesVersions вынесено в настройку includeGroupIdForPrintDependencies.
+    * Удалена настройка pushMetrics и отправка метрик.
+
 ### NEXT_VERSION_DESCRIPTION_END
-## [6.2.1](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/8) (30-11-2020)
+## [6.2.1] (30-11-2020)
 
 * Обновлена версия kotlin 1.3.71 -> 1.3.50
 
-## [6.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/7) (25-11-2020)
+## [6.2.0] (25-11-2020)
 
 * Добавлена проверка Snapshot зависимостей и репозитория в секции buildScript
 
-## [6.1.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/6) (03-07-2020)
+## [6.1.0] (03-07-2020)
 
 * Поднята версия gradle: 6.0.1 -> 6.4.1.
 
-## [6.0.2](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/5) (20-05-2020)
+## [6.0.2] (20-05-2020)
 
 * Замена символов в отправляемой метрике
 
-## [6.0.1](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/4) (19-05-2020)
+## [6.0.1] (19-05-2020)
 
 * Убрано определение названия репозитория по appName
 
-## [6.0.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/3) (19-05-2020)
+## [6.0.0] (19-05-2020)
 
 * Проверка конфликтов мажорных версий перенесена обратно на этап конфигурации. Таска majorVersionCheckerTask удалена.
 
-## [5.2.0](https://bitbucket.yamoney.ru/projects/BACKEND-GRADLE-PLUGINS/repos/check-dependencies-plugin/pull-requests/1) (12-04-2020)
+## [5.2.0] (12-04-2020)
 
 * Проверка конфликтов мажорных версий вынесена в отдельную таску "majorVersionCheckerTask" (раннее осуществлялась на этапе конфигурации).
 * Добавлена настройка includedConfigurations. Теперь проверка конфликтов осуществляется только для конфигураций, объявленных в

@@ -1,0 +1,31 @@
+def aetherVersion = '0.9.0.M2'
+
+dependencies {
+    api localGroovy(),
+            'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE',
+            'com.google.code.findbugs:jsr305:3.0.1',
+            'com.google.code.findbugs:annotations:3.0.1',
+            'org.eclipse.jgit:org.eclipse.jgit:5.4.0.201906121030-r'
+
+    api "org.eclipse.aether:aether-api:${aetherVersion}",
+            "org.eclipse.aether:aether-util:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-wagon:${aetherVersion}",
+            "org.eclipse.aether:aether-impl:${aetherVersion}",
+            "org.eclipse.aether:aether-spi:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-file:${aetherVersion}",
+            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherVersion}",
+            "org.eclipse.aether:aether:${aetherVersion}",
+            "org.apache.maven:maven-aether-provider:3.2.3",
+            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
+            "org.codehaus.plexus:plexus-utils:3.0.22",
+            "org.codehaus.plexus:plexus-interpolation:1.21"
+
+    testImplementation gradleTestKit(),
+            'com.netflix.nebula:nebula-test:7.4.0',
+            'org.codehaus.plexus:plexus-utils:2.0.7',
+            'org.codehaus.plexus:plexus-interpolation:1.14'
+
+    testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
+        exclude module: 'groovy-all'
+    }
+}

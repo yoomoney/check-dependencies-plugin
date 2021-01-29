@@ -1,47 +1,195 @@
 buildscript {
-    apply from: 'project.gradle', to: buildscript
-}
-apply plugin: 'yamoney-gradle-project-plugin'
-
-pluginId = 'yamoney-check-dependencies-plugin'
-gradlePlugin {
-    plugins {
-        checkDependenciesPlugin {
-            id = pluginId
-            implementationClass = "ru.yandex.money.gradle.plugins.library.dependencies.CheckDependenciesPlugin"
+    repositories {
+        jcenter()
+        dependencies {
+            classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50'
+            classpath 'ru.yoomoney.gradle.plugins:artifact-release-plugin:3.6.0'
         }
     }
 }
 
-def aetherVersion = '0.9.0.M2'
+plugins {
+    id "com.jfrog.bintray" version "1.8.4"
+    id "com.gradle.plugin-publish" version "0.12.0"
+    id "java-gradle-plugin"
+    id "ru.yoomoney.gradle.plugins.artifact-release-plugin" version "3.6.0"
+}
 
-dependencies {
-    api localGroovy(),
-            'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE',
-            'com.google.code.findbugs:jsr305:3.0.1',
-            'com.google.code.findbugs:annotations:3.0.1'
+releaseSettings {
+    releaseTasks = ["build", "bintrayUpload", "publishPlugins"]
+    pathToGitPrivateSshKey = System.getenv("GIT_PRIVATE_SSH_KEY_PATH")
+    passphraseToGitPrivateSshKey = System.getenv("GIT_KEY_PASSPHRASE")
+    gitUsername = "yoomoney-robot"
+    gitEmail = "SvcReleaserBackend@yoomoney.ru"
+    changelogRequired = true
+    addPullRequestLinkToChangelog = true
+    pullRequestInfoProvider = "GitHub"
+    githubAccessToken = System.getenv("GITHUB_TOKEN")
+}
 
-    api "org.eclipse.aether:aether-api:${aetherVersion}",
-            "org.eclipse.aether:aether-util:${aetherVersion}",
-            "org.eclipse.aether:aether-connector-wagon:${aetherVersion}",
-            "org.eclipse.aether:aether-impl:${aetherVersion}",
-            "org.eclipse.aether:aether-spi:${aetherVersion}",
-            "org.eclipse.aether:aether-connector-file:${aetherVersion}",
-            "org.eclipse.aether:aether-connector-asynchttpclient:${aetherVersion}",
-            "org.eclipse.aether:aether:${aetherVersion}",
-            "org.apache.maven:maven-aether-provider:3.2.3",
-            "org.apache.maven.wagon:wagon-http-lightweight:1.0",
-            "org.codehaus.plexus:plexus-utils:3.0.22",
-            "org.codehaus.plexus:plexus-interpolation:1.21",
-            'ru.yandex.money.common:yamoney-monitoring:3.2.3',
-            'ru.yandex.money.tools:yamoney-git-client:2.1.0'
+repositories {
+    mavenCentral()
+    jcenter()
+}
 
-    testImplementation gradleTestKit(),
-            'com.netflix.nebula:nebula-test:7.4.0',
-            'org.codehaus.plexus:plexus-utils:2.0.7',
-            'org.codehaus.plexus:plexus-interpolation:1.14'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'groovy'
+apply from: 'dependencies.gradle'
 
-    testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
-        exclude module: 'groovy-all'
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileJava {
+    options.compilerArgs.addAll(['--release', '8'])
+}
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Version': "$project.version",
+                'Implementation-Title': "$project.name",
+                'Built-By': java.lang.System.getProperty('user.name'),
+                'Built-Date': new Date().format('yyyy-MM-dd'),
+                'Copyright': '2021 NBCO YooMoney LLC',
+                'License': 'MIT'
+        )
+    }
+
+    from(projectDir.absolutePath) {
+        include "CHANGELOG.md", "README.md"
+        into "META-INF"
+    }
+}
+
+apply plugin: 'idea'
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.8'
+        vcs = 'Git'
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+test {
+    systemProperty "file.encoding", "UTF-8"
+    testLogging {
+        events "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
+
+apply plugin: "jacoco"
+jacocoTestReport {
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+}
+check.dependsOn jacocoTestReport
+
+javadoc {
+    options {
+        docEncoding = 'UTF-8'
+        charSet = 'UTF-8'
+        encoding = 'UTF-8'
+        failOnError = true
+    }
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+group = 'ru.yoomoney.gradle.plugins'
+
+gradlePlugin {
+    plugins {
+        checkDependenciesPlugin {
+            id = 'ru.yoomoney.gradle.plugins.check-dependencies-plugin'
+            implementationClass = 'ru.yoomoney.gradle.plugins.library.dependencies.CheckDependenciesPlugin'
+            displayName = 'Dependencies check gradle plugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin'
+    vcsUrl = 'https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin.git'
+    description = 'Dependencies check gradle plugin'
+    tags = ['dependency', 'gradle', 'plugin']
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId 'check-dependencies-plugin'
+            version project.version
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    publications = ['MyPublication']
+
+    dryRun = false
+    publish = true
+    pkg {
+        name = 'check-dependencies-plugin'
+        repo = 'maven'
+        userOrg = 'yoomoney-gradle-plugins'
+        desc = 'Dependencies check gradle plugin'
+        websiteUrl = 'https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin'
+        issueTrackerUrl = 'https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/issues'
+        vcsUrl = 'https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin.git'
+        licenses = ['MIT']
+        labels = ['dependency', 'gradle', 'plugin']
+        publicDownloadNumbers = true
+        githubRepo = 'yoomoney-gradle-plugins/check-dependencies-plugin'
+        githubReleaseNotesFile = 'CHANGELOG.md'
+        version {
+            gpg {
+                sign = true
+                passphrase = System.getenv('BINTRAY_PASSPHRASE')
+            }
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
     }
 }

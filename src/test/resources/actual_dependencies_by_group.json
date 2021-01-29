@@ -1,0 +1,8 @@
+[
+    {
+        "scope": "compileClasspath",
+        "name": "tomcat-embed-core",
+        "version": "9.0.10",
+        "group": "org.apache.tomcat.embed"
+    }
+]

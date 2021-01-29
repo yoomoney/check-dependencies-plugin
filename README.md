@@ -5,26 +5,33 @@
 ```groovy
 buildscript {
     repositories {
-        maven { url 'https://nexus.yamoney.ru/repository/thirdparty/' }
-        maven { url 'https://nexus.yamoney.ru/repository/central/' }
-        maven { url 'https://nexus.yamoney.ru/repository/releases/' }
-        maven { url 'https://nexus.yamoney.ru/repository/jcenter.bintray.com/' }
-        maven { url 'https://nexus.yamoney.ru/repository/gradle-plugins/' }
+        jcenter()
     }
     dependencies {
         classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
-        classpath 'ru.yandex.money.gradle.plugins:yamoney-check-dependencies-plugin:4.+'
+        classpath 'ru.yoomoney.gradle.plugins:check-dependencies-plugin:4.+'
     }
 }
-apply plugin: 'yamoney-check-dependencies-plugin'
+apply plugin: 'ru.yoomoney.gradle.plugins.check-dependencies-plugin'
 
 ```
 
-## Функционал
+## Функциональность
 
-Плагин включает в себя несколько функциональностей:
+Список тасок, предоставляемых плагином:  
+* ```checkLibraryDependencies```: Проверка легитимность изменения версий библиотек и конфликтов мажорных версий подключаемых библиотек  
+* ```checkSnapshotsDependencies```: Проверка наличия snapshot-версий подключаемых библиотек  
+* ```checkForbiddenDependencies```: Проверка наличия запрещенных артефактов в подключаемых библиотеках  
+  
 
-### Проверка легитимность изменения версий используемых библиотек в проекте.
+* ```printNewDependenciesByGroup```: Вывод новых доступных версий для библиотек для groupId из списка  
+* ```printNewDependencies```: Вывод новых доступных версий для библиотек  
+* ```printActualDependenciesByGroup```: Вывод актуальных версий для библиотек для groupId из списка  
+* ```printActualDependencies```: Вывод актуальных версий для библиотек  
+
+Подробности по работе тасок можно найти в одноименных разделах.
+
+### Проверка легитимности изменения версий используемых библиотек в проекте.
 
 Проверяются как прямые, так и транзитивные зависимости.
 
@@ -62,42 +69,64 @@ apply plugin: 'yamoney-check-dependencies-plugin'
 Прямые и транзитивные зависимости библиотек проверяются на наличие конфликтов мажорных версий.
 При наличии конфликтов сборка неуспешна, кроме случаев, если запускалась таска ":dependencies" - в этом случае выводится запись
 о наличии конфликта в лог. 
-Проверяются только версии внутренних библиотек (пакеты ru.yamoney и ru.yandex.money).
+Для определения, какие зависимости нужно проверять, существует настройка includeGroupIdPrefixes.
+Например, в ней можно указать, что проверять нужно только внутренние библиотеки компании, указав префикс "ru.yoomoney".
 
-### Вывод новых доступных версий для внешних и внутренних библиотек
+### Вывод новых доступных версий для библиотек  
 
-Печатает доступные новые версии внутренних и внешних зависимостей. Вызывается только при ручном запуске тасок 
-printNewOuterDependenciesVersions и printNewInnerDependenciesVersions.
+Печатает доступные новые версии зависимостей.  
+Есть два режима:
+1) Вывод новых версий для всех имеющихся в проекте зависимостей.  
+   Для запуска этого режима необходимо вызвать вручную таску printNewDependencies.  
+2) Вывод новых версий для groupId из списка. Список определяется с помощью настройки:
+```
+checkDependencies {
+    includeGroupIdForPrintDependencies = ['ru.yoomoney']
+}
+```
 
-### Вывод актуальных версий для внутренних библиотек
+   В настройку передаются префиксы groupId артефактов.  
+   Функицональность может быть полезна для вывода новых зависимостей, относящихся к внутренним для компании, 
+   тогда в настройку нужно передать префикс компании, как в примере выше.  
+   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByGroup.
 
-Печатает актуальные версии зависимостей. Вызывается только при ручном запуске 
-printActualInnerDependenciesVersions, printActualOuterDependenciesVersions.
+### Вывод актуальных версий для библиотек
+
+Печатает актуальные версии зависимостей.  
+Для этой функциональности также есть два режима:
+1) Вывод версий для всех имеющихся в проекте зависимостей.  
+   Для запуска этого режима необходимо вызвать вручную таску printActualDependencies.  
+   
+2) Вывод версий для groupId из списка. Список определяется с помощью настройки:  
+```
+checkDependencies {
+    includeGroupIdForPrintDependencies = ['org.apache']
+}
+``` 
+   В настройку передаются префиксы groupId артефактов.  
+   
+   Для запуска этого режима необходимо вызвать вручную таску printNewDependenciesByGroup.   
+
+Пример вывода:
 
 ```
    [
        {
            "scope": "compile",
-           "name": "yamoney-json-utils",
+           "name": "json-utils",
            "version": "1.0.0",
-           "group": "ru.yandex.money.common"
+           "group": "ru.yoomoney.common"
        },
        {
            "scope": "compile",
-           "name": "yamoney-xml-utils",
+           "name": "xml-utils",
            "version": "1.0.0",
-           "group": "ru.yandex.money.common"
-       },
-       {
-           "scope": "compile",
-           "name": "yamoney-backend-platform-config",
-           "version": "19.0.0",
-           "group": "ru.yandex.money.common"
+           "group": "ru.yoomoney.common"
        }
    ]
 ```
 
-Результат сохраняется в build/report/dependencies/ в actual_inner_dependencies.json & actual_outer_dependencies.json
+Результат сохраняется в build/report/dependencies/ в actual_dependencies_by_group.json & actual_all_dependencies.json
 
 ### Проверка наличия snapshot-версий подключаемых библиотек
 
@@ -122,23 +151,23 @@ checkSnapshotsDependencies. Выбрасывает исключение при �
    Список запрещенных артефактов может задаваться такими способами:
 ```groovy
      forbiddenDependenciesChecker {
-            after {             //запрещены все версии yamoney-xml-utils выше 4.0.0 (включая все более поздние мажорные)
-                 forbidden 'ru.yandex.money.common:yamoney-xml-utils:4.0.0'
+            after {             //запрещены все версии joda-time:joda-time выше 4.0.0 (включая все более поздние мажорные)
+                 forbidden 'joda-time:joda-time:4.0.0'
                  recommended '4.0.7'
                  comment 'bla bla'
             }
-            before {           //запрещены все версии yamoney-json-utils ниже 4.0.0
-                 forbidden 'ru.yandex.money.common:yamoney-json-utils:4.2.0'
+            before {           //запрещены все версии org.apache.tomcat.embed:tomcat-embed-core ниже 4.0.0
+                 forbidden 'org.apache.tomcat.embed:tomcat-embed-core:4.2.0'
                  recommended '4.2.7'
                  comment 'bla bla'
             }
-            eq {               //запрещена yamoney-enum-utils версии 2.1.4
-                 forbidden 'ru.yandex.money.common:yamoney-enum-utils:2.1.4'
+            eq {               //запрещена org.apache.commons:commons-lang3 версии 2.1.4
+                 forbidden 'org.apache.commons:commons-lang3:2.1.4'
                  recommended '2.1.7'
                  comment 'bla bla'
             }
-            range {            //запрещены версии yamoney-common-utils от 4.0.0 до 4.0.2 включительно
-                 forbidden 'ru.yandex.money.common:yamoney-common-utils'
+            range {            //запрещены версии com.google.guava:guava от 4.0.0 до 4.0.2 включительно
+                 forbidden 'com.google.guava:guava'
                  startVersion '4.0.0'
                  endVersion '4.0.2'
                  recommended '4.0.7'
@@ -166,8 +195,8 @@ checkDependencies {
 
 ```groovy
 checkDependencies {
-   exclusionsRulesSources = ["ru.yandex.money.platform:platform-dependencies:",
-                             "ru.yandex.money.platform:libraries-dependencies:1.0.2"]
+   exclusionsRulesSources = ["ru.yoomoney:platform-dependencies:",
+                             "ru.yoomoney:libraries-dependencies:1.0.2"]
 }
 ```
 
@@ -177,7 +206,7 @@ checkDependencies {
 checkDependencies {
    exclusionsRulesSources = ["my_libraries_versions_exclusions.properties", 
                              "settings/additional_libraries_versions_exclusions.properties", 
-                             "ru.yandex.money.platform:platform-dependencies:"]
+                             "ru.yoomoney:platform-dependencies:"]
 }
 ```
 
@@ -216,19 +245,19 @@ majorVersionChecker {
 Библиотеки, для которых будут проверяться конфликты мажорных версий можно описать с помощью префиксов, с которых начинаются 
 названия групп. 
 Например, для того, чтобы проверять конфликты только для библиотек, название группы которых начинается с
-"ru.yandex.money" или "ru.yamoney", нужно задать настройку includeMajorVersionCheckPrefixLibraries следующим образом:
+"com.google" или "org.apache", нужно задать настройку includeMajorVersionCheckPrefixLibraries следующим образом:
 
 ```groovy
 majorVersionChecker {
-   includeGroupIdPrefixes = ['ru.yamoney', 'ru.yandex.money']    // По умолчанию список пуст
+   includeGroupIdPrefixes = ['com.google', 'org.apache']    // По умолчанию список пуст
 }
 ```
 
 Также можно исключить из проверки конкретные артефакты:
 ```groovy
 majorVersionChecker {
-   excludeDependencies = ["ru.yandex.money.common:yamoney-xml-utils", 
-                                        "ru.yandex.money.common:yamoney-json-utils"]  // По умолчанию список пуст
+   excludeDependencies = ["ru.yoomoney.common:xml-utils", 
+                                        "ru.yoomoney.common:json-utils"]  // По умолчанию список пуст
 }
 ```
 
@@ -238,16 +267,6 @@ majorVersionChecker {
    failBuild = true  // По умолчанию билд фейлится
 }
 ```
-
-Также есть возможность отправки метрик при нахождения конфликта:
-```
-majorVersionChecker {
-   pushMetrics = true  // По умолчанию отправка метрик включена
-}
-```
-
-Формат отправляемой метрики:
-`{datacenter}.{hostname}.yamoney-check-dependencies-plugin.{appName}.major_conflict.{libraryName}.failed`
 
 #### Поиск возможного решения конфликта версий среди зависимостей
 

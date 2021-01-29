@@ -1,22 +1,21 @@
-### NEXT_VERSION_TYPE=MAJOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Внесены изменения в связи с переходом в GitHub:
-    * Переименованы пакеты
-    * Плагин собирается без использования project-plugin, сборка полностью описывается в build.gradle
-    * Подключен artifact-release-plugin для автоматического выпуска релиза.
-    * Сборка переведена на travis (ранее использовался jenkins)
-    * ***breaking_changes*** Переименованы таски:
-        * printNewInnerDependenciesVersions -> printNewDependenciesByGroup
-        * printNewOuterDependenciesVersions -> printNewDependencies
-        * printActualInnerDependenciesVersions -> printActualDependenciesByGroup
-        * printActualOuterDependenciesVersions -> printActualDependencies
-    * Таски printNewDependencies и printActualDependencies теперь выводят информацию по всем зависимостям проекта 
-      (раньше только для внешних)
-    * Регулирование префиксов пакетов, по которым нужно выводить информацию в тасках printNewInnerDependenciesVersions и 
-      printActualInnerDependenciesVersions вынесено в настройку includeGroupIdForPrintDependencies.
-    * Удалена настройка pushMetrics и отправка метрик.
+## [7.0.0](https://api.github.com/repos/yoomoney-gradle-plugins/check-dependencies-plugin/pulls/1) (29-01-2021)
 
-### NEXT_VERSION_DESCRIPTION_END
+* Внесены изменения в связи с переходом в GitHub:
+* Переименованы пакеты
+* Плагин собирается без использования project-plugin, сборка полностью описывается в build.gradle
+* Подключен artifact-release-plugin для автоматического выпуска релиза.
+* Сборка переведена на travis (ранее использовался jenkins)
+* ***breaking_changes*** Переименованы таски:
+* printNewInnerDependenciesVersions -> printNewDependenciesByGroup
+* printNewOuterDependenciesVersions -> printNewDependencies
+* printActualInnerDependenciesVersions -> printActualDependenciesByGroup
+* printActualOuterDependenciesVersions -> printActualDependencies
+* Таски printNewDependencies и printActualDependencies теперь выводят информацию по всем зависимостям проекта
+(раньше только для внешних)
+* Регулирование префиксов пакетов, по которым нужно выводить информацию в тасках printNewInnerDependenciesVersions и
+printActualInnerDependenciesVersions вынесено в настройку includeGroupIdForPrintDependencies.
+* Удалена настройка pushMetrics и отправка метрик.
+
 ## [6.2.1]() (30-11-2020)
 
 * Обновлена версия kotlin 1.3.71 -> 1.3.50

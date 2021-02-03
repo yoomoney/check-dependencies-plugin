@@ -3,7 +3,7 @@ buildscript {
         jcenter()
         dependencies {
             classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50'
-            classpath 'ru.yoomoney.gradle.plugins:artifact-release-plugin:3.6.0'
+            classpath 'ru.yoomoney.gradle.plugins:artifact-release-plugin:3.7.0'
         }
     }
 }
@@ -12,7 +12,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
     id "com.gradle.plugin-publish" version "0.12.0"
     id "java-gradle-plugin"
-    id "ru.yoomoney.gradle.plugins.artifact-release-plugin" version "3.6.0"
+    id "ru.yoomoney.gradle.plugins.artifact-release-plugin" version "3.7.0"
 }
 
 releaseSettings {

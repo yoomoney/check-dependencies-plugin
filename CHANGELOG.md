@@ -1,5 +1,8 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Удален ключ git_key.enc в связи с изменением логики работы с git_key. 
+  Подробности см. https://github.com/yoomoney-gradle-plugins/travis-shared-configuration/pull/8
+* Поднята версия artifact-release-plugin
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.0.0](https://api.github.com/repos/yoomoney-gradle-plugins/check-dependencies-plugin/pulls/1) (29-01-2021)
 

@@ -1,8 +1,8 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* Добавлена фильтрация репозиториев MavenArtifactRepository при составлении списка возможных репозиториев для поиска зависимостей. 
+## [7.1.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/3) (16-02-2021)
+
+* Добавлена фильтрация репозиториев MavenArtifactRepository при составлении списка возможных репозиториев для поиска зависимостей.
 Это исправляет проблему при подключении репозиториев типа "flatDir"
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [7.1.0](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/2) (04-02-2021)
 
 * Удален ключ git_key.enc в связи с изменением логики работы с git_key.

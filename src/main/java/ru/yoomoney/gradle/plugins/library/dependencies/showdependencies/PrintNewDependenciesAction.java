@@ -103,7 +103,7 @@ public class PrintNewDependenciesAction implements Action<Project> {
     private void printLatestDependencyVersion(Dependency dependency, String realVersion) {
         Optional.of(dependency)
                 .filter(dep -> dep.getGroup() != null)
-                .map(dep -> artifactVersionResolver.getArtifactLatestVersion(dependency.getGroup(), dependency.getName()))
+                .flatMap(dep -> artifactVersionResolver.getArtifactLatestVersion(dependency.getGroup(), dependency.getName()))
                 .filter(newVersion -> !Objects.equals(realVersion, newVersion))
                 .ifPresent(newVersion -> printNewVersion(dependency, realVersion, newVersion));
     }

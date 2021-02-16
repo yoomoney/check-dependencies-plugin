@@ -114,6 +114,7 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         // Запуск проверки конфликтов мажорных версий и вывода новых версий зависимостей
         target.afterEvaluate(project -> {
             Set<String> urls = project.getRepositories().stream()
+                    .filter(repo -> repo instanceof MavenArtifactRepository)
                     .map(repo -> ((MavenArtifactRepository) repo).getUrl().toString())
                     .collect(Collectors.toSet());
 

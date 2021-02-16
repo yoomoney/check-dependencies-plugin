@@ -238,7 +238,7 @@ testImplementation, runtime.
 Проверку конфликтов можно отключить, выставив данную настройку в false:
 ```groovy
 majorVersionChecker {
-   enable = true // true является значением по умолчанию
+   enabled = true // true является значением по умолчанию
 }
 ```
 

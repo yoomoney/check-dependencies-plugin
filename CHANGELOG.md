@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [7.1.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/3) (16-02-2021)
 
 * Добавлена фильтрация репозиториев MavenArtifactRepository при составлении списка возможных репозиториев для поиска зависимостей.

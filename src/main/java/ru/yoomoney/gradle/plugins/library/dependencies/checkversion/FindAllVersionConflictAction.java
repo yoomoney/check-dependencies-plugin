@@ -1,6 +1,7 @@
 package ru.yoomoney.gradle.plugins.library.dependencies.checkversion;
 
 import org.gradle.api.Action;
+import org.gradle.api.GradleException;
 import org.gradle.api.artifacts.DependencyResolveDetails;
 import ru.yoomoney.gradle.plugins.library.dependencies.ArtifactVersionResolver;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.LibraryName;
@@ -45,7 +46,9 @@ class FindAllVersionConflictAction implements Action<DependencyResolveDetails> {
         String nameDependency = dependency.getRequested().getName();
 
         if ("+".equals(requestedVersion) || "latest.release".equals(requestedVersion)) {
-            requestedVersion = artifactVersionResolver.getArtifactLatestVersion(groupDependency, nameDependency);
+            requestedVersion = artifactVersionResolver.getArtifactLatestVersion(groupDependency, nameDependency)
+                    .orElseThrow(() -> new GradleException(String.format("Not found version: dependency=%s:%s", groupDependency,
+                            nameDependency)));
         }
 
         LibraryName libraryName = new LibraryName(groupDependency, nameDependency);

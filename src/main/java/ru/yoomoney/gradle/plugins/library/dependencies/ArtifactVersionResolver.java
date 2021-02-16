@@ -2,7 +2,6 @@ package ru.yoomoney.gradle.plugins.library.dependencies;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.IOUtils;
-import org.gradle.api.GradleException;
 import org.gradle.util.VersionNumber;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -14,6 +13,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -45,9 +45,9 @@ public final class ArtifactVersionResolver {
      *
      * @param depGroup группа артифакта
      * @param depName  имя артифакта
-     * @return последнюю версию библиотеки
+     * @return последнюю версию библиотеки или Optional.empty(), если версия не найдена
      */
-    public String getArtifactLatestVersion(String depGroup, String depName) {
+    public Optional<String> getArtifactLatestVersion(String depGroup, String depName) {
         String path = depGroup.replace('.', '/');
         for (String repoUrl : repoUrls) {
             NodeList versionsNodeList = getVersions(path, repoUrl, depName);
@@ -55,12 +55,9 @@ public final class ArtifactVersionResolver {
             return IntStream.range(0, versionsNodeList.getLength())
                     .mapToObj(index -> versionsNodeList.item(index).getFirstChild().getNodeValue())
                     .filter(ArtifactVersionResolver::isValidVersion)
-                    .max(ArtifactVersionResolver::versionCompare)
-                    .<GradleException>orElseThrow(() -> {
-                        throw new GradleException("Not found version: dependencyName=" + depName);
-                    });
+                    .max(ArtifactVersionResolver::versionCompare);
         }
-        throw new GradleException("Not found version: dependencyName=" + depName);
+        return Optional.empty();
     }
 
     private static int versionCompare(String o1, String o2) {

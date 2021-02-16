@@ -1,5 +1,7 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Добавлена фильтрация репозиториев MavenArtifactRepository при составлении списка возможных репозиториев для поиска зависимостей. 
+Это исправляет проблему при подключении репозиториев типа "flatDir"
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.1.0](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/2) (04-02-2021)
 

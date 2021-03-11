@@ -3,6 +3,8 @@ package ru.yoomoney.gradle.plugins.library.dependencies;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.IOUtils;
 import org.gradle.util.VersionNumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -27,6 +29,8 @@ import static java.util.Objects.requireNonNull;
  */
 
 public final class ArtifactVersionResolver {
+    private final Logger log = LoggerFactory.getLogger(ArtifactVersionResolver.class);
+
     private static final Set<String> ILLEGAL_VERSION_PATTERNS =
             new HashSet<>(Arrays.asList(".*alpha.*", ".*beta.*", ".*rc.*", ".*r\\d.*", ".*-b\\d.*", ".*sec.*"));
 
@@ -50,12 +54,14 @@ public final class ArtifactVersionResolver {
     public Optional<String> getArtifactLatestVersion(String depGroup, String depName) {
         String path = depGroup.replace('.', '/');
         for (String repoUrl : repoUrls) {
-            NodeList versionsNodeList = getVersions(path, repoUrl, depName);
+            Optional<NodeList> versionsNodeList = getVersions(path, repoUrl, depName);
 
-            return IntStream.range(0, versionsNodeList.getLength())
-                    .mapToObj(index -> versionsNodeList.item(index).getFirstChild().getNodeValue())
-                    .filter(ArtifactVersionResolver::isValidVersion)
-                    .max(ArtifactVersionResolver::versionCompare);
+            if (versionsNodeList.isPresent()) {
+                return IntStream.range(0, versionsNodeList.get().getLength())
+                        .mapToObj(index -> versionsNodeList.get().item(index).getFirstChild().getNodeValue())
+                        .filter(ArtifactVersionResolver::isValidVersion)
+                        .max(ArtifactVersionResolver::versionCompare);
+            }
         }
         return Optional.empty();
     }
@@ -65,7 +71,7 @@ public final class ArtifactVersionResolver {
     }
 
     @SuppressFBWarnings("XXE_DOCUMENT")
-    private static NodeList getVersions(String path, String repoUrl, String depName) {
+    private Optional<NodeList> getVersions(String path, String repoUrl, String depName) {
         Document doc;
 
         try {
@@ -78,13 +84,13 @@ public final class ArtifactVersionResolver {
             doc = documentBuilder.parse(IOUtils.toInputStream(content));
 
         } catch (Exception e) {
-            throw new RuntimeException("Could not get latest artifact version", e);
+            log.info("Can't get or parse maven-metadata.xml, will try next repository: repository={}, dependency={}", repoUrl, depName);
+            return Optional.empty();
         }
 
         doc.getDocumentElement().normalize();
 
-        return doc.getElementsByTagName("version");
-
+        return Optional.of(doc.getElementsByTagName("version"));
     }
 
     private static boolean isValidVersion(String version) {

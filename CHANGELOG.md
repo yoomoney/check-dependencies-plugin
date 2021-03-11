@@ -1,5 +1,7 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=PATCH
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Исправлен баг в ArtifactVersionResolver - теперь при поиске в списке репозиториев пропускаем репозитории, получение версий из 
+  которого завершилось ошибкой.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.1.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/3) (16-02-2021)
 

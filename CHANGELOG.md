@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [7.1.2](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/4) (11-03-2021)
 
 * Исправлен баг в ArtifactVersionResolver - теперь при поиске в списке репозиториев пропускаем репозитории, получение версий из

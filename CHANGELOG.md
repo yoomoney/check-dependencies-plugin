@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Сборка проекта переведена на gradle-project-plugin.
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.1.2](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/4) (11-03-2021)
 

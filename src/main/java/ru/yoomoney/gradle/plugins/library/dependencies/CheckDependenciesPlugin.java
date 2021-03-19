@@ -177,8 +177,10 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
      *
      * @param project проект
      */
-    private static PrintActualDependenciesByGroupTask createPrintActualDependenciesByGroupTask(@Nonnull Project project,
-                                                                                               @Nonnull Set<String> includeGroupIdPrefixes) {
+    private static PrintActualDependenciesByGroupTask createPrintActualDependenciesByGroupTask(
+            @Nonnull Project project,
+            @Nonnull Set<String> includeGroupIdPrefixes
+    ) {
         PrintActualDependenciesByGroupTask task = project.getTasks()
                 .create(PRINT_ACTUAL_DEPENDENCIES_TASK_NAME_BY_GROUP, PrintActualDependenciesByGroupTask.class);
         task.setGroup(PRINT_DEPENDENCIES_TASK_GROUP);

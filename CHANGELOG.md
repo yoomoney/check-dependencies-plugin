@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [7.2.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/6) (19-05-2021)
+
 * Добавлена информация о сборке, покрытии, лицензии в README.md.
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [7.2.0](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/5) (19-03-2021)
 
 * Сборка проекта переведена на gradle-project-plugin.

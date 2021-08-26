@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/yoomoney-gradle-plugins/check-dependencies-plugin.svg?branch=master)](https://travis-ci.com/yoomoney-gradle-plugins/check-dependencies-plugin)
-[![codecov](https://codecov.io/gh/yoomoney-gradle-plugins/check-dependencies-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/yoomoney-gradle-plugins/check-dependencies-plugin)
+[![Build Status](https://travis-ci.com/yoomoney/check-dependencies-plugin.svg?branch=master)](https://travis-ci.com/yoomoney/check-dependencies-plugin)
+[![codecov](https://codecov.io/gh/yoomoney/check-dependencies-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/yoomoney/check-dependencies-plugin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # check-dependencies-plugin

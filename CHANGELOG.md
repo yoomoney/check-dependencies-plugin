@@ -1,31 +1,32 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Переезд организации yoomoney-gradle-plugins -> yoomoney
 ### NEXT_VERSION_DESCRIPTION_END
-## [7.2.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/6) (19-05-2021)
+## [7.2.1](https://github.com/yoomoney/check-dependencies-plugin/pull/6) (19-05-2021)
 
 * Добавлена информация о сборке, покрытии, лицензии в README.md.
 
-## [7.2.0](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/5) (19-03-2021)
+## [7.2.0](https://github.com/yoomoney/check-dependencies-plugin/pull/5) (19-03-2021)
 
 * Сборка проекта переведена на gradle-project-plugin.
 
-## [7.1.2](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/4) (11-03-2021)
+## [7.1.2](https://github.com/yoomoney/check-dependencies-plugin/pull/4) (11-03-2021)
 
 * Исправлен баг в ArtifactVersionResolver - теперь при поиске в списке репозиториев пропускаем репозитории, получение версий из
 которого завершилось ошибкой.
 
-## [7.1.1](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/3) (16-02-2021)
+## [7.1.1](https://github.com/yoomoney/check-dependencies-plugin/pull/3) (16-02-2021)
 
 * Добавлена фильтрация репозиториев MavenArtifactRepository при составлении списка возможных репозиториев для поиска зависимостей.
 Это исправляет проблему при подключении репозиториев типа "flatDir"
 
-## [7.1.0](https://github.com/yoomoney-gradle-plugins/check-dependencies-plugin/pull/2) (04-02-2021)
+## [7.1.0](https://github.com/yoomoney/check-dependencies-plugin/pull/2) (04-02-2021)
 
 * Удален ключ git_key.enc в связи с изменением логики работы с git_key.
-Подробности см. https://github.com/yoomoney-gradle-plugins/travis-shared-configuration/pull/8
+Подробности см. https://github.com/yoomoney/travis-shared-configuration/pull/8
 * Поднята версия artifact-release-plugin
 
-## [7.0.0](https://api.github.com/repos/yoomoney-gradle-plugins/check-dependencies-plugin/pulls/1) (29-01-2021)
+## [7.0.0](https://api.github.com/repos/yoomoney/check-dependencies-plugin/pulls/1) (29-01-2021)
 
 * Внесены изменения в связи с переходом в GitHub:
 * Переименованы пакеты

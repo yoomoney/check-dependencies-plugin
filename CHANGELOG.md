@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [7.3.0](https://github.com/yoomoney/check-dependencies-plugin/pull/7) (26-08-2021)
+
 * Переезд организации yoomoney-gradle-plugins -> yoomoney
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [7.2.1](https://github.com/yoomoney/check-dependencies-plugin/pull/6) (19-05-2021)
 
 * Добавлена информация о сборке, покрытии, лицензии в README.md.

@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -54,11 +56,16 @@ public class PrintActualDependenciesAction implements Action<Project> {
 
     @Override
     public void execute(Project project) {
-        ConfigurationContainer configurationContainer = project.getConfigurations();
+        Collection<Configuration> configurations = project.getConfigurations().getAsMap().values();
+        Collection<Configuration> buildscriptConfigurations = project.getBuildscript().getConfigurations().getAsMap().values();
+
+        List<Configuration> allConfigurations = Stream.of(configurations, buildscriptConfigurations)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
         Set<Dependency> checked = new HashSet<>();
         List<Map<String, String>> dependencies = new ArrayList<>();
-        for (Configuration configuration : configurationContainer) {
+        for (Configuration configuration : allConfigurations) {
 
             try {
 

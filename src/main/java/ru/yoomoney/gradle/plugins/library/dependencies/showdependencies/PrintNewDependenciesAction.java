@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ru.yoomoney.gradle.plugins.library.dependencies.ArtifactVersionResolver;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -55,8 +57,14 @@ public class PrintNewDependenciesAction implements Action<Project> {
 
     @Override
     public void execute(Project project) {
-        ConfigurationContainer configurationContainer = project.getConfigurations();
-        for (Configuration configuration : configurationContainer) {
+        Collection<Configuration> configurations = project.getConfigurations().getAsMap().values();
+        Collection<Configuration> buildscriptConfigurations = project.getBuildscript().getConfigurations().getAsMap().values();
+
+        List<Configuration> allConfigurations = Stream.of(configurations, buildscriptConfigurations)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        for (Configuration configuration : allConfigurations) {
             try {
                 Set<ResolvedArtifact> resolvedArtifacts = configuration
                         .getResolvedConfiguration()

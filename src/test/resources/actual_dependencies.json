@@ -1,5 +1,11 @@
 [
   {
+    "scope": "classpath",
+    "name": "dependency-management-plugin",
+    "version": "1.0.1.RELEASE",
+    "group": "io.spring.gradle"
+  },
+  {
     "scope": "compileClasspath",
     "name": "joda-time",
     "version": "1.6.2",

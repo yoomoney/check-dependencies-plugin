@@ -66,6 +66,30 @@ class PrintNewDependenciesSpec extends AbstractPluginSpec {
         result.standardOutput.contains("joda-time:joda-time 1.6.2 ->")
     }
 
+    def "Print new version for buildscript dependency"() {
+        given:
+        buildFile << """
+             buildscript {
+                repositories {
+                    mavenCentral()
+               
+                    dependencies {
+                        classpath 'org.apache.tomcat.embed:tomcat-embed-core:9.0.10'
+                    }
+                }
+            }
+            
+            checkDependencies {
+                    includeGroupIdForPrintDependencies = ['org.apache']
+            }
+                """.stripIndent()
+        when:
+        def result = runTasksSuccessfully("printNewDependencies")
+
+        then:
+        result.standardOutput.contains("org.apache.tomcat.embed:tomcat-embed-core 9.0.10 ->")
+    }
+
     def "Tasks show dependencies not execute when run 'build'"() {
 
         given:

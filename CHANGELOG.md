@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* В задачи вывода новых и текущих зависимостей добавлены зависимости buildscript конфигураций. 
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.3.0](https://github.com/yoomoney/check-dependencies-plugin/pull/7) (26-08-2021)
 

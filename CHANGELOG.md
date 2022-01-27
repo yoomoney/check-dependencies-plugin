@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
-* В задачи вывода новых и текущих зависимостей добавлены зависимости buildscript конфигураций. 
-### NEXT_VERSION_DESCRIPTION_END
+## [7.4.0](https://github.com/yoomoney/check-dependencies-plugin/pull/8) (27-01-2022)
+
+* В задачи вывода новых и текущих зависимостей добавлены зависимости buildscript конфигураций.
+
 ## [7.3.0](https://github.com/yoomoney/check-dependencies-plugin/pull/7) (26-08-2021)
 
 * Переезд организации yoomoney-gradle-plugins -> yoomoney

@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [7.4.0](https://github.com/yoomoney/check-dependencies-plugin/pull/8) (27-01-2022)
 
 * В задачи вывода новых и текущих зависимостей добавлены зависимости buildscript конфигураций.

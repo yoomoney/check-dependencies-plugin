@@ -1,5 +1,9 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MAJOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Удалена проверка исключения конфликта в файле из настройки exclusionsRulesSources. Теперь не происходит падения при конфликте фиксированных версий. 
+* Удалена функциональность подбора подходящих версий библиотек.
+* **breaking changes** Удалена настройка exclusionsRulesSources
+* **breaking changes** Удалена настройка versionSelectors
 ### NEXT_VERSION_DESCRIPTION_END
 ## [7.4.0](https://github.com/yoomoney/check-dependencies-plugin/pull/8) (27-01-2022)
 

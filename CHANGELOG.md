@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [8.0.0](https://github.com/yoomoney/check-dependencies-plugin/pull/9) (02-03-2022)
 
 * Удалена проверка исключения конфликта в файле из настройки exclusionsRulesSources. Теперь не происходит падения при конфликте фиксированных версий.

@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.plugins.JavaPlugin;
 import ru.yoomoney.gradle.plugins.library.dependencies.checkversion.MajorVersionCheckerExtension;
 import ru.yoomoney.gradle.plugins.library.dependencies.checkversion.VersionChecker;
-import ru.yoomoney.gradle.plugins.library.dependencies.dsl.VersionSelectors;
 import ru.yoomoney.gradle.plugins.library.dependencies.forbiddenartifacts.CheckForbiddenDependenciesTask;
 import ru.yoomoney.gradle.plugins.library.dependencies.forbiddenartifacts.ForbiddenDependenciesExtension;
 import ru.yoomoney.gradle.plugins.library.dependencies.showdependencies.PrintActualDependenciesByGroupTask;
@@ -91,16 +90,8 @@ public class CheckDependenciesPlugin implements Plugin<Project> {
         CheckDependenciesTask task = createCheckDependenciesTask(target);
         target.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(task);
 
-        // В момент примения плагина ни один extension еще не объявлен. Поэтому брать оттуда значения до окончания формирования
-        // проекта бессмысленно. Поэтому вытаскиваем имя файла исключений после того, как проект полностью сформирован.
-        // Так же стоит обратить внимание, что ConventionMapping - это список значений для свойств таски и значение из него берется
-        // только, если одноименное свойство в таске имеет null значение.
-        task.getConventionMapping().map("exclusionsRulesSources",
-                () -> checkDependenciesExtension.exclusionsRulesSources);
         task.getConventionMapping().map("includedConfigurations",
                 () -> checkDependenciesExtension.includedConfigurations);
-        task.getConventionMapping().map("versionSelectors",
-                () -> new VersionSelectors(checkDependenciesExtension.versionSelectors));
 
         MajorVersionCheckerExtension majorVersionCheckerExtension = new MajorVersionCheckerExtension();
         target.getExtensions().add(MAJOR_VERSION_CHECKER_EXTENSION_NAME, majorVersionCheckerExtension);

@@ -40,15 +40,6 @@ public class ConfigurationDependencies {
     }
 
     /**
-     * Возвращает прямые зависимости для конфигурации проекта
-     *
-     * @return список прямых зависимостей
-     */
-    public List<ArtifactDependency> direct() {
-        return getDependencyRoot().getDependencies();
-    }
-
-    /**
      * Возвращает все зависимости для конфигурации проекта
      *
      * @return список всех зависимостей

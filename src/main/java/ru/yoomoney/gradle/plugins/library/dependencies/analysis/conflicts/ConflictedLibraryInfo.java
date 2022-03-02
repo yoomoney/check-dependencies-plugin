@@ -1,14 +1,11 @@
 package ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts;
 
-import ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.ConflictPathResolutionResult;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.DependencyPath;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.LibraryName;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Информация о конфликте:
@@ -28,7 +25,6 @@ public class ConflictedLibraryInfo {
     private final String version;
     private final String fixedVersion;
     private final List<DependencyPath<ArtifactDependency>> conflictDependentPaths;
-    private final Map<ArtifactName, ConflictPathResolutionResult> conflictPathResolutions = new HashMap<>();
 
     /**
      * Конструктор класса
@@ -48,7 +44,6 @@ public class ConflictedLibraryInfo {
      * @param library имя библиотеки
      * @param version имя первоначально запрашиваемой версии
      * @param fixedVersion конечная версия библиотеки
-     * @param dependentPaths пути зависимостей, в результате которых произошел конфликт версий
      */
     ConflictedLibraryInfo(LibraryName library, String version, String fixedVersion,
                           List<DependencyPath<ArtifactDependency>> conflictDependentPaths) {
@@ -56,10 +51,6 @@ public class ConflictedLibraryInfo {
         this.version = version;
         this.fixedVersion = fixedVersion;
         this.conflictDependentPaths = conflictDependentPaths;
-    }
-
-    public void addConflictPathResolution(ConflictPathResolutionResult resolutionResult) {
-        conflictPathResolutions.put(resolutionResult.getDirectDependency(), resolutionResult);
     }
 
     public LibraryName getLibrary() {
@@ -78,7 +69,12 @@ public class ConflictedLibraryInfo {
         return conflictDependentPaths;
     }
 
-    public ConflictPathResolutionResult getResolutionFor(DependencyPath<ArtifactDependency> conflictPath) {
-        return conflictPathResolutions.get(conflictPath.getRoot().getRequestedArtifactName());
+    @Override
+    public String toString() {
+        return "ConflictedLibraryInfo{" +
+                "library=" + library +
+                ", version='" + version + '\'' +
+                ", fixedVersion='" + fixedVersion +
+                '}';
     }
 }

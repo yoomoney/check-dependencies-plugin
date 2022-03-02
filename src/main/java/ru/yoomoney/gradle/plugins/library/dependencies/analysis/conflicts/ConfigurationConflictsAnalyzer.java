@@ -6,16 +6,12 @@ import org.slf4j.LoggerFactory;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.ArtifactDependentPathsFinder;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.ConfigurationDependencies;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.FixedDependencies;
-import ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.VersionConflictInfo;
-import ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts.resolvers.VersionConflictResolver;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactDependency;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactDependent;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactName;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ArtifactNameSet;
-import ru.yoomoney.gradle.plugins.library.dependencies.dsl.ConflictRegister;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.DependencyPath;
 import ru.yoomoney.gradle.plugins.library.dependencies.dsl.LibraryName;
-import ru.yoomoney.gradle.plugins.library.dependencies.reporters.NameFormatter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -38,27 +34,18 @@ public class ConfigurationConflictsAnalyzer {
 
     private final ConfigurationDependencies dependencies;
     private final ArtifactNameSet fixedDependencies;
-    private final ConflictVersionsChecker conflictChecker;
-    private final ConflictRegister conflictRegister;
-    private final VersionConflictResolver conflictResolver;
 
     /**
      * Фабричный метод для создания объекта класса.
      *
      * @param projectFixedDependencies зависимости проекта, указанные в dependencyManagement секции
      * @param configuration проверяемая конфигурация проекта
-     * @param conflictResolver объект, проверяющий допустимость конфликта
-     * @param conflictRegister объект для регистрации обнаруженных конфликтов
      * @return новый объект класса для анализа конфиктов в конфигурации
      */
     public static ConfigurationConflictsAnalyzer create(@Nonnull FixedDependencies projectFixedDependencies,
-                                                        @Nonnull Configuration configuration,
-                                                        @Nonnull ConflictVersionsChecker conflictChecker,
-                                                        @Nonnull ConflictRegister conflictRegister,
-                                                        @Nonnull VersionConflictResolver conflictResolver) {
+                                                        @Nonnull Configuration configuration) {
         ArtifactNameSet configurationFixedDependencies = projectFixedDependencies.forConfiguration(configuration);
-        return new ConfigurationConflictsAnalyzer(configuration, configurationFixedDependencies,
-                                                  conflictChecker, conflictRegister, conflictResolver);
+        return new ConfigurationConflictsAnalyzer(configuration, configurationFixedDependencies);
     }
 
     /**
@@ -66,19 +53,11 @@ public class ConfigurationConflictsAnalyzer {
      *
      * @param configuration объект конфигурации проекта
      * @param fixedDependencies фиксированные зависимости проекта
-     * @param conflictChecker объект, проверяющий допустимость изменения версии
-     * @param conflictRegister объект для регистрации обнаруженных конфликтов
      */
     private ConfigurationConflictsAnalyzer(@Nonnull Configuration configuration,
-                                           @Nonnull ArtifactNameSet fixedDependencies,
-                                           @Nonnull ConflictVersionsChecker conflictChecker,
-                                           @Nonnull ConflictRegister conflictRegister,
-                                           @Nonnull VersionConflictResolver conflictResolver) {
+                                           @Nonnull ArtifactNameSet fixedDependencies) {
         this.dependencies = new ConfigurationDependencies(configuration);
         this.fixedDependencies = fixedDependencies;
-        this.conflictChecker = conflictChecker;
-        this.conflictRegister = conflictRegister;
-        this.conflictResolver = conflictResolver;
     }
 
     /**
@@ -126,27 +105,10 @@ public class ConfigurationConflictsAnalyzer {
                 return;
             }
 
-            conflictRegister.registerConflict(artifact, fixedVersion);
-            if (canSkipConflict(artifact, fixedVersion)) {
-                log.info("Approved changing version {} : {} -> {}", NameFormatter.format(artifact.getLibraryName()),
-                                                                    requestedVersion, fixedVersion);
-            } else {
-                conflictedLibraries.add(createConflictInfo(artifact, fixedVersion));
-            }
+            conflictedLibraries.add(createConflictInfo(artifact, fixedVersion));
         });
 
         return conflictedLibraries;
-    }
-
-    /**
-     * Проверяет, является ли изменение версии допустимым
-     *
-     * @return true - если конфликт допустим, false - иначе
-     */
-    private boolean canSkipConflict(ArtifactName requestedArtifact, String fixedVersion) {
-        LibraryName library = requestedArtifact.getLibraryName();
-        String version = requestedArtifact.getVersion();
-        return conflictChecker.checkChangingLibraryVersion(library, version, fixedVersion);
     }
 
     /**
@@ -165,11 +127,6 @@ public class ConfigurationConflictsAnalyzer {
     private ConflictedLibraryInfo createConflictInfo(ArtifactName requestedArtifact, String fixedVersion) {
         List<DependencyPath<ArtifactDependency>> conflictPaths = findDependentPaths(requestedArtifact);
         ConflictedLibraryInfo conflictedLibraryInfo = new ConflictedLibraryInfo(requestedArtifact, fixedVersion, conflictPaths);
-
-        conflictPaths.forEach(conflictPath -> {
-            VersionConflictInfo versionConflict = new VersionConflictInfo(conflictPath, fixedVersion);
-            conflictedLibraryInfo.addConflictPathResolution(conflictResolver.resolveConflict(versionConflict));
-        });
 
         return conflictedLibraryInfo;
     }

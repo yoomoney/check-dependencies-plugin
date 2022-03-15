@@ -56,7 +56,8 @@ public class CheckDependenciesTask extends ConventionTask {
                             .contains(new LibraryName(dep.getGroup(), dep.getName())))
                     .filter(dep -> dep.getVersion() != null && !dep.getVersion().isEmpty())
                     .forEach(dep -> log.warn("Fixed dependency are overridden in the local build.gradle. " +
-                            "Please, remove the version for these dependencies: {}:{}:{}", dep.getGroup(), dep.getName(), dep.getVersion()));
+                            "Please, remove the version for these dependencies: {}:{}:{}",
+                            dep.getGroup(), dep.getName(), dep.getVersion()));
         }
     }
 

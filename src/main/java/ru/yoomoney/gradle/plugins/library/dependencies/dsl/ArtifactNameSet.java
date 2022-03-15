@@ -1,10 +1,13 @@
 package ru.yoomoney.gradle.plugins.library.dependencies.dsl;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Описывает набор имен артефактов
@@ -36,6 +39,20 @@ public class ArtifactNameSet implements Iterable<ArtifactName> {
      */
     public Set<String> getVersions(LibraryName libraryName) {
         return Optional.ofNullable(libraryVersions.get(libraryName)).orElseGet(Collections::emptySet);
+    }
+
+    /**
+     * Проверяет, есть ли фиксированная версия для библиотеки
+     *
+     * @return true, если есть
+     */
+    public boolean contains(@Nonnull LibraryName libraryName) {
+        requireNonNull(libraryName, "libraryName");
+
+        return libraryVersions != null
+                && libraryName.getGroup() != null
+                && libraryName.getName() != null
+                && libraryVersions.containsKey(libraryName);
     }
 
     @Override

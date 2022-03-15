@@ -1,5 +1,6 @@
-### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_TYPE=MINOR
 ### NEXT_VERSION_DESCRIPTION_BEGIN
+* Добавлен вывод в лог в случае, если в build.gradle определена версия зафиксированной зависимости
 ### NEXT_VERSION_DESCRIPTION_END
 ## [8.0.0](https://github.com/yoomoney/check-dependencies-plugin/pull/9) (02-03-2022)
 

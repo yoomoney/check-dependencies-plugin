@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [8.1.0](https://github.com/yoomoney/check-dependencies-plugin/pull/10) (16-03-2022)
+
 * Добавлен вывод в лог в случае, если в build.gradle определена версия зафиксированной зависимости
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [8.0.0](https://github.com/yoomoney/check-dependencies-plugin/pull/9) (02-03-2022)
 
 * Удалена проверка исключения конфликта в файле из настройки exclusionsRulesSources. Теперь не происходит падения при конфликте фиксированных версий.

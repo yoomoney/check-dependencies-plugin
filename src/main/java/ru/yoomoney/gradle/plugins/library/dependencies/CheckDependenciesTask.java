@@ -1,6 +1,7 @@
 package ru.yoomoney.gradle.plugins.library.dependencies;
 
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
@@ -9,11 +10,14 @@ import org.slf4j.LoggerFactory;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.FixedDependencies;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts.ConfigurationConflictsAnalyzer;
 import ru.yoomoney.gradle.plugins.library.dependencies.analysis.conflicts.ConflictedLibraryInfo;
+import ru.yoomoney.gradle.plugins.library.dependencies.dsl.LibraryName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Задача на проверку согласованности изменений версий используемых библиотек. Если изменение версии библиотеки связано
@@ -44,6 +48,16 @@ public class CheckDependenciesTask extends ConventionTask {
             if (!conflictedLibraries.isEmpty()) {
                 log.warn("There are conflicts: {}", conflictedLibraries);
             }
+
+            // Ищем определение зафиксированных версий в блоке dependencies.
+            // Это неправильно, т.к. версия не будет применена.
+            configuration.getAllDependencies().stream()
+                    .filter(dep -> fixedDependencies.forConfiguration(configuration)
+                            .contains(new LibraryName(dep.getGroup(), dep.getName())))
+                    .filter(dep -> dep.getVersion() != null && !dep.getVersion().isEmpty())
+                    .forEach(dep -> log.warn("Fixed dependency are overridden in the local build.gradle. " +
+                            "Please, remove the version for these dependencies: {}:{}:{}",
+                            dep.getGroup(), dep.getName(), dep.getVersion()));
         }
     }
 

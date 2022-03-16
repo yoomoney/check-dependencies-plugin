@@ -166,6 +166,13 @@ class CheckDependenciesPluginSpec extends AbstractPluginSpec {
         result.standardOutput.contains("There are conflicts: [ConflictedLibraryInfo{library=org.hamcrest:hamcrest-core, version='1.2'," +
                 " fixedVersion='1.3}, ConflictedLibraryInfo{library=org.slf4j:slf4j-api, version='1.7.20', fixedVersion='1.7.21}]")
 
+        result.standardOutput.contains("Fixed dependency are overridden in the local build.gradle. " +
+                "Please, remove the version for these dependencies: junit:junit:4.11")
+
+        //не должны ругаться на определение версии транзитивной зависимости
+        !result.standardOutput.contains("Fixed dependencies are overridden in the local build.gradle. " +
+                "Please, remove the version for these dependencies: org.slf4j:slf4j-api")
+
     }
 
     def "success check on project libraries and fixed versions and rules of changing libraries versions"() {

@@ -44,7 +44,9 @@ public class CheckDependenciesTask extends ConventionTask {
         fixedDependencies = FixedDependencies.from(getProject());
 
         for (Configuration configuration : getCheckedConfigurations()) {
-            List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration);
+            List<ConflictedLibraryInfo> conflictedLibraries = calculateConflictedVersionsLibrariesFor(configuration).stream()
+                    .filter(conflict -> !conflict.getVersion().isEmpty())
+                    .collect(Collectors.toList());
             if (!conflictedLibraries.isEmpty()) {
                 log.warn("There are conflicts: {}", conflictedLibraries);
             }

@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [8.1.1](https://github.com/yoomoney/check-dependencies-plugin/pull/11) (28-03-2022)
 
 * Фильтруем пустые версии в выдаче зависимостей с конфликтом

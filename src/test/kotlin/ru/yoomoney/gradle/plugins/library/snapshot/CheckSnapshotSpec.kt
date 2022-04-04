@@ -84,7 +84,7 @@ class CheckSnapshotSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT',
+                    implementation 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT',
                     'ru.yoomoney.common:yoomoney-xml-utils:3.0.1'
                 }
             """.trimIndent())
@@ -122,7 +122,7 @@ class CheckSnapshotSpec {
                 }
             
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
                 }
             """.trimIndent())
 
@@ -158,7 +158,7 @@ class CheckSnapshotSpec {
                 }
             
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
                 }
             """.trimIndent())
 
@@ -177,7 +177,7 @@ class CheckSnapshotSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
 
                 }
             """.trimIndent())
@@ -199,7 +199,7 @@ class CheckSnapshotSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT'
+                    implementation 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT'
                 }
             """.trimIndent())
 
@@ -220,7 +220,7 @@ class CheckSnapshotSpec {
                 ext.allowSnapshot = "true"
 
                 dependencies {
-                    compile 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT',
+                    implementation 'ru.yoomoney.common:yoomoney-json-utils:2.0.2-feature-SNAPSHOT',
                             'ru.yoomoney.common:yoomoney-xml-utils:3.0.1'
                 }
             """.trimIndent())

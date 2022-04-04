@@ -84,7 +84,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
 
                 }
                 forbiddenDependenciesChecker {
@@ -116,7 +116,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9',
+                    implementation 'joda-time:joda-time:2.10.9',
                            'org.apache.tomcat.embed:tomcat-embed-core:9.0.10'
 
                 }
@@ -159,7 +159,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9',
+                    implementation 'joda-time:joda-time:2.10.9',
                            'org.apache.tomcat.embed:tomcat-embed-core:9.0.10'
 
                 }
@@ -192,7 +192,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.8',
+                    implementation 'joda-time:joda-time:2.10.8',
                            'org.apache.tomcat.embed:tomcat-embed-core:9.0.10'
 
                 }
@@ -220,7 +220,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
 
                 }
             """.trimIndent())
@@ -240,7 +240,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:2.10.9'
+                    implementation 'joda-time:joda-time:2.10.9'
                 }
                 forbiddenDependenciesChecker {
                     before {
@@ -271,7 +271,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:1.6.2',
+                    implementation 'joda-time:joda-time:1.6.2',
                         'joda-time:joda-time:2.10.9'
                 }
                 forbiddenDependenciesChecker {
@@ -308,7 +308,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:1.6.2',
+                    implementation 'joda-time:joda-time:1.6.2',
                         'joda-time:joda-time:2.10.9',
                         'org.apache.tomcat.embed:tomcat-embed-core:10.0.0',
                         'org.apache.tomcat.embed:tomcat-embed-core:9.0.10'
@@ -362,7 +362,7 @@ class ForbiddenArifactsSpec {
 
         buildFile.writeText(setupBuildFile + """
                 dependencies {
-                    compile 'joda-time:joda-time:1.6.2',
+                    implementation 'joda-time:joda-time:1.6.2',
                         'joda-time:joda-time:2.10.9'
                 }
                 forbiddenDependenciesChecker {

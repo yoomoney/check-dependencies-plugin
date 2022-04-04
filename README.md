@@ -100,13 +100,13 @@ checkDependencies {
 ```
    [
        {
-           "scope": "compile",
+           "scope": "implementation",
            "name": "json-utils",
            "version": "1.0.0",
            "group": "ru.yoomoney.common"
        },
        {
-           "scope": "compile",
+           "scope": "implementation",
            "name": "xml-utils",
            "version": "1.0.0",
            "group": "ru.yoomoney.common"

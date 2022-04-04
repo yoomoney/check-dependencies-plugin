@@ -49,7 +49,9 @@ public class VersionChecker {
     private static boolean isValidConfiguration(Configuration configuration) {
         String configurationLowerName = configuration.getName().toLowerCase();
 
-        return configurationLowerName.endsWith("compile")
+        return configurationLowerName.endsWith("implementation")
+                || configurationLowerName.endsWith("api")
+                || configurationLowerName.endsWith("compile")
                 || configurationLowerName.endsWith("runtime")
                 || Objects.equals(configurationLowerName, "compileclasspath");
     }

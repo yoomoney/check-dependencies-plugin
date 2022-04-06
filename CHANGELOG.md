@@ -1,3 +1,6 @@
+### NEXT_VERSION_TYPE=MAJOR|MINOR|PATCH
+### NEXT_VERSION_DESCRIPTION_BEGIN
+### NEXT_VERSION_DESCRIPTION_END
 ## [9.0.0](https://github.com/yoomoney/check-dependencies-plugin/pull/12) (06-04-2022)
 
 * ***breaking changes*** Обновлена версия gradle `6.4.1` -> `7.4.1`

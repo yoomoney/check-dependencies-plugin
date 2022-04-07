@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=PATCH
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [9.0.1](https://github.com/yoomoney/check-dependencies-plugin/pull/13) (07-04-2022)
+
 * Перевыпуск релиза из-за проблем с синхронизацией maven-central
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [9.0.0](https://github.com/yoomoney/check-dependencies-plugin/pull/12) (06-04-2022)
 
 * ***breaking changes*** Обновлена версия gradle `6.4.1` -> `7.4.1`
